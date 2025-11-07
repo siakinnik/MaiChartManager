@@ -16,6 +16,7 @@ import { captureException } from "@sentry/vue"
 import noJacket from "@/assets/noJacket.webp";
 import { getUrl } from "@/client/api";
 import { t } from "@/locales";
+import { CheckBox, TextInput } from "@munet/ui";
 
 const Component = defineComponent({
   setup() {
@@ -56,9 +57,11 @@ const Component = defineComponent({
       }
     })
 
-    return () => info.value && <NForm showFeedback={false} labelPlacement="top" disabled={selectedADir.value === 'A000'}>
+    // TODO: inject disable when A000
+
+    return () => info.value && <div class="flex flex-col gap-2">
         <div class="grid cols-[1fr_12em] gap-5">
-            <NFlex vertical class="relative">
+            <div class="flex flex-col gap-2 relative">
                 <NFlex align="center" class="absolute right-0 top-0 mr-2 mt-2">
                     <ProblemsDisplay problems={info.value.problems!}/>
                 </NFlex>
@@ -69,40 +72,32 @@ const Component = defineComponent({
                         <span class="select-text">{info.value.id}</span>
                     </div>
                 </NFlex>
-                <NFormItem label={t('music.edit.name')}>
-                    <div class="flex items-center gap-2 w-full">
-                        <NInput v-model:value={info.value.name} class="w-0 grow"/>
-                        <NSwitch v-model:value={info.value.longMusic}/>
-                        {t('common.longMusic')}
-                    </div>
-                </NFormItem>
-                <NFormItem label={t('music.edit.artist')}>
-                    <NInput v-model:value={info.value.artist}/>
-                </NFormItem>
-            </NFlex>
+
+                <div class="ml-1 text-sm">{t('music.edit.name')}</div>
+                <div class="flex items-center gap-2 w-full">
+                    <TextInput v-model:value={info.value.name} class="w-0 grow"/>
+                    <CheckBox v-model:value={info.value.longMusic}>{t('common.longMusic')}</CheckBox>
+                </div>
+                <div class="ml-1 text-sm">{t('music.edit.artist')}</div>
+                <TextInput v-model:value={info.value.artist}/>
+            </div>
             <JacketBox info={info.value} class="h-12em w-12em"/>
         </div>
-        <NFlex vertical>
-            <NFormItem label={t('music.edit.bpm')}>
-                <NInputNumber showButton={false} class="w-full" v-model:value={info.value.bpm} min={0}/>
-            </NFormItem>
-            <NFormItem label={t('music.edit.version')}>
-                <VersionInput v-model:value={info.value.version}/>
-            </NFormItem>
-            <NFormItem label={t('music.edit.genre')}>
-                <GenreInput options={genreList.value} v-model:value={info.value.genreId}/>
-            </NFormItem>
-            <NFormItem label={t('music.edit.versionCategory')}>
-                <GenreInput options={addVersionList.value} v-model:value={info.value.addVersionId}/>
-            </NFormItem>
-          {info.value.genreId === UTAGE_GENRE && // 宴会场
+        <div class="flex flex-col gap-2">
+            <div class="ml-1 text-sm">{t('music.edit.bpm')}</div>
+            <TextInput type="number" v-model:value={info.value.bpm}/>
+            <div class="ml-1 text-sm">{t('music.edit.version')}</div>
+            <VersionInput v-model:value={info.value.version}/>
+            <div class="ml-1 text-sm">{t('music.edit.genre')}</div>
+            <GenreInput options={genreList.value} v-model:value={info.value.genreId}/>
+            <div class="ml-1 text-sm">{t('music.edit.versionCategory')}</div>
+            <GenreInput options={addVersionList.value} v-model:value={info.value.addVersionId}/>
+            {info.value.genreId === UTAGE_GENRE && // 宴会场
               <>
-                  <NFormItem label={t('music.edit.utageType')}>
-                      <NInput v-model:value={info.value.utageKanji}/>
-                  </NFormItem>
-                  <NFormItem label={t('music.edit.utageComment')}>
-                      <NInput v-model:value={info.value.comment}/>
-                  </NFormItem>
+                  <div class="ml-1 text-sm">{t('music.edit.utageType')}</div>
+                  <TextInput v-model:value={info.value.utageKanji}/>
+                  <div class="ml-1 text-sm">{t('music.edit.utageComment')}</div>
+                  <TextInput v-model:value={info.value.comment}/>
               </>}
             <AcbAwb song={info.value}/>
             <NTabs type="line" animated barWidth={0} v-model:value={selectedLevel.value} class="levelTabs"
@@ -117,8 +112,8 @@ const Component = defineComponent({
                 </NTabPane>
               )}
             </NTabs>
-        </NFlex>
-    </NForm>;
+        </div>
+    </div>;
   },
 })
 

@@ -6,6 +6,7 @@ import { MusicXmlWithABJacket } from "@/client/apiGen";
 import ChooseAction from "@/components/MusicList/BatchActionButton/ChooseAction";
 import ProgressDisplay from "@/components/MusicList/BatchActionButton/ProgressDisplay";
 import { useI18n } from 'vue-i18n';
+import { Button, Modal } from "@munet/ui";
 
 export enum STEP {
   None,
@@ -26,24 +27,26 @@ export default defineComponent({
       selectedMusic.value = [];
     }
 
-    return () => <NButton secondary onClick={show}>
-      {t('music.batch.batchAndSearch')}
+    // TODO: 移到单独页面
 
-      <NModal
-        preset="card"
-        class={step.value === STEP.Select ? "w-[min(90vw,120em)]" : "w-[min(50vw,60em)]"}
+    return () => <>
+      <button onClick={show}>
+        {t('music.batch.batchAndSearch')}
+      </button>
+      <Modal
+        width={step.value === STEP.Select ? "min(90vw,120em)" : "min(50vw,60em)"}
         title={t('music.batch.title')}
+        esc={step.value !== STEP.ProgressDisplay}
         show={step.value !== STEP.None}
         onUpdateShow={() => step.value = STEP.None}
-        maskClosable={false}
-        closable={step.value !== STEP.ProgressDisplay}
-        closeOnEsc={step.value !== STEP.ProgressDisplay}
-      >
-        {step.value === STEP.Select && <MusicSelector v-model:selectedMusicIds={selectedMusic.value} continue={() => step.value = STEP.ChooseAction} cancel={() => step.value = STEP.None}/>}
-        {step.value === STEP.ChooseAction && <ChooseAction selectedMusic={selectedMusic.value} continue={(action: STEP) => step.value = action}/>}
-        {step.value === STEP.EditProps && <EditProps selectedMusicIds={selectedMusic.value} closeModal={() => step.value = STEP.None}/>}
-        {step.value === STEP.ProgressDisplay && <ProgressDisplay/>}
-      </NModal>
-    </NButton>;
+      >{{
+        default: ()=><>
+          {step.value === STEP.Select && <MusicSelector v-model:selectedMusicIds={selectedMusic.value} continue={() => step.value = STEP.ChooseAction} cancel={() => step.value = STEP.None}/>}
+          {step.value === STEP.ChooseAction && <ChooseAction selectedMusic={selectedMusic.value} continue={(action: STEP) => step.value = action}/>}
+          {step.value === STEP.EditProps && <EditProps selectedMusicIds={selectedMusic.value} closeModal={() => step.value = STEP.None}/>}
+          {step.value === STEP.ProgressDisplay && <ProgressDisplay/>}
+        </>,
+      }}</Modal>
+    </>;
   }
 })

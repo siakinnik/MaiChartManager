@@ -27,10 +27,10 @@ export default defineComponent({
     })
 
     return () => <>
-      <NBadge dot show={!!badgeType.value} type={badgeType.value as any}>
-        <NButton secondary onClick={() => showConfigurator.value = true}>
+      <NBadge dot show={!!badgeType.value} type={badgeType.value as any} offset={[-3, 5]}>
+        <button onClick={() => showConfigurator.value = true}>
           {t('mod.title')}
-        </NButton>
+        </button>
       </NBadge>
       <ModNotInstalledWarning show={showWarning.value} closeModal={(dismiss: boolean) => {
         showWarning.value = false

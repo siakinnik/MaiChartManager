@@ -21,7 +21,7 @@ export default defineComponent({
 
     return () => (
       <NFlex vertical class="h-full" size="large">
-        <NFlex>
+        <div class="flex items-center gap-2">
           <NButton secondary onClick={() => props.toggleMenu()} class="min-[1440px]:hidden">
             <span class="i-ic-baseline-menu text-lg"/>
           </NButton>
@@ -31,9 +31,9 @@ export default defineComponent({
             options={assetDirs.value.map(dir => ({ label: dir.dirName!, value: dir.dirName! }))}
             onUpdateValue={setAssetsDir}
           />
-          <RefreshAllButton />
+          <RefreshAllButton class="shrink-0" />
           <BatchActionButton />
-        </NFlex>
+        </div>
         <NVirtualList class="flex-1" itemSize={20 / 4 * 16} items={musicList.value}>
           {{
             default({ item }: { item: MusicXmlWithABJacket }) {

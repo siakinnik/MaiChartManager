@@ -10,6 +10,7 @@ import UnityVue from 'unity-webgl/vue'
 import { selectedADir } from "@/store/refs";
 import { getUrl } from "@/client/api";
 import { t } from "@/locales";
+import { Modal } from "@munet/ui";
 
 export default defineComponent({
   props: {
@@ -32,20 +33,20 @@ export default defineComponent({
       }, 3000)
     })
 
-    return () => <NButton secondary onClick={() => show.value = true}>
-      {t('music.edit.previewChart')}
-      <NModal
-        preset="card"
-        class="w-60vw"
+    return () => <>
+      <button onClick={() => show.value = true}>
+        {t('music.edit.previewChart')}
+      </button>
+      <Modal
+        width="60vw"
         title={t('chart.preview.title')}
         v-model:show={show.value}
-      >
-        <NFlex vertical>
+      >{{
+        default: () => <NFlex vertical>
           {t('music.edit.previewChartWarning')}
           <UnityVue unity={unityContext} height="32vw"/>
-        </NFlex>
-      </NModal>
-
-    </NButton>
+        </NFlex>,
+      }}</Modal>
+    </>
   },
 })

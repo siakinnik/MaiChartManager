@@ -1,8 +1,10 @@
 import api from '@/client/api';
 import { NDropdown, NButton, useMessage } from 'naive-ui';
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import VideoConvertButton from './VideoConvertButton';
 import { useI18n } from 'vue-i18n';
+import DropDown from '@munet/ui/src/components/DropMenu/DropDown';
+import { DropMenu } from '@munet/ui';
 
 enum DROPDOWN_OPTIONS {
   AudioConvert,
@@ -17,10 +19,10 @@ export default defineComponent({
     const videoConvertRef = ref<{ trigger: () => void }>();
     const { t } = useI18n();
 
-    const options = [
-      { label: t('tools.audioConvert'), key: DROPDOWN_OPTIONS.AudioConvert },
-      { label: t('tools.videoConvert'), key: DROPDOWN_OPTIONS.VideoConvert },
-    ]
+    const options = computed(() => [
+      { label: t('tools.audioConvert'), action: () => handleOptionClick(DROPDOWN_OPTIONS.AudioConvert) },
+      { label: t('tools.videoConvert'), action: () => handleOptionClick(DROPDOWN_OPTIONS.VideoConvert) },
+    ])
 
     const handleOptionClick = async (key: DROPDOWN_OPTIONS) => {
       switch (key) {
@@ -41,11 +43,7 @@ export default defineComponent({
     }
 
     return () => (location.hostname === 'mcm.invalid' || import.meta.env.DEV) && <>
-      <NDropdown options={options} trigger="click" onSelect={handleOptionClick}>
-        <NButton secondary>
-          {t('tools.title')}
-        </NButton>
-      </NDropdown>
+      <DropMenu options={options.value} buttonText={t('tools.title')} />
       <VideoConvertButton ref={videoConvertRef} />
     </>;
   },

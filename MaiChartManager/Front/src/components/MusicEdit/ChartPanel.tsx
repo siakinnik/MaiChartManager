@@ -7,6 +7,7 @@ import { LEVELS } from "@/consts";
 import ProblemsDisplay from "@/components/ProblemsDisplay";
 import PreviewChartButton from "@/components/MusicEdit/PreviewChartButton";
 import { useI18n } from 'vue-i18n';
+import { CheckBox, TextInput } from "@munet/ui";
 
 const LEVELS_OPTIONS = LEVELS.map((level, index) => ({label: level, value: index}));
 
@@ -39,30 +40,22 @@ export default defineComponent({
     watch(() => props.chart.enable, sync('enable', api.EditChartEnable));
     watch(() => props.chart.levelId, sync('levelId', api.EditChartLevelDisplay));
 
-    return () => <NForm showFeedback={false} labelPlacement="top" disabled={selectedADir.value === 'A000'}>
-      <NFlex vertical>
-        <NFlex align="center" class="absolute right-0 top-0 m-xy mt-2 z-2">
+    return () => <div class="flex flex-col gap-2">
+        <div class="absolute right-0 top-0 m-xy mt-2 z-2">
           <PreviewChartButton songId={props.songId} level={props.chartIndex}/>
-        </NFlex>
-        <NFormItem label={t('music.edit.chartEnable')} labelPlacement="left" class="ml-2px">
-          <NFlex align="center">
-            <NSwitch v-model:value={props.chart.enable}/>
-            <ProblemsDisplay problems={props.chart.problems!}/>
-          </NFlex>
-        </NFormItem>
-        <NFormItem label={t('music.edit.chartAuthor')}>
-          <NInput v-model:value={props.chart.designer} placeholder=""/>
-        </NFormItem>
-        <NFormItem label={t('music.edit.chartLevel')}>
-          <NSelect options={LEVELS_OPTIONS as any} v-model:value={props.chart.levelId}/>
-        </NFormItem>
-        <NFormItem label={t('music.edit.chartConstant')}>
-          <NInputNumber showButton={false} class="w-full" precision={1} v-model:value={levelValue.value} min={0}/>
-        </NFormItem>
-        <NFormItem label={t('music.edit.chartNoteCount')}>
-          <NInputNumber showButton={false} class="w-full" precision={0} v-model:value={props.chart.maxNotes} min={0}/>
-        </NFormItem>
-      </NFlex>
-    </NForm>;
+        </div>
+        <div class="flex items-center gap-2">
+          <CheckBox v-model:value={props.chart.enable} class="m-1">{t('music.edit.chartEnable')}</CheckBox>
+          <ProblemsDisplay problems={props.chart.problems!}/>
+        </div>
+        <div class="ml-1 text-sm">{t('music.edit.chartAuthor')}</div>
+        <TextInput v-model:value={props.chart.designer} placeholder=""/>
+        <div class="ml-1 text-sm">{t('music.edit.chartLevel')}</div>
+        <NSelect options={LEVELS_OPTIONS as any} v-model:value={props.chart.levelId}/>
+        <div class="ml-1 text-sm">{t('music.edit.chartConstant')}</div>
+        <NInputNumber showButton={false} class="w-full" precision={1} v-model:value={levelValue.value} min={0}/>
+        <div class="ml-1 text-sm">{t('music.edit.chartNoteCount')}</div>
+        <NInputNumber showButton={false} class="w-full" precision={0} v-model:value={props.chart.maxNotes} min={0}/>
+    </div>;
   },
 });

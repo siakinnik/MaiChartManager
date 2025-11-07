@@ -1,5 +1,5 @@
 import { computed, defineComponent, ref } from "vue";
-import { NA, NButton, NFlex, NModal, NPopover, NQrCode } from "naive-ui";
+import { NFlex, NPopover, NQrCode } from "naive-ui";
 import '@fontsource/nerko-one'
 import { version } from "@/store/refs";
 import StorePurchaseButton from "@/components/StorePurchaseButton";

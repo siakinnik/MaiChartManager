@@ -9,6 +9,7 @@ import _ from "lodash";
 import ModInstallDropdown from "@/components/ModManager/ModInstallDropdown";
 import styles from "./styles.module.sass";
 import { useI18n } from 'vue-i18n';
+import { Button, Modal } from "@munet/ui";
 
 export default defineComponent({
   props: {
@@ -98,9 +99,9 @@ export default defineComponent({
     }, { deep: true })
 
 
-    return () => <NModal
-      preset="card"
-      class={["w-[min(99dvw,100em)]", styles.modal]}
+    return () => <Modal
+      width="min(99dvw,100em)"
+      innerClass={styles.modal}
       title={t('mod.title')}
       v-model:show={show.value}
     >
@@ -108,7 +109,7 @@ export default defineComponent({
         <NFlex align="center">
           <span class="max-[1060px]:hidden">MelonLoader:</span>
           {modInfo.value.melonLoaderInstalled ? <span class="c-green-6 max-[1060px]:hidden">{t('mod.installed')}</span> : <span class="c-red-6">{t('mod.notInstalled')}</span>}
-          {!modInfo.value.melonLoaderInstalled && <NButton secondary loading={installingMelonLoader.value} onClick={installMelonLoader}>{t('mod.install')}</NButton>}
+          {!modInfo.value.melonLoaderInstalled && <Button ing={installingMelonLoader.value} onClick={installMelonLoader}>{t('mod.install')}</Button>}
           <div class={["w-8", "max-[1060px]:hidden"]}/>
           <span class="max-[1060px]:hidden">AquaMai:</span>
           {modInfo.value.aquaMaiInstalled ?
@@ -119,9 +120,9 @@ export default defineComponent({
           <span class="max-[450px]:hidden">v{modInfo.value.aquaMaiVersion}</span>
           <span class="max-[1060px]:hidden">{t('mod.availableVersion')}:</span>
           <span class={[shouldShowUpdate.value && "c-orange", "max-[1060px]:hidden"]}>{latestVersion.value.version}</span>
-          <NButton secondary onClick={() => api.KillGameProcess()}>
+          <button onClick={() => api.KillGameProcess()}>
             {t('mod.killGameProcess')}
-          </NButton>
+          </button>
         </NFlex>
         {configReadErr.value ? <NFlex vertical justify="center" align="center" class="min-h-100">
           <div class="text-8">{t('mod.needInstallOrUpdate')}</div>
@@ -129,6 +130,6 @@ export default defineComponent({
           <div class="c-gray-4 text-sm">{configReadErrTitle.value}</div>
         </NFlex> : <AquaMaiConfigurator config={config.value!} useNewSort={true}/>}
       </NFlex>}
-    </NModal>;
+    </Modal>;
   }
 })

@@ -4,6 +4,7 @@ import { globalCapture, modInfo, modUpdateInfo, updateModInfo } from "@/store/re
 import api from "@/client/api";
 import { latestVersion } from './shouldShowUpdateController';
 import { useI18n } from 'vue-i18n';
+import { Button } from '@munet/ui';
 
 export default defineComponent({
   props: {
@@ -48,9 +49,8 @@ export default defineComponent({
     }
 
     return () =>
-      <NButton secondary loading={installingAquaMai.value} onClick={() => installAquaMai(latestVersion.value.type)}
-        type={showAquaMaiInstallDone.value ? 'success' : 'default'}>
+      <Button ing={installingAquaMai.value} onClick={() => installAquaMai(latestVersion.value.type)}>
         {showAquaMaiInstallDone.value ? <span class="i-material-symbols-done" /> : modInfo.value?.aquaMaiInstalled ? t('mod.reinstallUpdate') : t('mod.install')}
-      </NButton>
+      </Button>
   },
 });

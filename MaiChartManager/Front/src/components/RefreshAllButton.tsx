@@ -3,6 +3,7 @@ import { NButton } from "naive-ui";
 import { globalCapture, updateAll } from "@/store/refs";
 import api from "@/client/api";
 import { useI18n } from 'vue-i18n';
+import { Button } from "@munet/ui";
 
 export default defineComponent({
   setup(props) {
@@ -21,8 +22,8 @@ export default defineComponent({
       }
     }
 
-    return () => <NButton secondary loading={load.value} onClick={reload}>
-      {!load.value && <span class="i-ic-baseline-refresh text-lg"/>}
-    </NButton>;
+    return () => <Button ing={load.value} onClick={reload} class="p-3">
+      <span class="i-ic-baseline-refresh text-lg"/>
+    </Button>;
   }
 })

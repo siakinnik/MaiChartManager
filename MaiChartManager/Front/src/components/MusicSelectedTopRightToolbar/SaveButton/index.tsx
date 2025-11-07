@@ -5,6 +5,7 @@ import { NButton } from "naive-ui";
 import animation from './animation.module.sass';
 import { useMagicKeys, whenever } from '@vueuse/core'
 import { useI18n } from 'vue-i18n';
+import { Button } from "@munet/ui";
 
 export default defineComponent({
   setup() {
@@ -30,12 +31,12 @@ export default defineComponent({
     whenever(ctrl_s, save);
 
     return () => selectedMusic.value && (
-      <NButton secondary onClick={save} type={selectedMusic.value.modified ? "warning" : undefined}>
+      <button onClick={save} class={selectedMusic.value.modified && "bg-orange-300!"}>
         {t('common.save')}
         {isAnimationShow.value && <Teleport to="body">
           <div class={animation.box}/>
         </Teleport>}
-      </NButton>
+      </button>
     );
   }
 });

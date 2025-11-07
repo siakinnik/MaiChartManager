@@ -87,7 +87,7 @@ music:
     editPreview: 编辑预览
     movie: 影片
     charts: 谱面
-    chartEnable: 启用
+    chartEnable: 启用此难度
     chartAuthor: 作者
     chartLevel: 显示等级
     chartConstant: 定数

@@ -3,6 +3,7 @@ import api from "@/client/api";
 import { globalCapture, selectedADir, selectMusicId, updateMusicList } from "@/store/refs";
 import { NButton, useDialog } from "naive-ui";
 import { useI18n } from 'vue-i18n';
+import { Button } from "@munet/ui";
 
 export default defineComponent({
   setup() {
@@ -33,10 +34,10 @@ export default defineComponent({
     }
 
 
-    return () => <NButton secondary onClick={del} loading={deleteLoading.value} type={deleteConfirm.value ? 'error' : 'default'}
+    return () => <Button onClick={del} ing={deleteLoading.value} class={deleteConfirm.value && 'bg-red-300!'}
       // @ts-ignore
                           onMouseleave={() => deleteConfirm.value = false}>
       {deleteConfirm.value ? t('music.delete.confirm') : t('common.delete')}
-    </NButton>;
+    </Button>;
   }
 });

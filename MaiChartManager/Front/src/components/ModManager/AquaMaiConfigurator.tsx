@@ -109,7 +109,7 @@ export default defineComponent({
         {bigSections.value.map((key) => <NAnchorLink key={key} title={getBigSectionName(key!)} href={`#${key}`}/>)}
         {otherSection.value.length > 0 && <NAnchorLink key={t('mod.other')} title={t('mod.other')} href={`#${t('mod.other')}`}/>}
       </NAnchor>
-      <NScrollbar class="h-[calc(100dvh-160px)] p-2 relative"
+      <NScrollbar class="h-[calc(100dvh-160px)] p-2 relative text-14px"
         // @ts-ignore
                   id="scroll"
       >
@@ -126,7 +126,7 @@ export default defineComponent({
           <NInput v-model:value={search.value} placeholder={t('mod.searchPlaceholder')} size="small" clearable ref={searchRef}/>
         </div>
         {bigSections.value.map((big) => <div id={big} key={big}>
-          <NDivider titlePlacement="left" class="mt-0! pt-8 sticky top-0! bg-white/80! z-1"
+          <NDivider titlePlacement="left" class={["mt-0! pt-8 sticky top-0! z-1 bg-modal"]}
             // @ts-ignore
             onClick={() => location.href = `#${big}`}
           >{getBigSectionName(big!)}</NDivider>

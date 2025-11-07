@@ -15,6 +15,7 @@
     "@iconify/json": "^2.2.308",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@modyfi/vite-plugin-yaml": "^1.1.0",
+    "@munet/ui": "link:D:/Projects/MuNET/MuFront/packages/ui",
     "@sentry/vite-plugin": "^2.22.5",
     "@sentry/vue": "^8.33.1",
     "@types/color": "^3.0.6",

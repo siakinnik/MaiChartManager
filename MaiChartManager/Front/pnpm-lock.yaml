@@ -23,6 +23,9 @@ importers:
       '@modyfi/vite-plugin-yaml':
         specifier: ^1.1.0
         version: 1.1.0(rollup@4.24.0)(vite@5.4.8(@types/node@22.7.4)(sass@1.79.4))
+      '@munet/ui':
+        specifier: link:D:/Projects/MuNET/MuFront/packages/ui
+        version: link:../../../../MuNET/MuFront/packages/ui
       '@sentry/vite-plugin':
         specifier: ^2.22.5
         version: 2.22.5

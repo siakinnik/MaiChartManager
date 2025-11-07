@@ -1,5 +1,7 @@
 {
 	"devDependencies": {
-		"@vitejs/plugin-vue": "^6.0.1"
+		"@fontsource/noto-sans-sc": "^5.2.8",
+		"@vitejs/plugin-vue": "^6.0.1",
+		"animate.css": "^4.1.1"
 	}
 }

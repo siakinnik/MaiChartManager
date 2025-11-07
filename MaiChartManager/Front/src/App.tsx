@@ -5,6 +5,7 @@ import NeedPurchaseDialog from "@/components/NeedPurchaseDialog";
 import Index from "@/views/Index";
 import StartupErrorDialog from "@/components/StartupErrorDialog";
 import { locale } from '@/locales';
+import { GlobalElementsContainer as UIGlobalElementsContainer } from '@munet/ui';
 
 export default defineComponent({
   setup() {
@@ -40,10 +41,11 @@ export default defineComponent({
         <NNotificationProvider>
           <NDialogProvider>
             <NMessageProvider>
-              <Index/>
-              <FeedbackErrorDialog/>
-              <NeedPurchaseDialog/>
-              <StartupErrorDialog/>
+              <UIGlobalElementsContainer />
+              <Index />
+              <FeedbackErrorDialog />
+              <NeedPurchaseDialog />
+              <StartupErrorDialog />
             </NMessageProvider>
           </NDialogProvider>
         </NNotificationProvider>

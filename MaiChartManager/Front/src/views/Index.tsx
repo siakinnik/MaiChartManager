@@ -77,9 +77,9 @@ export default defineComponent({
         </TransitionOpacity>
         <NFlex vertical class="p-xy h-100dvh" size="large" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 16px, rgba(255, 255, 255, 0.1) calc(100% - 16px), transparent 100%)' }}>
           <NFlex class="shrink-0" align="center">
-            <NButton secondary onClick={() => mobileShowMenu.value = true} class="min-[1440px]:hidden">
+            <button onClick={() => mobileShowMenu.value = true} class="min-[1440px]:hidden">
               <span class="i-ic-baseline-menu text-lg" />
-            </NButton>
+            </button>
             <AssetDirsManager />
             {selectedADir.value !== 'A000' && <>
               <GenreVersionManager />

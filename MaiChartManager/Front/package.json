@@ -11,6 +11,8 @@
   },
   "devDependencies": {
     "@fontsource/nerko-one": "^5.1.0",
+    "@fontsource/noto-sans-sc": "^5.2.8",
+    "@fontsource/quicksand": "^5.2.10",
     "@gekichumai/dxdata": "https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08",
     "@iconify/json": "^2.2.308",
     "@microsoft/fetch-event-source": "^2.0.1",
@@ -25,9 +27,11 @@
     "@types/wicg-file-system-access": "^2023.10.5",
     "@unocss/preset-icons": "^0.63.3",
     "@unocss/reset": "^0.63.3",
+    "@vitejs/plugin-vue": "^6.0.1",
     "@vitejs/plugin-vue-jsx": "^4.0.1",
     "@vueuse/core": "^11.1.0",
     "@zip.js/zip.js": "^2.7.52",
+    "animate.css": "^4.1.1",
     "axios": "^1.7.7",
     "change-case": "^5.4.4",
     "color": "^4.2.3",
@@ -48,5 +52,5 @@
     "vue-i18n": "^9.14.5",
     "wavesurfer.js": "^7.8.6"
   },
-  "packageManager": "pnpm@9.7.0+sha512.dc09430156b427f5ecfc79888899e1c39d2d690f004be70e05230b72cb173d96839587545d09429b55ac3c429c801b4dc3c0e002f653830a420fa2dd4e3cf9cf"
+  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd"
 }

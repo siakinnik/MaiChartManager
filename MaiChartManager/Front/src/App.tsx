@@ -5,10 +5,13 @@ import NeedPurchaseDialog from "@/components/NeedPurchaseDialog";
 import Index from "@/views/Index";
 import StartupErrorDialog from "@/components/StartupErrorDialog";
 import { locale } from '@/locales';
-import { GlobalElementsContainer as UIGlobalElementsContainer } from '@munet/ui';
+import { modalShowing, GlobalElementsContainer as UIGlobalElementsContainer } from '@munet/ui';
+import styles from './App.module.sass';
+import { useWindowSize } from '@vueuse/core';
 
 export default defineComponent({
   setup() {
+    const { width, height } = useWindowSize();
     // 根据当前语言动态设置 Naive UI 的 locale
     const naiveLocale = computed(() => {
       switch (locale.value) {
@@ -41,11 +44,15 @@ export default defineComponent({
         <NNotificationProvider>
           <NDialogProvider>
             <NMessageProvider>
-              <UIGlobalElementsContainer />
-              <Index />
-              <FeedbackErrorDialog />
-              <NeedPurchaseDialog />
-              <StartupErrorDialog />
+              <div
+                class={[styles.contentRoot, modalShowing.value && styles.modalOpen]} style={{ '--screen-width': `${width.value}`, '--screen-height': `${height.value}` }}
+              >
+                <UIGlobalElementsContainer />
+                <Index />
+                <FeedbackErrorDialog />
+                <NeedPurchaseDialog />
+                <StartupErrorDialog />
+              </div>
             </NMessageProvider>
           </NDialogProvider>
         </NNotificationProvider>

@@ -2,6 +2,7 @@ import '@unocss/reset/sanitize/sanitize.css';
 import 'animate.css';
 import 'virtual:uno.css';
 import '@fontsource/noto-sans-sc';
+import '@fontsource/quicksand';
 import './global.sass';
 import { createApp } from 'vue';
 import App from './App';

@@ -73,7 +73,7 @@ music:
     filterReMaster: 白
     filterAdvanced: 黄
   edit:
-    name: 歌曲名称
+    name: 名称
     artist: 作者
     bpm: BPM
     genre: 流派

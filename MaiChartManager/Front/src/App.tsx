@@ -5,7 +5,7 @@ import NeedPurchaseDialog from "@/components/NeedPurchaseDialog";
 import Index from "@/views/Index";
 import StartupErrorDialog from "@/components/StartupErrorDialog";
 import { locale } from '@/locales';
-import { modalShowing, GlobalElementsContainer as UIGlobalElementsContainer } from '@munet/ui';
+import { modalShowing, selectedThemeHue, GlobalElementsContainer as UIGlobalElementsContainer } from '@munet/ui';
 import styles from './App.module.sass';
 import { useWindowSize } from '@vueuse/core';
 
@@ -38,6 +38,8 @@ export default defineComponent({
           return dateZhCN;
       }
     });
+
+    selectedThemeHue.value = 353;
 
     return () => (
       <NConfigProvider locale={naiveLocale.value} dateLocale={naiveDateLocale.value}>

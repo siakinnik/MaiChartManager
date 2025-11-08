@@ -1,11 +1,13 @@
 html
   --selected-bg: rgba(221, 243, 238, 0.6)
   user-select: none
-  background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.4) 16px)
 
 body
   font-size: 1rem
   line-height: 1.5
+
+  .bg-dropMenu
+    background: oklch(0.9 0.02 var(--hue) / 80%) !important
 
 *
   -webkit-user-drag: none

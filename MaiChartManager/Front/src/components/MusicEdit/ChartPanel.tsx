@@ -7,7 +7,7 @@ import { LEVELS } from "@/consts";
 import ProblemsDisplay from "@/components/ProblemsDisplay";
 import PreviewChartButton from "@/components/MusicEdit/PreviewChartButton";
 import { useI18n } from 'vue-i18n';
-import { CheckBox, TextInput } from "@munet/ui";
+import { CheckBox, NumberInput, Select, TextInput } from "@munet/ui";
 
 const LEVELS_OPTIONS = LEVELS.map((level, index) => ({label: level, value: index}));
 
@@ -51,11 +51,11 @@ export default defineComponent({
         <div class="ml-1 text-sm">{t('music.edit.chartAuthor')}</div>
         <TextInput v-model:value={props.chart.designer} placeholder=""/>
         <div class="ml-1 text-sm">{t('music.edit.chartLevel')}</div>
-        <NSelect options={LEVELS_OPTIONS as any} v-model:value={props.chart.levelId}/>
+        <Select options={LEVELS_OPTIONS} v-model:value={props.chart.levelId}/>
         <div class="ml-1 text-sm">{t('music.edit.chartConstant')}</div>
-        <NInputNumber showButton={false} class="w-full" precision={1} v-model:value={levelValue.value} min={0}/>
+        <NumberInput class="w-full" step={0.1} decimal={1} v-model:value={levelValue.value} min={0}/>
         <div class="ml-1 text-sm">{t('music.edit.chartNoteCount')}</div>
-        <NInputNumber showButton={false} class="w-full" precision={0} v-model:value={props.chart.maxNotes} min={0}/>
+        <NumberInput class="w-full" v-model:value={props.chart.maxNotes} min={0}/>
     </div>;
   },
 });

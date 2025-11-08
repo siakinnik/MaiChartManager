@@ -7,7 +7,7 @@ import JacketBox from "../JacketBox";
 import dxIcon from "@/assets/dxIcon.png";
 import stdIcon from "@/assets/stdIcon.png";
 import ChartPanel from "./ChartPanel";
-import { DIFFICULTY, LEVEL_COLOR, UTAGE_GENRE } from "@/consts";
+import { DIFFICULTY, LEVEL_COLOR, LEVEL_HUE, UTAGE_GENRE } from "@/consts";
 import ProblemsDisplay from "@/components/ProblemsDisplay";
 import AcbAwb from "@/components/MusicEdit/AcbAwb";
 import GenreInput from "@/components/GenreInput";
@@ -16,7 +16,7 @@ import { captureException } from "@sentry/vue"
 import noJacket from "@/assets/noJacket.webp";
 import { getUrl } from "@/client/api";
 import { t } from "@/locales";
-import { CheckBox, TextInput } from "@munet/ui";
+import { CheckBox, NumberInput, TextInput } from "@munet/ui";
 
 const Component = defineComponent({
   setup() {
@@ -74,7 +74,7 @@ const Component = defineComponent({
                 </NFlex>
 
                 <div class="ml-1 text-sm">{t('music.edit.name')}</div>
-                <div class="flex items-center gap-2 w-full">
+                <div class="flex items-center gap-4 w-full">
                     <TextInput v-model:value={info.value.name} class="w-0 grow"/>
                     <CheckBox v-model:value={info.value.longMusic}>{t('common.longMusic')}</CheckBox>
                 </div>
@@ -85,7 +85,7 @@ const Component = defineComponent({
         </div>
         <div class="flex flex-col gap-2">
             <div class="ml-1 text-sm">{t('music.edit.bpm')}</div>
-            <TextInput type="number" v-model:value={info.value.bpm}/>
+            <NumberInput min={0} v-model:value={info.value.bpm}/>
             <div class="ml-1 text-sm">{t('music.edit.version')}</div>
             <VersionInput v-model:value={info.value.version}/>
             <div class="ml-1 text-sm">{t('music.edit.genre')}</div>
@@ -107,7 +107,7 @@ const Component = defineComponent({
                   {{
                     tab: () => <Tab index={index} chart={info.value?.charts![index]!} selected={selectedLevel.value === index}/>,
                     default: () => <ChartPanel chart={info.value?.charts![index]!} songId={info.value?.id!} chartIndex={index}
-                                               class="pxy pt-2 rounded-[0_0_.5em_.5em]" style={{backgroundColor: `color-mix(in srgb, ${LEVEL_COLOR[index]}, transparent 90%)`}}/>
+                                               class="pxy pt-2 rounded-[0_0_.5em_.5em]" style={{backgroundColor: `color-mix(in srgb, ${LEVEL_COLOR[index]}, transparent 90%)`, '--hue': LEVEL_HUE[index]}}/>
                   }}
                 </NTabPane>
               )}

@@ -569,6 +569,21 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
         simaiFile.AppendLine("&ChartConvertTool=MaiChartManager");
         simaiFile.AppendLine($"&ChartConvertToolVersion={Application.ProductVersion}");
 
+
+        // demo_seek
+        try
+        {
+            if (AudioConvert.TryResolveAcbAwb(GetAudioCandidateIds(music), out _, out var previewAcb, out _) && previewAcb is not null)
+            {
+                var previewTime = CriUtils.GetAudioPreviewTime(previewAcb);
+                if (previewTime.StartTime >= 0)
+                    simaiFile.AppendLine($"&demo_seek={previewTime.StartTime}");
+            }
+        }
+        catch
+        {
+            // ignore preview time errors
+        }
         for (var i = 0; i < music.Charts.Length; i++)
         {
             var chart = music.Charts[i];

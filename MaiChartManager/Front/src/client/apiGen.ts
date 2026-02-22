@@ -267,6 +267,7 @@ export interface MusicXmlWithABJacket {
   subLockType?: number;
   disable?: boolean;
   longMusic?: boolean;
+  shiftMethod?: string | null;
   charts?: Chart[] | null;
   assetBundleJacket?: string | null;
   pseudoAssetBundleJacket?: string | null;
@@ -966,14 +967,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: {
         /** @format binary */
         file?: File;
+        shift?: ShiftMethod;
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<ImportChartResult, any>({
         path: `/MaiChartManagerServlet/ReplaceChartApi/${assetDir}/${id}/${level}`,
         method: "POST",
         body: data,
         type: ContentType.FormData,
+        format: "json",
         ...params,
       }),
 
@@ -1237,6 +1240,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: {
         /** @format binary */
         file?: File;
+        /** @default false */
+        isReplacement?: boolean;
       },
       params: RequestParams = {},
     ) =>

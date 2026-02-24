@@ -1,5 +1,5 @@
 import api from '@/client/api';
-import { NDropdown, NButton, useMessage } from 'naive-ui';
+import { addToast } from '@munet/ui';
 import { computed, defineComponent, ref } from 'vue';
 import VideoConvertButton from './VideoConvertButton';
 import { useI18n } from 'vue-i18n';
@@ -15,7 +15,6 @@ export default defineComponent({
   // props: {
   // },
   setup(props, { emit }) {
-    const message = useMessage();
     const videoConvertRef = ref<{ trigger: () => void }>();
     const { t } = useI18n();
 
@@ -29,9 +28,9 @@ export default defineComponent({
         case DROPDOWN_OPTIONS.AudioConvert: {
           const res = await api.AudioConvertTool();
           if (res.status === 200) {
-            message.success(t('tools.convertSuccess'));
+            addToast({message: t('tools.convertSuccess'), type: 'success'});
           } else {
-            message.error(t('tools.convertFailed'));
+            addToast({message: t('tools.convertFailed'), type: 'error'});
           }
           break;
         }

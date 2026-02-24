@@ -1,6 +1,6 @@
 import { t } from '@/locales';
 import { globalCapture, selectedADir, selectedLevel, selectedMusic, selectMusicId, updateMusicList } from '@/store/refs';
-import { NButton, NFlex, NModal, useDialog, useMessage } from 'naive-ui';
+import { Button, Modal, showTransactionalDialog, addToast } from '@munet/ui';
 import { computed, defineComponent, ref, shallowRef } from 'vue';
 import JacketBox from '../JacketBox';
 import { DIFFICULTY } from '@/consts';
@@ -18,7 +18,6 @@ export let prepareReplaceChart = async (fileHandle?: FileSystemFileHandle) => {
 
 export default defineComponent({
   setup() {
-    const dialog = useDialog();
 
     const checking = ref(false);
     const fileHandle = shallowRef<FileSystemFileHandle | null>(null);
@@ -73,7 +72,7 @@ export default defineComponent({
       } else if (name.endsWith(".ma2")) {
         show.value = "ma2"
       } else {
-        dialog.error({title: t('error.unsupportedFileType'), content: t('music.edit.notValidChartFile')})
+        await showTransactionalDialog(t('error.unsupportedFileType'), t('music.edit.notValidChartFile'), undefined, true);
       }
     }
 
@@ -86,7 +85,7 @@ export default defineComponent({
         show.value = "";
         const result = (await api.ReplaceChart(selectMusicId.value, level, selectedADir.value, { file, shift: tempOption.value.shift })).data;
         if (!result.fatal) {
-          dialog.success({title: t('music.edit.replaceChartSuccess')});
+          await showTransactionalDialog(t('music.edit.replaceChartSuccess'), '', undefined, true);
         } else {
           apiResp.value = result; // 用于在失败时显示错误信息
           show.value = "failed";
@@ -135,10 +134,10 @@ export default defineComponent({
             <div>{t('music.edit.replaceChartShiftModeHint')}</div>
           </div>}
         </div>,
-        footer: () => <NFlex justify="end">
-          <NButton onClick={() => show.value = ""}>{show.value !== "failed" ? t('common.cancel') : t('common.close')}</NButton>
-          {show.value !== "failed" && <NButton onClick={replaceChart} type="primary">{t('common.confirm')}</NButton>}
-        </NFlex>
+        footer: () => <div class="flex gap-2 justify-end">
+          <Button onClick={() => show.value = ""}>{show.value !== "failed" ? t('common.cancel') : t('common.close')}</Button>
+          {show.value !== "failed" && <Button onClick={replaceChart} variant="primary">{t('common.confirm')}</Button>}
+        </div>
       }}</NModal>
       <CheckingModal title={t('chart.import.checkingTitle')} show={checking.value} closeModal={()=>checking.value=false} />
     </div>;

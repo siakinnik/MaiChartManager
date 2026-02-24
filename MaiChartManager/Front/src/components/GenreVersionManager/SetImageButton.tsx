@@ -1,6 +1,6 @@
 import { defineComponent, onMounted, PropType, ref } from "vue";
 import { GenreXml } from "@/client/apiGen";
-import { NButton } from "naive-ui";
+import { Button } from "@munet/ui";
 import api, { getUrl } from "@/client/api";
 import SelectFileTypeTip from "@/components/GenreVersionManager/SelectFileTypeTip";
 import { globalCapture, selectedMusic, updateAddVersionList, updateGenreList } from "@/store/refs";
@@ -64,9 +64,9 @@ export default defineComponent({
     return () => <div>
       {imageUrl.value ?
         <img src={imageUrl.value} class="max-w-full max-h-3em object-cover cursor-pointer" onClick={startProcess}/> :
-        <NButton secondary onClick={startProcess}>
+        <Button variant="secondary" onClick={startProcess}>
           {t('genre.setImage')}
-        </NButton>
+        </Button>
       }
       <SelectFileTypeTip show={showTip.value}/>
     </div>;

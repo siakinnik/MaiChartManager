@@ -1,7 +1,7 @@
 import { computed, defineComponent, ref } from "vue";
 import api, { getUrl } from "@/client/api";
 import { globalCapture, selectedADir, selectedMusic, selectMusicId, showNeedPurchaseDialog, updateMusicList, version } from "@/store/refs";
-import { NButton, NButtonGroup, NDropdown, useDialog, useMessage } from "naive-ui";
+import { Button, DropDown, addToast } from "@munet/ui";
 import { BlobWriter, ZipReader } from "@zip.js/zip.js";
 import ChangeIdDialog from "./ChangeIdDialog";
 import getSubDirFile from "@/utils/getSubDirFile";
@@ -22,10 +22,9 @@ enum DROPDOWN_OPTIONS {
 export default defineComponent({
   setup() {
     const wait = ref(false);
-    const dialog = useDialog();
-    const message = useMessage();
     const showChangeId = ref(false);
     const { t } = useI18n();
+    const ddRef = ref<any>(null);
 
     const options = computed(() => [
       {
@@ -125,7 +124,7 @@ export default defineComponent({
                 await writable.close();
               }
             }
-            message.success(t('message.exportSuccess'));
+            addToast({message: t('message.exportSuccess'), type: 'success'});
           } finally {
             await zipReader.close();
           }
@@ -148,16 +147,26 @@ export default defineComponent({
     }
 
     return () =>
-      <NButtonGroup>
-        <NButton secondary onClick={() => copy(DROPDOWN_OPTIONS.export)} loading={wait.value}>
+      <div class="flex">
+        <Button variant="secondary" onClick={() => copy(DROPDOWN_OPTIONS.export)} ing={wait.value}>
           {t('copy.title')}...
-        </NButton>
-        <NDropdown options={options.value} trigger="click" placement="bottom-end" onSelect={handleOptionClick}>
-          <NButton secondary class="px-.5 b-l b-l-solid b-l-[rgba(255,255,255,0.5)]">
-            <span class="i-mdi-arrow-down-drop text-6 translate-y-.25"/>
-          </NButton>
-        </NDropdown>
+        </Button>
+        <DropDown ref={ddRef}>
+          {{
+            trigger: (toggle: Function) => <Button variant="secondary" class="px-.5 b-l b-l-solid b-l-[rgba(255,255,255,0.5)]" onClick={() => toggle()}>
+              <span class="i-mdi-arrow-down-drop text-6 translate-y-.25"/>
+            </Button>,
+            default: () => <div class="flex flex-col gap-1 min-w-40">
+              {options.value.map(o => {
+                const label = typeof o.label === 'function' ? o.label() : o.label;
+                return <div key={o.key} class="px-4 py-2 rounded-lg bg-avatarMenuButton cursor-pointer" onClick={() => { ddRef.value?.setShow(false); handleOptionClick(o.key); }}>
+                  {label}
+                </div>
+              })}
+            </div>
+          }}
+        </DropDown>
         <ChangeIdDialog v-model:show={showChangeId.value}/>
-      </NButtonGroup>
+      </div>
   }
-});
+})

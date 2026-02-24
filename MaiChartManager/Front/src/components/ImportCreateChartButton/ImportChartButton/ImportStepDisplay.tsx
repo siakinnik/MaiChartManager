@@ -1,5 +1,5 @@
 import { computed, defineComponent, PropType } from "vue";
-import { NButton, NFlex, NInputNumber, NModal, NProgress } from "naive-ui";
+import { Modal, Progress } from "@munet/ui";
 import { IMPORT_STEP, ImportMeta } from "./types";
 import { useI18n } from 'vue-i18n';
 
@@ -17,16 +17,13 @@ export default defineComponent({
       get: () => props.show,
       set: (val) => props.closeModal()
     })
-    return () => <NModal
-      preset="card"
-      class="w-[min(40vw,40em)]"
+    return () => <Modal
+      width="min(40vw,40em)"
       title={t('chart.import.importingTitle')}
-      closable={false}
-      maskClosable={false}
-      closeOnEsc={false}
       show={show.value}
+      esc={false}
     >
-      <NFlex vertical class="text-4">
+      <div class="flex flex-col gap-2 text-4">
         <div>
           <span class="op-90">{t('chart.import.currentProcessing')}：</span>
           {props.current.name}
@@ -35,17 +32,16 @@ export default defineComponent({
         <Step step={IMPORT_STEP.chart} current={props.current.importStep} name={t('chart.import.step.convertChart')}/>
         <Step step={IMPORT_STEP.music} current={props.current.importStep} name={t('chart.import.step.convertAudio')}/>
         {props.current.movie && <Step step={IMPORT_STEP.movie} current={props.current.importStep} name={t('chart.import.step.convertVideo')}/>}
-        {props.current.movie && !!props.movieProgress && <NProgress
-            type="line"
+        {props.current.movie && !!props.movieProgress && <Progress
             percentage={props.movieProgress}
-            indicator-placement="inside"
-            processing
+            status="success"
+            showIndicator
         >
           {props.movieProgress === 100 ? t('tools.videoOptions.processing') : `${props.movieProgress}%`}
-        </NProgress>}
+        </Progress>}
         <Step step={IMPORT_STEP.jacket} current={props.current.importStep} name={t('chart.import.step.importJacket')}/>
-      </NFlex>
-    </NModal>
+      </div>
+    </Modal>
   }
 })
 
@@ -68,10 +64,10 @@ const Step = defineComponent({
       return 'text-green-600'
     })
 
-    return () => <NFlex class={className.value} align="center">
+    return () => <div class={className.value + " flex gap-2 items-center"}>
       <div class={icon.value}/>
       {props.name}
       {props.current === props.step && '...'}
-    </NFlex>
+    </div>
   }
 })

@@ -1,6 +1,6 @@
 import { computed, defineComponent, PropType } from "vue";
 import { GetAssetsDirsResult } from "@/client/apiGen";
-import { NFlex, NPopover } from "naive-ui";
+import { Popover } from '@munet/ui';
 import OfficialChartToggle from "@/components/AssetDirsManager/OfficialChartToggle";
 import MemosDisplay from "@/components/AssetDirsManager/MemosDisplay";
 import DeleteButton from "@/components/AssetDirsManager/DeleteButton";
@@ -23,24 +23,24 @@ export default defineComponent({
       <div>
         {
           props.dir.subFiles!.some(it => it === 'DataConfig.xml') ?
-            <NPopover trigger="hover">
+            <Popover trigger="hover">
               {{
                 trigger: () => t('assetDir.storingOfficial'),
                 default: () => t('assetDir.dataConfigExists')
               }}
-            </NPopover> :
+            </Popover> :
             <OfficialChartToggle dir={props.dir}/>
         }
       </div>
       <div>
         <MemosDisplay dir={props.dir}/>
       </div>
-      <NFlex>
+      <div class="flex gap-2">
         {props.dir.dirName! !== 'A000' && <>
             <DeleteButton dir={props.dir}/>
             <CheckConflictButton dir={props.dir.dirName!}/>
         </>}
-      </NFlex>
+      </div>
     </div>;
   }
 })

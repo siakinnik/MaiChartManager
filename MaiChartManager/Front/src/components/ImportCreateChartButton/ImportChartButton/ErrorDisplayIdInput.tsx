@@ -1,5 +1,5 @@
 import { computed, defineComponent, effect, PropType, watch } from "vue";
-import { NAlert, NButton, NCheckbox, NCollapse, NCollapseItem, NFlex, NForm, NFormItem, NInputNumber, NModal, NPopover, NRadio, NRadioButton, NRadioGroup, NScrollbar, NSelect, SelectOption } from "naive-ui";
+import { Button, CheckBox, Modal, NumberInput, Select } from "@munet/ui";
 import { ImportChartMessage, MessageLevel, ShiftMethod } from "@/client/apiGen";
 import { ImportChartMessageEx, ImportMeta, MOVIE_CODEC, SavedOptions, TempOptions } from "./types";
 import noJacket from '@/assets/noJacket.webp';
@@ -36,67 +36,69 @@ export default defineComponent({
       }
     })
 
-    return () => <NModal
-      preset="card"
-      class="w-[min(50vw,50em)]"
+    return () => <Modal
+      width="min(50vw,50em)"
       title={t('chart.import.importPrompt')}
       v-model:show={show.value}
     >{{
-      default: () => <NFlex vertical size="large">
+      default: () => <div class="flex flex-col gap-3">
         <ImportAlert errors={props.errors} tempOptions={props.tempOptions}></ImportAlert>
         {!!props.meta.length && <>
             {t('chart.import.assignId')}
-            <NScrollbar class="max-h-24vh">
-                <NFlex vertical size="large">
+            <div class="of-y-auto cst max-h-24vh">
+                <div class="flex flex-col gap-3">
                   {props.meta.map((meta, i) => <MusicIdInput key={i} meta={meta} utage={props.savedOptions.genreId === UTAGE_GENRE}/>)}
-                </NFlex>
-            </NScrollbar>
-            <NFormItem label={t('music.edit.genre')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-                <GenreInput options={genreList.value} v-model:value={props.savedOptions.genreId}/>
-            </NFormItem>
-            <NFormItem label={t('music.edit.versionCategory')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-                <GenreInput options={addVersionList.value} v-model:value={props.savedOptions.addVersionId}/>
-            </NFormItem>
-            <NFormItem label={t('music.edit.version')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-                <VersionInput v-model:value={props.savedOptions.version}/>
-            </NFormItem>
-            <NCheckbox v-model:checked={props.savedOptions.ignoreLevel}>
+                </div>
+            </div>
+            <div>
+              <div class="ml-1 text-sm">{t('music.edit.genre')}</div>
+              <GenreInput options={genreList.value} v-model:value={props.savedOptions.genreId}/>
+            </div>
+            <div>
+              <div class="ml-1 text-sm">{t('music.edit.versionCategory')}</div>
+              <GenreInput options={addVersionList.value} v-model:value={props.savedOptions.addVersionId}/>
+            </div>
+            <div>
+              <div class="ml-1 text-sm">{t('music.edit.version')}</div>
+              <VersionInput v-model:value={props.savedOptions.version}/>
+            </div>
+            <CheckBox v-model:value={props.savedOptions.ignoreLevel}>
                 {t('chart.import.option.ignoreLevel')}
-            </NCheckbox>
-            <NCheckbox v-model:checked={props.savedOptions.disableBga}>
+            </CheckBox>
+            <CheckBox v-model:value={props.savedOptions.disableBga}>
                 {t('chart.import.option.disableBga')}
-            </NCheckbox>
-            <NCollapse>
-                <NCollapseItem title={t('chart.import.option.advancedOptions')}>
-                    <NFlex vertical>
-                        <ShiftModeSelector tempOptions={props.tempOptions}></ShiftModeSelector>
-                        <NCheckbox v-model:checked={props.savedOptions.noScale}>
-                            {t('chart.import.option.noScale')}
-                        </NCheckbox>
-                        <NFormItem label={t('chart.import.option.pvCodec')} labelPlacement="left" showFeedback={false}>
-                            <NFlex vertical class="w-full">
-                                <NFlex class="h-34px" align="center">
-                                    <NSelect v-model:value={props.savedOptions.movieCodec} options={[
-                                      {label: t('chart.import.option.codecPreferH264'), value: MOVIE_CODEC.PreferH264},
-                                      {label: t('chart.import.option.codecForceH264'), value: MOVIE_CODEC.ForceH264},
-                                      {label: t('chart.import.option.codecForceVP9'), value: MOVIE_CODEC.ForceVP9},
-                                    ]}/>
-                                </NFlex>
-                            </NFlex>
-                        </NFormItem>
-                        <NCheckbox v-model:checked={props.savedOptions.yuv420p}>
-                            {t('chart.import.option.yuv420p')}
-                        </NCheckbox>
-                    </NFlex>
-                </NCollapseItem>
-            </NCollapse>
+            </CheckBox>
+            <details>
+                <summary class="cursor-pointer">{t('chart.import.option.advancedOptions')}</summary>
+                <div class="flex flex-col gap-2 mt-2">
+                    <ShiftModeSelector tempOptions={props.tempOptions}></ShiftModeSelector>
+                    <CheckBox v-model:value={props.savedOptions.noScale}>
+                        {t('chart.import.option.noScale')}
+                    </CheckBox>
+                    <div>
+                        <div class="ml-1 text-sm">{t('chart.import.option.pvCodec')}</div>
+                        <div class="flex flex-col gap-2 w-full">
+                            <div class="flex gap-2 h-34px items-center">
+                                <Select v-model:value={props.savedOptions.movieCodec} options={[
+                                  {label: t('chart.import.option.codecPreferH264'), value: MOVIE_CODEC.PreferH264},
+                                  {label: t('chart.import.option.codecForceH264'), value: MOVIE_CODEC.ForceH264},
+                                  {label: t('chart.import.option.codecForceVP9'), value: MOVIE_CODEC.ForceVP9},
+                                ]}/>
+                            </div>
+                        </div>
+                    </div>
+                    <CheckBox v-model:value={props.savedOptions.yuv420p}>
+                        {t('chart.import.option.yuv420p')}
+                    </CheckBox>
+                </div>
+            </details>
         </>}
-      </NFlex>,
-      footer: () => <NFlex justify="end">
-        <NButton onClick={() => show.value = false}>{props.meta.length ? t('common.cancel') : t('common.close')}</NButton>
-        {!!props.meta.length && <NButton onClick={props.proceed}>{t('purchase.continue')}</NButton>}
-      </NFlex>
-    }}</NModal>;
+      </div>,
+      footer: () => <div class="flex gap-2 justify-end">
+        <Button onClick={() => show.value = false}>{props.meta.length ? t('common.cancel') : t('common.close')}</Button>
+        {!!props.meta.length && <Button onClick={props.proceed}>{t('purchase.continue')}</Button>}
+      </div>
+    }}</Modal>;
   }
 })
 
@@ -113,11 +115,11 @@ const MusicIdInput = defineComponent({
     });
     const img = computed(() => props.meta.bg ? URL.createObjectURL(props.meta.bg) : noJacket);
 
-    return () => <NFlex align="center" size="large">
+    return () => <div class="flex gap-3 items-center">
       <img src={img.value} class="h-16 w-16 object-fill shrink-0"/>
       <div class="w-0 grow">{props.meta.name}</div>
       <MusicIdConflictNotifier id={props.meta.id}/>
-      <NInputNumber v-model:value={props.meta.id} min={dxBase.value + 1} max={dxBase.value + 1e4 - 1} step={1} class="shrink-0"/>
-    </NFlex>
+      <NumberInput v-model:value={props.meta.id} min={dxBase.value + 1} max={dxBase.value + 1e4 - 1} step={1} class="shrink-0"/>
+    </div>
   }
 })

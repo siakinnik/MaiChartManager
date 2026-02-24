@@ -1,5 +1,5 @@
 import { defineComponent, ref } from "vue";
-import { NButton, useDialog } from "naive-ui";
+import { Button } from "@munet/ui";
 import SelectFileTypeTip from "./SelectFileTypeTip";
 import { LicenseStatus, MessageLevel, ShiftMethod } from "@/client/apiGen";
 import CheckingModal from "./CheckingModal";
@@ -30,7 +30,6 @@ export default defineComponent({
     const savedOptions = useStorage('importMusicOptions', defaultSavedOptions, undefined, { mergeDefaults: true });
     const tempOptions = ref({ ...defaultTempOptions });
     const step = ref(STEP.none);
-    const dialog = useDialog();
     const errors = ref<ImportChartMessageEx[]>([]);
     const modalResolve = ref<(qwq?: any) => any>(() => {
     });
@@ -286,7 +285,7 @@ export default defineComponent({
       }
     }
 
-    return () => <NButton onClick={() => startProcess()} secondary>
+    return () => <Button onClick={() => startProcess()} variant="secondary">
       {t('chart.import.title')}
       <SelectFileTypeTip show={step.value === STEP.selectFile} closeModal={closeModal} />
       <CheckingModal title={t('chart.import.checkingTitle')} show={step.value === STEP.checking} closeModal={closeModal} />
@@ -295,6 +294,6 @@ export default defineComponent({
       <ImportStepDisplay show={step.value === STEP.importing} closeModal={closeModal} current={currentProcessing.value} movieProgress={currentMovieProgress.value} />
       <ErrorDisplayIdInput show={step.value === STEP.showResultError} closeModal={closeModal} proceed={() => {
       }} meta={[]} savedOptions={savedOptions.value} tempOptions={tempOptions.value} errors={errors.value} />
-    </NButton>;
+    </Button>;
   }
 })

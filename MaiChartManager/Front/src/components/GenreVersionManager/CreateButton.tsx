@@ -1,4 +1,4 @@
-import { NButton, NFlex, NForm, NFormItem, NInputNumber, NModal, NSelect, useDialog } from "naive-ui";
+import { Button, Modal, NumberInput, Select, showTransactionalDialog } from "@munet/ui";
 import { computed, defineComponent, PropType, ref } from "vue";
 import { addVersionList, assetDirs, genreList, selectedADir, updateAddVersionList, updateGenreList } from "@/store/refs";
 import api from "@/client/api";
@@ -15,7 +15,6 @@ export default defineComponent({
     const { t } = useI18n();
     const text = computed(() => props.type === EDIT_TYPE.Genre ? t('genre.title') : t('version.title'));
     const list = props.type === EDIT_TYPE.Genre ? genreList : addVersionList;
-    const dialog = useDialog();
 
     const assetDir = ref('')
     const id = ref(0)
@@ -38,47 +37,45 @@ export default defineComponent({
       });
       if (res.error) {
         const error = res.error as any;
-        dialog.warning({title: t('genre.createFailed'), content: error.message || error});
+        await showTransactionalDialog(t('genre.createFailed'), error.message || error, undefined, true);
         return;
       }
       if (res.data) {
-        dialog.info({title: t('genre.createFailed'), content: res.data})
+        await showTransactionalDialog(t('genre.createFailed'), res.data, undefined, true);
         return;
       }
-
       await updateAddVersionList();
       await updateGenreList();
       props.setEditId(id.value);
     }
 
     return () => (
-      <NButton onClick={setShow}>
+      <Button onClick={setShow}>
         {t('common.create')}
 
-        <NModal
-          preset="card"
-          class="w-[min(30vw,25em)]"
+        <Modal
+          width="min(30vw,25em)"
           title={`${t('common.create')}${text.value}`}
           v-model:show={show.value}
         >{{
-          default: () => <NForm label-placement="left" labelWidth="5em" showFeedback={false}>
-            <NFlex vertical size="large">
-              <NFormItem label="ID">
-                <NInputNumber v-model:value={id.value} class="w-full" min={1}/>
-              </NFormItem>
-              <NFormItem label="Opt">
-                <NSelect
-                  v-model:value={assetDir.value}
-                  options={assetDirs.value.filter(it => it.dirName !== 'A000').map(dir => ({label: dir.dirName!, value: dir.dirName!}))}
-                />
-              </NFormItem>
-            </NFlex>
-          </NForm>,
-          footer: () => <NFlex justify="end">
-            <NButton onClick={save}>{t('common.confirm')}</NButton>
-          </NFlex>
-        }}</NModal>
-      </NButton>
+          default: () => <div class="flex flex-col gap-3">
+            <div>
+              <div class="ml-1 text-sm">ID</div>
+              <NumberInput v-model:value={id.value} class="w-full" min={1}/>
+            </div>
+            <div>
+              <div class="ml-1 text-sm">Opt</div>
+              <Select
+                v-model:value={assetDir.value}
+                options={assetDirs.value.filter(it => it.dirName !== 'A000').map(dir => ({label: dir.dirName!, value: dir.dirName!}))}
+              />
+            </div>
+          </div>,
+          actions: () => <div class="flex gap-2 justify-end">
+            <Button onClick={save}>{t('common.confirm')}</Button>
+          </div>
+        }}</Modal>
+      </Button>
     )
   }
 })

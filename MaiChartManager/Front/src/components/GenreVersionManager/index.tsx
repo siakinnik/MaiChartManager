@@ -1,5 +1,5 @@
-import { computed, defineComponent, PropType, ref } from "vue";
-import { NButton, NCheckbox, NDropdown, NFlex, NList, NListItem, NModal, NScrollbar } from "naive-ui";
+import { computed, defineComponent, ref } from "vue";
+import { CheckBox, DropMenu, Modal } from "@munet/ui";
 import GenreDisplay from "./GenreDisplay";
 import { addVersionList, genreList } from "@/store/refs";
 import { useStorage } from "@vueuse/core";
@@ -21,8 +21,8 @@ export default defineComponent({
     const editingId = ref(-1);
 
     const options = computed(()=>[
-      {label: t('genre.management'), key: EDIT_TYPE.Genre},
-      {label: t('version.management'), key: EDIT_TYPE.Version},
+      {label: t('genre.management'), action: () => show.value = EDIT_TYPE.Genre},
+      {label: t('version.management'), action: () => show.value = EDIT_TYPE.Version},
     ]);
 
     const list = computed(() => {
@@ -30,41 +30,34 @@ export default defineComponent({
       return showBuiltIn.value ? data.value : data.value.filter(it => it.assetDir !== 'A000');
     });
 
-    const handleSelect = (key: EDIT_TYPE) => {
-      show.value = key;
-    }
 
     return () => (
-      <NDropdown options={options.value} trigger="click" onSelect={handleSelect} placement="bottom-end">
-        <NButton secondary class="pr-1">
-          {t('genre.categoryManagement')}
-          <span class="i-mdi-arrow-down-drop text-6 translate-y-.25"/>
+      <>
+        <DropMenu options={options.value} buttonText={t('genre.categoryManagement')} />
 
-          <NModal
-            preset="card"
-            class="w-80em max-w-100dvw"
-            title={`${text.value}${t('common.management')}`}
-            show={show.value !== EDIT_TYPE.None}
-            onUpdateShow={() => show.value = EDIT_TYPE.None}
-          >
-            <NFlex vertical>
-              <NFlex align="center">
-                <NCheckbox v-model:checked={showBuiltIn.value}>{t('genre.showBuiltIn')}</NCheckbox>
-                <CreateButton setEditId={id => editingId.value = id} type={show.value}/>
-              </NFlex>
-              <NScrollbar class="h-80vh">
-                <NList>
-                  {list.value.map(it => <NListItem key={it.id}>
-                    <GenreDisplay genre={it} type={show.value} class={`${editingId.value >= 0 && editingId.value !== it.id && 'op-30'}`} disabled={editingId.value >= 0 && editingId.value !== it.id}
-                                  style={{transition: 'opacity 0.3s'}}
-                                  editing={editingId.value === it.id} setEdit={isEdit => editingId.value = isEdit ? it.id! : -1}/>
-                  </NListItem>)}
-                </NList>
-              </NScrollbar>
-            </NFlex>
-          </NModal>
-        </NButton>
-      </NDropdown>
+      <Modal
+        class="w-80em max-w-100dvw"
+        title={`${text.value}${t('common.management')}`}
+        show={show.value !== EDIT_TYPE.None}
+        onUpdateShow={() => show.value = EDIT_TYPE.None}
+      >
+        <div class="flex flex-col gap-2">
+          <div class="flex gap-2 items-center">
+            <CheckBox v-model:value={showBuiltIn.value}>{t('genre.showBuiltIn')}</CheckBox>
+            <CreateButton setEditId={id => editingId.value = id} type={show.value}/>
+          </div>
+          <div class="of-y-auto cst h-80vh">
+            <div class="flex flex-col gap-1">
+              {list.value.map(it => <div key={it.id}>
+                <GenreDisplay genre={it} type={show.value} class={`${editingId.value >= 0 && editingId.value !== it.id && 'op-30'}`} disabled={editingId.value >= 0 && editingId.value !== it.id}
+                              style={{transition: 'opacity 0.3s'}}
+                              editing={editingId.value === it.id} setEdit={isEdit => editingId.value = isEdit ? it.id! : -1}/>
+              </div>)}
+            </div>
+          </div>
+        </div>
+      </Modal>
+      </>
     );
   },
 })

@@ -1,5 +1,5 @@
 import { getUrl } from '@/client/api';
-import { NButton, NCheckbox, NFlex, NModal, NProgress, useMessage } from 'naive-ui';
+import { Button, CheckBox, Modal, Progress, addToast } from '@munet/ui';
 import { defineComponent, ref } from 'vue';
 import { useStorage } from '@vueuse/core';
 import { LicenseStatus } from '@/client/apiGen';
@@ -21,7 +21,6 @@ const defaultVideoConvertOptions = {
 
 export default defineComponent({
   setup(props, { expose }) {
-    const message = useMessage();
     const step = ref(STEP.None);
     const progress = ref(0);
     const videoConvertOptions = useStorage('videoConvertOptions', defaultVideoConvertOptions, undefined, { mergeDefaults: true });
@@ -57,7 +56,7 @@ export default defineComponent({
                 case 'Success':
                   console.log("success", e.data);
                   controller.abort();
-                  message.success(t('tools.convertSuccess'));
+                  addToast({message: t('tools.convertSuccess'), type: 'success'});
                   resolve();
                   break;
                 case 'Error':
@@ -95,47 +94,41 @@ export default defineComponent({
 
     return () => <>
 
-      <NModal
-        preset="card"
-        class="w-[min(30vw,25em)]"
+      <Modal
+        width="min(30vw,25em)"
         title={t('tools.videoOptions.title')}
         show={step.value === STEP.Options}
         onUpdateShow={() => step.value = STEP.None}
       >{{
-        default: () => <NFlex vertical size="large">
+        default: () => <div class="flex flex-col gap-3">
           <div>{t('tools.videoOptions.onlyForUsm')}</div>
-          <NCheckbox v-model:checked={videoConvertOptions.value.noScale}>
+          <CheckBox v-model:value={videoConvertOptions.value.noScale}>
             {t('tools.videoOptions.noScale')}
-          </NCheckbox>
-          <NCheckbox v-model:checked={videoConvertOptions.value.yuv420p}>
+          </CheckBox>
+          <CheckBox v-model:value={videoConvertOptions.value.yuv420p}>
             {t('tools.videoOptions.useYuv420p')}
-          </NCheckbox>
-        </NFlex>,
-        footer: () => <NFlex justify="end">
-          <NButton onClick={() => step.value = STEP.None}>{t('common.cancel')}</NButton>
-          <NButton type="primary" onClick={handleVideoConvert}>{t('common.confirm')}</NButton>
-        </NFlex>
-      }}</NModal>
+          </CheckBox>
+        </div>,
+        footer: () => <div class="flex gap-2 justify-end">
+          <Button onClick={() => step.value = STEP.None}>{t('common.cancel')}</Button>
+          <Button variant="primary" onClick={handleVideoConvert}>{t('common.confirm')}</Button>
+        </div>
+      }}</Modal>
 
-      <NModal
-        preset="card"
-        class="w-[min(40vw,40em)]"
+      <Modal
+        width="min(40vw,40em)"
         title={t('tools.converting')}
         show={step.value === STEP.Progress}
-        closable={false}
-        maskClosable={false}
-        closeOnEsc={false}
+        esc={false}
       >
-        <NProgress
-          type="line"
-          status="success"
+        <Progress
           percentage={progress.value}
-          indicator-placement="inside"
-          processing
+          status="success"
+          showIndicator
         >
           {progress.value === 100 ? t('tools.videoOptions.processing') : `${progress.value}%`}
-        </NProgress>
-      </NModal>
+        </Progress>
+      </Modal>
     </>;
   },
 });

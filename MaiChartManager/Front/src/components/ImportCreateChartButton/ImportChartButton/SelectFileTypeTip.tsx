@@ -1,5 +1,5 @@
 import { computed, defineComponent } from "vue";
-import { NDrawer, NDrawerContent, NFlex } from "naive-ui";
+import { Modal } from "@munet/ui";
 import FileTypeIcon from "@/components/FileTypeIcon";
 import FileContentIcon from "@/components/FileContentIcon";
 import { useI18n } from 'vue-i18n';
@@ -17,28 +17,26 @@ export default defineComponent({
       set: (val) => props.closeModal()
     })
 
-    return () => <NDrawer v-model:show={show.value} height={350} placement="bottom">
-      <NDrawerContent title={t('music.edit.selectFileTypes')}>
-        <NFlex vertical size="large">
-          {t('chart.import.folderHint')}
-          <div class="grid cols-[2fr_1fr] justify-items-center h-50 gap-5 w-50%">
-            <NFlex vertical align="center" class="w-full" size="small">
-              <FileContentIcon type="maidata"/>
-              maidata.txt
-            </NFlex>
-            <div class="grid rows-2">
-              <NFlex vertical align="center" justify="center" class="w-full" size="small">
-                <FileTypeIcon type="mp3" class="text-16"/>
-                track.mp3
-              </NFlex>
-              <NFlex vertical align="center" justify="center" class="w-full" size="small">
-                <FileTypeIcon type="jpg" class="text-16"/>
-                bg.jpg / bg.png
-              </NFlex>
+    return () => <Modal v-model:show={show.value} title={t('music.edit.selectFileTypes')} width="min(50vw,40em)">
+      <div class="flex flex-col gap-3">
+        {t('chart.import.folderHint')}
+        <div class="grid cols-[2fr_1fr] justify-items-center h-50 gap-5 w-50%">
+          <div class="flex flex-col gap-1 items-center w-full">
+            <FileContentIcon type="maidata"/>
+            maidata.txt
+          </div>
+          <div class="grid rows-2">
+            <div class="flex flex-col gap-1 items-center justify-center w-full">
+              <FileTypeIcon type="mp3" class="text-16"/>
+              track.mp3
+            </div>
+            <div class="flex flex-col gap-1 items-center justify-center w-full">
+              <FileTypeIcon type="jpg" class="text-16"/>
+              bg.jpg / bg.png
             </div>
           </div>
-        </NFlex>
-      </NDrawerContent>
-    </NDrawer>;
+        </div>
+      </div>
+    </Modal>;
   }
 })

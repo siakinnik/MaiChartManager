@@ -1,5 +1,4 @@
 import { defineComponent, PropType } from "vue";
-import { NAlert, NFlex, NScrollbar } from "naive-ui";
 import { MessageLevel, ShiftMethod } from "@/client/apiGen";
 import { ImportChartMessageEx, TempOptions } from "./types";
 import { showNeedPurchaseDialog } from "@/store/refs";
@@ -13,52 +12,65 @@ export default defineComponent({
   setup(props, {emit}) {
     const {t} = useI18n();
 
-    return () => <NScrollbar class="max-h-24vh">
-      <NFlex vertical>
+    return () => <div class="of-y-auto cst max-h-24vh">
+      <div class="flex flex-col gap-2">
         {
           props.errors.map((error, i) => {
             if ('first' in error) {
               if (error.padding > 0 && props.tempOptions.shift === ShiftMethod.Legacy) {
-                return <NAlert key={i} type="info"
-                               title={error.name}>{t('chart.import.addPadding', {padding: error.padding.toFixed(3)})}</NAlert>
+                return <div key={i} class="p-3 rounded border border-blue/30 bg-blue/10">
+                  <div class="font-bold mb-1">{error.name}</div>
+                  {t('chart.import.addPadding', {padding: error.padding.toFixed(3)})}
+                </div>
               }
               if (error.padding < 0 && props.tempOptions.shift === ShiftMethod.Legacy) {
-                return <NAlert key={i} type="info"
-                               title={error.name}>{t('chart.import.trimPadding', {padding: (-error.padding).toFixed(3)})}</NAlert>
+                return <div key={i} class="p-3 rounded border border-blue/30 bg-blue/10">
+                  <div class="font-bold mb-1">{error.name}</div>
+                  {t('chart.import.trimPadding', {padding: (-error.padding).toFixed(3)})}
+                </div>
               }
               if (error.first > 0 && props.tempOptions.shift === ShiftMethod.NoShift) {
-                return <NAlert key={i} type="info"
-                               title={error.name}>{t('chart.import.trimFirst', {first: error.first.toFixed(3)})}</NAlert>
+                return <div key={i} class="p-3 rounded border border-blue/30 bg-blue/10">
+                  <div class="font-bold mb-1">{error.name}</div>
+                  {t('chart.import.trimFirst', {first: error.first.toFixed(3)})}
+                </div>
               }
               if (error.first < 0 && props.tempOptions.shift === ShiftMethod.NoShift) {
-                return <NAlert key={i} type="info"
-                               title={error.name}>{t('chart.import.addFirst', {first: (-error.first).toFixed(3)})}</NAlert>
+                return <div key={i} class="p-3 rounded border border-blue/30 bg-blue/10">
+                  <div class="font-bold mb-1">{error.name}</div>
+                  {t('chart.import.addFirst', {first: (-error.first).toFixed(3)})}
+                </div>
               }
               return <></>
             }
-            let type: "default" | "info" | "success" | "warning" | "error" = "default";
+            let borderColor = 'border-gray/30';
+            let bgColor = 'bg-gray/10';
             switch (error.level) {
               case MessageLevel.Info:
-                type = 'info';
+                borderColor = 'border-blue/30';
+                bgColor = 'bg-blue/10';
                 break;
               case MessageLevel.Warning:
-                type = 'warning';
+                borderColor = 'border-yellow/30';
+                bgColor = 'bg-yellow/10';
                 break;
               case MessageLevel.Fatal:
-                type = 'error';
+                borderColor = 'border-red/30';
+                bgColor = 'bg-red/10';
                 break;
             }
-            return <NAlert key={i} type={type} title={error.name} class={`${error.isPaid && 'cursor-pointer'}`}
+            return <div key={i} class={`p-3 rounded border ${borderColor} ${bgColor} ${error.isPaid && 'cursor-pointer'}`}
               // @ts-ignore
-                           onClick={() => error.isPaid && (showNeedPurchaseDialog.value = true)}
+                         onClick={() => error.isPaid && (showNeedPurchaseDialog.value = true)}
             >
+              <div class="font-bold mb-1">{error.name}</div>
               <div class="whitespace-pre-wrap">
                 {error.message}
               </div>
-            </NAlert>
+            </div>
           })
         }
-      </NFlex>
-    </NScrollbar>
+      </div>
+    </div>
   }
 })

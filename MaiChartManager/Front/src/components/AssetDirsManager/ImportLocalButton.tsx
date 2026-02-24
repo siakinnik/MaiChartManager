@@ -1,5 +1,5 @@
 import { defineComponent, ref } from "vue";
-import { NButton, NModal, NProgress, useDialog, useMessage } from "naive-ui";
+import { Button, Modal, Progress, addToast } from "@munet/ui";
 import api, { getUrl } from "@/client/api";
 import { updateAssetDirs } from "@/store/refs";
 import axios from "axios";
@@ -8,9 +8,7 @@ import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
   setup(props) {
-    const dialog = useDialog();
     const importWait = ref(false);
-    const message = useMessage();
     const showProgress = ref(false);
     const progress = ref(0);
     const { t } = useI18n();
@@ -54,7 +52,7 @@ export default defineComponent({
             responseType: 'json'
           })
           showProgress.value = false;
-          message.success(t('message.importSuccess') + ` ${res.data.dirName}`);
+          addToast({message: t('message.importSuccess') + ` ${res.data.dirName}`, type: 'success'});
           updateAssetDirs();
         } catch (e) {
           console.log(e)
@@ -73,25 +71,20 @@ export default defineComponent({
       }
     }
 
-    return () => <NButton onClick={importLocal} loading={importWait.value}>
+    return () => <Button onClick={importLocal} ing={importWait.value}>
       {t('common.import')}
-      <NModal
-        preset="card"
-        class="w-[min(60vw,80em)]"
+      <Modal
+        width="min(60vw,80em)"
         title={t('music.batch.progress')}
         show={showProgress.value}
-        maskClosable={false}
-        closable={false}
-        closeOnEsc={false}
+        esc={false}
       >
-        <NProgress
-          type="line"
-          status="success"
+        <Progress
           percentage={progress.value}
-          indicator-placement="inside"
-          processing
+          status="success"
+          showIndicator
         />
-      </NModal>
-    </NButton>;
+      </Modal>
+    </Button>;
   }
 })

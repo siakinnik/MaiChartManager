@@ -1,15 +1,13 @@
 import { defineComponent, ref } from "vue";
 import api from "@/client/api";
 import { globalCapture, selectedADir, selectMusicId, updateMusicList } from "@/store/refs";
-import { NButton, useDialog } from "naive-ui";
+import { Button, showTransactionalDialog } from "@munet/ui";
 import { useI18n } from 'vue-i18n';
-import { Button } from "@munet/ui";
 
 export default defineComponent({
   setup() {
     const deleteLoading = ref(false);
     const deleteConfirm = ref(false);
-    const dialog = useDialog();
     const { t } = useI18n();
 
     const del = async () => {
@@ -23,7 +21,7 @@ export default defineComponent({
         const res = await api.DeleteMusic(selectMusicId.value, selectedADir.value);
         if (res.error) {
           const error = res.error as any;
-          dialog.warning({ title: t('music.delete.deleteFailed'), content: error.message || error });
+          await showTransactionalDialog(t('music.delete.deleteFailed'), error.message || error, undefined, true);
           return;
         }
       } catch (e) {

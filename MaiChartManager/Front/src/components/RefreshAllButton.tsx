@@ -1,9 +1,7 @@
 import { defineComponent, ref } from "vue";
-import { NButton } from "naive-ui";
 import { globalCapture, updateAll } from "@/store/refs";
 import api from "@/client/api";
 import { useI18n } from 'vue-i18n';
-import { Button } from "@munet/ui";
 
 export default defineComponent({
   setup(props) {

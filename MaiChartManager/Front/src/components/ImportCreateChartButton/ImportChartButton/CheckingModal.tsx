@@ -1,5 +1,5 @@
 import { computed, defineComponent } from "vue";
-import { NButton, NFlex, NInputNumber, NModal } from "naive-ui";
+import { Modal } from "@munet/ui";
 
 export default defineComponent({
   props: {
@@ -12,14 +12,11 @@ export default defineComponent({
       get: () => props.show,
       set: (val) => props.closeModal()
     })
-    return () => <NModal
-      preset="card"
-      class="w-[min(30vw,25em)]"
+    return () => <Modal
+      width="min(30vw,25em)"
       title={props.title}
-      closable={false}
-      maskClosable={false}
-      closeOnEsc={false}
-      v-model:show={show.value}
+      show={show.value}
+      esc={false}
     />
   }
 })

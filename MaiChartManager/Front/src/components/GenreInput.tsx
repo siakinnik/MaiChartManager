@@ -1,6 +1,5 @@
 import { computed, defineComponent, PropType } from "vue";
 import { GenreXml } from "@/client/apiGen";
-import { NFlex, NSelect, SelectOption } from "naive-ui";
 import { Select } from "@munet/ui";
 
 export default defineComponent({
@@ -24,9 +23,9 @@ export const GenreOption = defineComponent({
     genre: {type: Object as PropType<GenreXml>},
   },
   setup(props) {
-    return () => <NFlex align="center">
+    return () => <div class="flex gap-2 items-center">
       <div class="h-4 w-4 rounded-full" style={{backgroundColor: props.genre ? `rgb(${props.genre.colorR}, ${props.genre.colorG}, ${props.genre.colorB})` : 'white'}}/>
       {props.genre ? props.genre.genreName : '???'}
-    </NFlex>;
+    </div>;
   },
 })

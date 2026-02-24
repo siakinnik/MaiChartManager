@@ -1,5 +1,5 @@
 import { computed, defineComponent, ref, watch } from "vue";
-import { NButton, NFlex, NForm, NFormItem, NInputNumber, NModal, NRadio, NSelect } from "naive-ui";
+import { Button, Modal, NumberInput, Radio } from "@munet/ui";
 import { assetDirs, musicList, selectedADir, selectMusicId, updateMusicList } from "@/store/refs";
 import dxIcon from "@/assets/dxIcon.png";
 import stdIcon from "@/assets/stdIcon.png";
@@ -35,36 +35,35 @@ export default defineComponent({
     }
 
     return () => (
-      <NModal
-        preset="card"
-        class="w-25em"
+      <Modal
+        width="25em"
         title={t('chart.import.create')}
         v-model:show={show.value}
       >{{
-        default: () => <NForm label-placement="left" labelWidth="7em" showFeedback={false}>
-          <NFlex vertical size="large">
-            <NFormItem label="ID">
-              <NFlex align="center" wrap={false}>
-                <NInputNumber v-model:value={id.value} class="w-full" min={1} max={2e4 - 1}/>
-                <MusicIdConflictNotifier id={id.value}/>
-              </NFlex>
-            </NFormItem>
-            <NFormItem label={t('chart.import.chartType')}>
-              <NFlex>
-                <NRadio checked={id.value < 1e4} onUpdateChecked={() => id.value -= 1e4}>
-                  <img src={stdIcon} class="h-1.5em mt--0.6"/>
-                </NRadio>
-                <NRadio checked={id.value >= 1e4} onUpdateChecked={() => id.value += 1e4}>
-                  <img src={dxIcon} class="h-1.5em mt--0.6"/>
-                </NRadio>
-              </NFlex>
-            </NFormItem>
-          </NFlex>
-        </NForm>,
-        footer: () => <NFlex justify="end">
-          <NButton onClick={save}>{t('common.confirm')}</NButton>
-        </NFlex>
-      }}</NModal>
+        default: () => <div class="flex flex-col gap-3">
+          <div>
+            <div class="ml-1 text-sm">ID</div>
+            <div class="flex gap-2 items-center">
+              <NumberInput v-model:value={id.value} class="w-full" min={1} max={2e4 - 1}/>
+              <MusicIdConflictNotifier id={id.value}/>
+            </div>
+          </div>
+          <div>
+            <div class="ml-1 text-sm">{t('chart.import.chartType')}</div>
+            <div class="flex gap-2">
+              <Radio checked={id.value < 1e4} onUpdateChecked={() => id.value -= 1e4}>
+                <img src={stdIcon} class="h-1.5em mt--0.6"/>
+              </Radio>
+              <Radio checked={id.value >= 1e4} onUpdateChecked={() => id.value += 1e4}>
+                <img src={dxIcon} class="h-1.5em mt--0.6"/>
+              </Radio>
+            </div>
+          </div>
+        </div>,
+        footer: () => <div class="flex gap-2 justify-end">
+          <Button onClick={save}>{t('common.confirm')}</Button>
+        </div>
+      }}</Modal>
     );
   }
 });

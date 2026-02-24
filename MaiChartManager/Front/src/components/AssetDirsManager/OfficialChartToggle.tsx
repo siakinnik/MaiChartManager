@@ -2,7 +2,7 @@ import { computed, defineComponent, PropType } from "vue";
 import { GetAssetsDirsResult } from "@/client/apiGen";
 import api from "@/client/api";
 import { updateAssetDirs } from "@/store/refs";
-import { NButton } from "naive-ui";
+import { Button } from '@munet/ui';
 import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
@@ -28,10 +28,10 @@ export default defineComponent({
       await updateAssetDirs();
     }
 
-    return () => <NButton secondary onClick={toggleSelfMadeChart}>
+    return () => <Button variant="secondary" onClick={toggleSelfMadeChart}>
       <span class="i-material-symbols-repeat text-lg m-r-1"/>
       {t('assetDir.storing')}
       {isOfficialChart.value ? t('assetDir.officialChart') : t('assetDir.customChart')}
-    </NButton>;
+    </Button>;
   }
 })

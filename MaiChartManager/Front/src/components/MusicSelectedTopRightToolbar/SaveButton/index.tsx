@@ -1,11 +1,9 @@
 import { defineComponent, ref, Teleport } from "vue";
 import { selectedADir, selectedMusic, selectMusicId, updateMusicList } from "@/store/refs";
 import api from "@/client/api";
-import { NButton } from "naive-ui";
 import animation from './animation.module.sass';
 import { useMagicKeys, whenever } from '@vueuse/core'
 import { useI18n } from 'vue-i18n';
-import { Button } from "@munet/ui";
 
 export default defineComponent({
   setup() {

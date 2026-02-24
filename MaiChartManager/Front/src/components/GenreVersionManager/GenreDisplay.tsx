@@ -1,6 +1,6 @@
 import { computed, defineComponent, PropType, ref } from "vue";
 import { GenreXml, HttpResponse } from "@/client/apiGen";
-import { NButton, NFlex, useDialog } from "naive-ui";
+import { Button, showTransactionalDialog } from "@munet/ui";
 import api from "@/client/api";
 import { updateAddVersionList, updateGenreList } from "@/store/refs";
 import Color from "color";
@@ -22,7 +22,6 @@ export default defineComponent({
       get: () => _color.value || Color([props.genre.colorR, props.genre.colorG, props.genre.colorB]).hex(),
       set: value => _color.value = value,
     })
-    const dialog = useDialog();
     const { t } = useI18n();
 
     const save = async () => {
@@ -53,7 +52,7 @@ export default defineComponent({
       }
       if (res.error) {
         const error = res.error as any;
-        dialog.warning({title: t('music.delete.deleteFailed'), content: error.message || error});
+        await showTransactionalDialog(t('music.delete.deleteFailed'), error.message || error, undefined, true);
         return;
       }
       updateGenreList();
@@ -68,31 +67,31 @@ export default defineComponent({
         if (props.genre.assetDir === 'A000')
           return <div class="i-material-symbols-edit-off text-6 c-gray-6"/>
         if (props.editing)
-          return <NButton size="large" type="primary" style={{'--n-padding': 0}} secondary onClick={save}><span class="i-material-symbols-done text-6 c-gray-6"/></NButton>
+          return <Button variant="primary" onClick={save}><span class="i-material-symbols-done text-6 c-gray-6"/></Button>
         if (confirmDelete.value)
-          return <NButton size="large" type={deleteLoad.value ? "default" : "error"} style={{'--n-padding': 0}} secondary onClick={del} loading={deleteLoad.value}
+          return <Button danger={!deleteLoad.value} variant="secondary" onClick={del} ing={deleteLoad.value}
             // @ts-ignore
                           onMouseleave={() => confirmDelete.value = false}>
             {!deleteLoad.value && <span class="i-material-symbols-delete-outline text-6 c-gray-6"/>}
-          </NButton>
-        return <NFlex>
-          <NButton class="w-0 grow-1" size="large" style={{'--n-padding': 0}} secondary onClick={() => props.setEdit(true)}>
+          </Button>
+        return <div class="flex gap-2">
+          <Button class="w-0 grow-1" variant="secondary" onClick={() => props.setEdit(true)}>
             <span class="i-material-symbols-edit text-6 c-gray-6"/>
-          </NButton>
-          <NButton class="w-0 grow-1" size="large" style={{'--n-padding': 0}} secondary onClick={() => confirmDelete.value = true}>
+          </Button>
+          <Button class="w-0 grow-1" variant="secondary" onClick={() => confirmDelete.value = true}>
             <span class="i-material-symbols-delete-outline text-6 c-gray-6"/>
-          </NButton>
-        </NFlex>
+          </Button>
+        </div>
       }
     })
 
     return () => (
       <div class="grid cols-[10em_2em_8em_1.3fr_1fr_7em] items-center gap-5 m-x">
-        <NFlex class="c-gray-6" size="small">
+        <div class="flex gap-1 c-gray-6">
           {props.genre.id}
           <span class="op-60">@</span>
           <span class="op-80">{props.genre.assetDir}</span>
-        </NFlex>
+        </div>
         <div class="h-6 w-6 rounded-full relative of-clip" style={{backgroundColor: color.value}}>
           <input type="color" v-model={color.value} disabled={!props.editing} class={`op-0 ${props.editing ? 'cursor-pointer' : 'cursor-default'}`}/>
         </div>

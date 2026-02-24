@@ -1,5 +1,5 @@
 import { computed, defineComponent, ref } from "vue";
-import { NFlex, NPopover, NQrCode } from "naive-ui";
+import { Popover, Qrcode } from "@munet/ui";
 import '@fontsource/nerko-one'
 import { version } from "@/store/refs";
 import StorePurchaseButton from "@/components/StorePurchaseButton";
@@ -27,12 +27,12 @@ export default defineComponent({
           <div class="flex justify-center gap-1 text-10 c-gray-4">
             <a class="i-mdi-github hover:c-#1f2328 transition-300" href="https://github.com/clansty/MaiChartManager" target="_blank"/>
             <a class="i-ic-baseline-telegram hover:c-#39a6e6 transition-300" href="https://t.me/MaiChartManager" target="_blank"/>
-            <NPopover trigger="hover">
-              {{
-                trigger: () => <div class="i-ri-qq-fill hover:c-#e31b25 transition-300"/>,
-                default: () => <div><NQrCode value="https://qm.qq.com/q/U3gT7CDuy6"/></div>
-              }}
-            </NPopover>
+          <Popover trigger="hover">
+            {{
+              trigger: () => <div class="i-ri-qq-fill hover:c-#e31b25 transition-300"/>,
+              default: () => <div><Qrcode value="https://qm.qq.com/q/U3gT7CDuy6"/></div>
+            }}
+          </Popover>
           </div>
           <div>
             {t('about.version')}: v{version.value.version}
@@ -57,7 +57,7 @@ export default defineComponent({
               class={[theme.value.lc, 'fl']}
             >{t('about.continueSupport')}</a>
           </div>}
-          {version.value.license === LicenseStatus.Inactive && <NFlex align="center">
+          {version.value.license === LicenseStatus.Inactive && <div class="flex gap-2 items-center">
             {t('purchase.supportDev')}
             <StorePurchaseButton/>
             <button onClick={() => window.open("https://afdian.com/item/90b4d1fe70e211efab3052540025c377")}>
@@ -66,7 +66,7 @@ export default defineComponent({
               </span>
               {t('purchase.afdian')}
             </button>
-          </NFlex>}
+          </div>}
           <div class="op-80 text-center translate-y-2">
             © 2024-2025 MuNET Team
             <br />
@@ -83,14 +83,14 @@ export default defineComponent({
 const AppIcon = defineComponent({
   setup() {
     return () => <div class="flex flex-col items-center font-['Nerko_One'] text-20cqw text-stroke-2 lh-[0.8]">
-      <NFlex>
+      <div class="flex gap-2">
         <div class="c-#c3c4f8 text-stroke-#8791e2">
           Mai
         </div>
         <div class="c-#f7abca text-stroke-#d079b2">
           Chart
         </div>
-      </NFlex>
+      </div>
       <div class="c-#fef19d text-stroke-#e3c86a">
         Manager
       </div>

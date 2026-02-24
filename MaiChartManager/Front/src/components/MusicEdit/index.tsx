@@ -1,8 +1,8 @@
 import { computed, defineComponent, onMounted, PropType, ref, watch } from "vue";
-import { Chart, GenreXml, MusicXmlWithABJacket } from "@/client/apiGen";
-import { addVersionList, genreList, globalCapture, selectedADir, selectedMusic as info, selectMusicId, updateAddVersionList, updateGenreList, updateMusicList } from "@/store/refs";
+import { addVersionList, genreList, globalCapture, selectedADir, selectedMusic as info, selectMusicId, updateAddVersionList, updateGenreList, updateMusicList, selectedLevel, disableSync } from "@/store/refs";
+import { Chart, GenreXml, MusicXmlWithABJacket, ShiftMethod } from "@/client/apiGen";
 import api from "@/client/api";
-import { NButton, NFlex, NForm, NFormItem, NInput, NInputNumber, NSelect, NSwitch, NTabPane, NTabs, SelectOption, useDialog, useMessage } from "naive-ui";
+import { NButton, NFlex, NForm, NFormItem, NInput, NInputNumber, NPopover, NRadio, NSelect, NSwitch, NTabPane, NTabs, SelectOption, useDialog, useMessage } from "naive-ui";
 import JacketBox from "../JacketBox";
 import dxIcon from "@/assets/dxIcon.png";
 import stdIcon from "@/assets/stdIcon.png";
@@ -20,7 +20,6 @@ import { CheckBox, NumberInput, TextInput } from "@munet/ui";
 
 const Component = defineComponent({
   setup() {
-    const selectedLevel = ref(0);
     const message = useMessage();
 
     const firstEnabledChart = info.value?.charts?.findIndex(chart => chart.enable);
@@ -29,9 +28,14 @@ const Component = defineComponent({
     }
 
     const sync = (key: keyof MusicXmlWithABJacket, method: Function) => async () => {
-      if (!info.value) return;
+      if (disableSync.value || !info.value) return;
       info.value!.modified = true;
-      await method(info.value.id!, info.value.assetDir, (info.value as any)[key]!);
+      const value = (info.value as any)[key];
+      const result = (await method(info.value.id!, info.value.assetDir, value)).data;
+      if (key === "sortName" && typeof result === "string" && result !== value) {
+        // 如果调用的是sortName接口，且返回的字符串（经过格式化后的实际内容）和传过去的值不同的话，则覆盖之
+        info.value!.sortName = result;
+      }
     }
 
     watch(() => info.value?.name, sync('name', api.EditMusicName));
@@ -43,6 +47,7 @@ const Component = defineComponent({
     watch(() => info.value?.utageKanji, sync('utageKanji', api.EditMusicUtageKanji));
     watch(() => info.value?.comment, sync('comment', api.EditMusicComment));
     watch(() => info.value?.longMusic, sync('longMusic', api.EditMusicLong));
+    watch(() => info.value?.sortName, sync('sortName', api.EditMusicSortName))
 
     onMounted(()=>{
       if ('mediaSession' in navigator) {
@@ -99,6 +104,14 @@ const Component = defineComponent({
                   <div class="ml-1 text-sm">{t('music.edit.utageComment')}</div>
                   <TextInput v-model:value={info.value.comment}/>
               </>}
+            <NFormItem label={t('music.edit.sortName')}>
+              <NPopover trigger="hover">
+                {{
+                  trigger: () => <NInput v-model:value={info.value!.sortName} class="w-0 grow"/>,
+                  default: () => <div>{t('music.edit.sortNameTips')}</div>
+                }}
+              </NPopover>
+            </NFormItem>
             <AcbAwb song={info.value}/>
             <NTabs type="line" animated barWidth={0} v-model:value={selectedLevel.value} class="levelTabs"
                    style={{'--n-tab-padding': 0, '--n-pane-padding-top': 0, '--n-tab-text-color-hover': ''}}>

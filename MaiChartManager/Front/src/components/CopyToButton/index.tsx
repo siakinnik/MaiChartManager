@@ -2,7 +2,7 @@ import { computed, defineComponent, ref } from "vue";
 import api, { getUrl } from "@/client/api";
 import { globalCapture, selectedADir, selectedMusic, selectMusicId, showNeedPurchaseDialog, updateMusicList, version } from "@/store/refs";
 import { NButton, NButtonGroup, NDropdown, useDialog, useMessage } from "naive-ui";
-import { ZipReader } from "@zip.js/zip.js";
+import { BlobWriter, ZipReader } from "@zip.js/zip.js";
 import ChangeIdDialog from "./ChangeIdDialog";
 import getSubDirFile from "@/utils/getSubDirFile";
 import { useI18n } from 'vue-i18n';
@@ -16,6 +16,7 @@ enum DROPDOWN_OPTIONS {
   exportMaidataIgnoreVideo,
   exportMaiDataZip,
   exportMaiDataZipIgnoreVideo,
+  editXml,
 }
 
 export default defineComponent({
@@ -54,6 +55,10 @@ export default defineComponent({
       {
         label: t('copy.showInExplorer'),
         key: DROPDOWN_OPTIONS.showExplorer,
+      },
+      {
+        label: t('copy.editXml'),
+        key: DROPDOWN_OPTIONS.editXml,
       }
     ])
 
@@ -72,6 +77,9 @@ export default defineComponent({
         case DROPDOWN_OPTIONS.exportMaidata:
         case DROPDOWN_OPTIONS.exportMaidataIgnoreVideo:
           copy(key);
+          break;
+        case DROPDOWN_OPTIONS.editXml:
+          api.RequestOpenXml(selectMusicId.value, selectedADir.value);
           break;
       }
     }
@@ -98,17 +106,29 @@ export default defineComponent({
           }
           const zip = await fetch(url)
           const zipReader = new ZipReader(zip.body!);
-          const entries = zipReader.getEntriesGenerator();
-          for await (const entry of entries) {
-            console.log(entry.filename);
-            if (entry.filename.endsWith('/')) {
-              continue;
+          try {
+            const entries = zipReader.getEntriesGenerator();
+            for await (const entry of entries) {
+              console.log(entry.filename);
+              if (entry.filename.endsWith('/')) {
+                continue;
+              }
+              if (!entry.getData) {
+                continue;
+              }
+              const fileHandle = await getSubDirFile(folderHandle, entry.filename);
+              const writable = await fileHandle.createWritable();
+              try {
+                const blob = await entry.getData(new BlobWriter());
+                await writable.write(blob);
+              } finally {
+                await writable.close();
+              }
             }
-            const fileHandle = await getSubDirFile(folderHandle, entry.filename);
-            const writable = await fileHandle.createWritable();
-            await entry.getData!(writable);
+            message.success(t('message.exportSuccess'));
+          } finally {
+            await zipReader.close();
           }
-          message.success(t('message.exportSuccess'));
         } catch (e) {
           globalCapture(e, t('copy.exportError'))
         } finally {

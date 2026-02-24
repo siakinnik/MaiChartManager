@@ -4,7 +4,6 @@ import api, { aquaMaiVersionConfig } from "@/client/api";
 import { captureException } from "@sentry/vue";
 import posthog from "posthog-js";
 import { useStorage, useWindowFocus, whenever } from "@vueuse/core";
-import deniedOgg from "@/assets/Denied.ogg";
 import { locale } from "@/locales";
 
 export const error = ref();
@@ -13,7 +12,7 @@ export const errorContext = ref<string>();
 
 export const globalCapture = async (err: any, context: string) => {
   console.log(err)
-  if (err instanceof Response) {
+  if (err instanceof Response && !(err as any).error) {
     if (!err.bodyUsed) {
       // @ts-ignore
       const errText = err.error = await err.text();
@@ -39,7 +38,6 @@ export const globalCapture = async (err: any, context: string) => {
     errorId: errorId.value,
     message: error.value?.error?.message || error.value?.error?.toString() || error.value?.message || error.value?.toString(),
   })
-  new Audio(deniedOgg).play();
 }
 
 export const showNeedPurchaseDialog = ref(false);
@@ -55,6 +53,11 @@ export const modInfo = ref<GameModInfo>();
 
 export const musicList = computed(() => musicListAll.value.filter(m => m.assetDir === selectedADir.value));
 export const selectedMusic = computed(() => musicList.value.find(m => m.id === selectMusicId.value));
+export const selectedLevel = ref(0);
+
+// 如ReplaceChart等后端接口可能会涉及对MusicXml中的信息进行修改后保存。此时前端updateMusicList时会发现相关数据出现变更，触发了MusicEdit/ChartPanel中的watch，造成发送多余的edit请求、同时modified也被错误设置为true。
+// 因此，对于涉及内部对xml进行修改后会自动保存的后端接口，可以在updateMusicList期间打开本选项，以阻止MusicEdit/ChartPanel中的sync动作。
+export const disableSync = ref(false);
 
 export const aquaMaiConfig = ref<ConfigDto>()
 export const modUpdateInfo = ref<Awaited<ReturnType<typeof aquaMaiVersionConfig.getGetConfig>>['data']>([{
@@ -91,8 +94,11 @@ export const updateAddVersionList = async () => {
   addVersionList.value = response.data;
 }
 
-export const updateMusicList = async () => {
-  musicListAll.value = (await api.GetMusicList()).data;
+export const updateMusicList = async (disableAutoSync=false) => {
+  const data = (await api.GetMusicList()).data;
+  if (disableAutoSync) disableSync.value = true;
+  musicListAll.value = data;
+  setTimeout(()=>disableSync.value = false); // timeout=0表示在下一帧执行
 }
 
 export const updateAssetDirs = async () => {

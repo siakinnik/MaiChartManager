@@ -23,12 +23,12 @@ export default defineComponent({
       <NFlex vertical class="h-full" size="large">
         <div class="flex items-center gap-2">
           <NButton secondary onClick={() => props.toggleMenu()} class="min-[1440px]:hidden">
-            <span class="i-ic-baseline-menu text-lg"/>
+            <span class="i-ic-baseline-menu text-lg" />
           </NButton>
           <NSelect
             class="grow w-0"
             value={selectedADir.value}
-            options={assetDirs.value.map(dir => ({ label: dir.dirName!, value: dir.dirName! }))}
+            options={assetDirs.value.map(dir => ({ label: dir.dirName! + (dir.version ? ` (Ver.${dir.version})` : ''), value: dir.dirName! }))}
             onUpdateValue={setAssetsDir}
           />
           <RefreshAllButton class="shrink-0" />

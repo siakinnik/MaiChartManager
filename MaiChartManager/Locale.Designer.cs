@@ -96,6 +96,15 @@ namespace MaiChartManager {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AquaMai configuration file appears corrupted....
+        /// </summary>
+        internal static string AquaMaiConfigCorrupted {
+            get {
+                return ResourceManager.GetString("AquaMaiConfigCorrupted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to AquaMai is not installed.
         /// </summary>
         internal static string AquaMaiNotInstalled {
@@ -164,6 +173,15 @@ namespace MaiChartManager {
         internal static string ChartDifficultyParseFailed {
             get {
                 return ResourceManager.GetString("ChartDifficultyParseFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chart file not exist.
+        /// </summary>
+        internal static string ChartFileNotFound {
+            get {
+                return ResourceManager.GetString("ChartFileNotFound", resourceCulture);
             }
         }
         
@@ -405,6 +423,15 @@ namespace MaiChartManager {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File upload failed.
+        /// </summary>
+        internal static string FileUploadFailed {
+            get {
+                return ResourceManager.GetString("FileUploadFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Game directory not specified.
         /// </summary>
         internal static string GameDirNotSpecified {
@@ -514,6 +541,15 @@ namespace MaiChartManager {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automatically run in server mode and minimize to the system tray upon startup..
+        /// </summary>
+        internal static string LauncherOpenToLanDesc {
+            get {
+                return ResourceManager.GetString("LauncherOpenToLanDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select Game Directory.
         /// </summary>
         internal static string LauncherSelectGameDir {
@@ -577,6 +613,15 @@ namespace MaiChartManager {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Replacing individual difficulty charts is not supported when using maidata. All difficulties will be replaced at once..
+        /// </summary>
+        internal static string MaidataReplaceAllOnly {
+            get {
+                return ResourceManager.GetString("MaidataReplaceAllOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Music with this ID already exists in current directory.
         /// </summary>
         internal static string MusicIdExists {
@@ -600,6 +645,15 @@ namespace MaiChartManager {
         internal static string MusicNoTitle {
             get {
                 return ResourceManager.GetString("MusicNoTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Caution! This &quot;Replace Chart&quot; function should only be used when modifying the note content of the existing chart, while the audio remains unchanged, the &amp;first offset remains unchanged, and the timing of the first note remains unchanged. Otherwise, you will need to delete the entire chart and re-import it..
+        /// </summary>
+        internal static string NotesReplacementWarning {
+            get {
+                return ResourceManager.GetString("NotesReplacementWarning", resourceCulture);
             }
         }
         
@@ -658,15 +712,6 @@ namespace MaiChartManager {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string qwq {
-            get {
-                return ResourceManager.GetString("qwq", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Please select resource directory (OPT).
         /// </summary>
         internal static string SelectAssetDirectory {
@@ -708,6 +753,15 @@ namespace MaiChartManager {
         internal static string UnknownError {
             get {
                 return ResourceManager.GetString("UnknownError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported file format.
+        /// </summary>
+        internal static string UnsupportedChartFormat {
+            get {
+                return ResourceManager.GetString("UnsupportedChartFormat", resourceCulture);
             }
         }
         

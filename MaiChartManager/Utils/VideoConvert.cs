@@ -16,6 +16,9 @@ public static class VideoConvert
     public static string H264Encoder { get; private set; } = "libx264";
 
     private static string Vp9Encoding => HardwareAcceleration == HardwareAccelerationStatus.Enabled ? "vp9_qsv" : "vp9";
+    private static readonly SemaphoreSlim UsmToMp4Semaphore = new(
+        Math.Max(1, Environment.ProcessorCount / 4),
+        Math.Max(1, Environment.ProcessorCount / 4));
 
     /// <summary>
     /// 检测硬件加速支持
@@ -39,7 +42,6 @@ public static class VideoConvert
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
             HardwareAcceleration = HardwareAccelerationStatus.Disabled;
         }
 
@@ -60,10 +62,7 @@ public static class VideoConvert
                 H264Encoder = encoder;
                 break;
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            catch (Exception e) { }
         }
 
         Console.WriteLine($"H264 encoder: {H264Encoder}");
@@ -110,6 +109,8 @@ public static class VideoConvert
         /// 输入文件 MIME 类型
         /// </summary>
         public string? ContentType { get; set; }
+
+        public bool TaskbarProgress { get; set; } = true;
     }
 
     /// <summary>
@@ -120,6 +121,17 @@ public static class VideoConvert
         var tmpDir = Directory.CreateTempSubdirectory();
         try
         {
+            if (options.TaskbarProgress)
+            {
+                WinUtils.SetTaskbarProgressIndeterminate();
+            }
+
+            var outputDirectory = Path.GetDirectoryName(options.OutputPath);
+            if (!string.IsNullOrWhiteSpace(outputDirectory))
+            {
+                Directory.CreateDirectory(outputDirectory);
+            }
+
             // 第一步：转换为 VP9 (IVF) 或 H264 (MP4)
             var intermediateFile = Path.Combine(tmpDir.FullName, options.UseH264 ? "out.mp4" : "out.ivf");
             await ConvertToVp9OrH264(options, intermediateFile, tmpDir.FullName);
@@ -130,28 +142,28 @@ public static class VideoConvert
                 throw new Exception("视频转换失败：输出文件不存在或为空");
             }
 
-            // 第二步：如果是 VP9，转换为 USM
-            string finalFile;
+            // 第二步：VP9 直接打包到目标 USM，避免中间 USM 文件再复制。
             if (options.UseH264)
             {
-                finalFile = intermediateFile;
+                FileSystem.CopyFile(intermediateFile, options.OutputPath, true);
             }
             else
             {
-                finalFile = Path.Combine(tmpDir.FullName, "out.usm");
-                WannaCRI.WannaCRI.CreateUsm(intermediateFile);
-                if (!File.Exists(finalFile) || new FileInfo(finalFile).Length == 0)
+                if (options.TaskbarProgress)
+                {
+                    WinUtils.SetTaskbarProgressIndeterminate();
+                }
+
+                WannaCRI.WannaCRI.CreateUsm(intermediateFile, options.OutputPath);
+                if (!File.Exists(options.OutputPath) || new FileInfo(options.OutputPath).Length == 0)
                 {
                     throw new Exception("视频转换为 USM 失败：输出文件不存在或为空");
                 }
             }
-
-            // 第三步：复制到目标位置
-            Directory.CreateDirectory(Path.GetDirectoryName(options.OutputPath)!);
-            FileSystem.CopyFile(finalFile, options.OutputPath, true);
         }
         finally
         {
+            WinUtils.ClearTaskbarProgress();
             // 清理临时目录
             try
             {
@@ -244,8 +256,13 @@ public static class VideoConvert
                 options.OnProgress((int)args.Percent);
             };
         }
-
-        Console.WriteLine("Conversion command: " + conversion.Build());
+        if (options.TaskbarProgress)
+        {
+            conversion.OnProgress += (sender, args) =>
+            {
+                WinUtils.SetTaskbarProgress((ulong)args.Percent);
+            };
+        }
 
         await conversion.Start();
     }
@@ -294,62 +311,68 @@ public static class VideoConvert
     /// <param name="onProgress">进度回调（可选）</param>
     public static async Task ConvertUsmToMp4(string inputPath, string outputPath, Action<int>? onProgress = null)
     {
-        var tmpDir = Directory.CreateTempSubdirectory();
+        await UsmToMp4Semaphore.WaitAsync();
         try
         {
-            var movieUsm = Path.Combine(tmpDir.FullName, "movie.usm");
-            var ext = Path.GetExtension(inputPath).ToLowerInvariant();
-            
-            onProgress?.Invoke(10);
-            FileSystem.CopyFile(inputPath, movieUsm, UIOption.OnlyErrorDialogs);
-
-            // 解包 USM
-            onProgress?.Invoke(30);
-            WannaCRI.WannaCRI.UnpackUsm(movieUsm, Path.Combine(tmpDir.FullName, "output"));
-            
-            // 查找解包后的 IVF 文件
-            onProgress?.Invoke(50);
-            var outputIvfFile = Directory.EnumerateFiles(Path.Combine(tmpDir.FullName, @"output\movie.usm\videos")).FirstOrDefault();
-            if (outputIvfFile is null)
+            var tmpDir = Directory.CreateTempSubdirectory();
+            try
             {
-                throw new Exception("USM 解包失败：未找到视频文件");
-            }
+                var movieUsm = Path.Combine(tmpDir.FullName, "movie.usm");
 
-            // 转换为 MP4
-            var conversion = FFmpeg.Conversions.New()
-                .AddParameter("-i " + outputIvfFile.Escape())
-                .AddParameter("-c:v copy")
-                .SetOutput(outputPath);
+                onProgress?.Invoke(10);
+                FileSystem.CopyFile(inputPath, movieUsm, UIOption.OnlyErrorDialogs);
 
-            if (onProgress != null)
-            {
-                conversion.OnProgress += (sender, args) =>
+                // 解包 USM
+                onProgress?.Invoke(30);
+                WannaCRI.WannaCRI.UnpackUsm(movieUsm, Path.Combine(tmpDir.FullName, "output"));
+
+                // 查找解包后的 IVF 文件
+                onProgress?.Invoke(50);
+                var outputIvfFile = Directory.EnumerateFiles(Path.Combine(tmpDir.FullName, @"output\movie.usm\videos")).FirstOrDefault();
+                if (outputIvfFile is null)
                 {
-                    // FFmpeg 进度从 50% 开始，映射到 50-100%
-                    var percent = 50 + (int)(args.Percent / 2);
-                    onProgress(percent);
-                };
+                    throw new Exception("USM 解包失败：未找到视频文件");
+                }
+
+                // 转换为 MP4
+                var conversion = FFmpeg.Conversions.New()
+                    .AddParameter("-i " + outputIvfFile.Escape())
+                    .AddParameter("-c:v copy")
+                    .SetOutput(outputPath);
+
+                if (onProgress != null)
+                {
+                    conversion.OnProgress += (sender, args) =>
+                    {
+                        // FFmpeg 进度从 50% 开始，映射到 50-100%
+                        var percent = 50 + (int)(args.Percent / 2);
+                        onProgress(percent);
+                    };
+                }
+
+                await conversion.Start();
+
+                if (!File.Exists(outputPath) || new FileInfo(outputPath).Length == 0)
+                {
+                    throw new Exception("转换失败：输出文件不存在或为空");
+                }
             }
-
-            await conversion.Start();
-
-            if (!File.Exists(outputPath) || new FileInfo(outputPath).Length == 0)
+            finally
             {
-                throw new Exception("转换失败：输出文件不存在或为空");
+                // 清理临时目录
+                try
+                {
+                    tmpDir.Delete(true);
+                }
+                catch
+                {
+                    // 忽略清理错误
+                }
             }
         }
         finally
         {
-            // 清理临时目录
-            try
-            {
-                tmpDir.Delete(true);
-            }
-            catch
-            {
-                // 忽略清理错误
-            }
+            UsmToMp4Semaphore.Release();
         }
     }
 }
-

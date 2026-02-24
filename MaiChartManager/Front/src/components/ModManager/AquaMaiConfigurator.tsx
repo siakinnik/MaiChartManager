@@ -16,11 +16,13 @@ const ConfigSection = defineComponent({
     section: { type: Object as PropType<Section>, required: true },
     entryStates: { type: Object as PropType<Record<string, IEntryState>>, required: true },
     sectionState: { type: Object as PropType<ISectionState>, required: true },
+    isCommunity: Boolean,
   },
   setup(props, { emit }) {
     const { t, te } = useI18n();
 
-    const CustomPanel = getSectionPanelOverride(props.section.path!);
+    const CustomPanel = getSectionPanelOverride(props.section.path!)
+    const customPanelPosition: 'top' | 'bottom' | 'override' = comments.customPanelPosition[props.section.path!] || 'override';
     const comment = computed(() => {
       const localeKey = 'mod.commentOverrides.' + props.section.path!.replace(/\./g, '_');
       if (te(localeKey)) {
@@ -41,18 +43,27 @@ const ConfigSection = defineComponent({
           <NFlex class="h-34px" align="center">
             <NSwitch v-model:value={props.sectionState.enabled}/>
             {comments.shouldEnableOptions[props.section.path!] && !props.sectionState.enabled && <ProblemsDisplay problems={[t('mod.needEnableOption')]}/>}
+            {props.isCommunity && <NPopover trigger="hover">{{
+              trigger: () => <div class="i-ic-baseline-info text-lg c-neutral-5"/>,
+              default: () => <div>
+                <div class="text-lg mb-2">{t('mod.community.title')}</div>
+                <div class="text-sm whitespace-pre-line lh-1.7em">{t('mod.community.description')}</div>
+              </div>
+            }}</NPopover>}
           </NFlex>
           {comment.value}
         </NFlex>
       </NFormItem>}
-      {props.sectionState.enabled && (
-        CustomPanel ?
+      {props.sectionState.enabled && <>
+        {customPanelPosition === 'top' && <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/>}
+        {(CustomPanel && customPanelPosition === 'override') ?
           <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/> :
           !!props.section.entries?.length && <NFlex vertical class="p-l-15 max-[900px]:p-l-10 max-[500px]:p-l-5!">
             {props.section.entries?.filter(it => !it.attribute?.hideWhenDefault || (it.attribute?.hideWhenDefault && !props.entryStates[it.path!].isDefault))
               .map((entry) => <ConfigEntry key={entry.path!} entry={entry} entryState={props.entryStates[entry.path!]}/>)}
-          </NFlex>
-      )}
+          </NFlex>}
+        {customPanelPosition === 'bottom' && <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/>}
+        </>}
     </NFlex>;
   },
 });
@@ -66,6 +77,7 @@ export default defineComponent({
     const search = ref('');
     const searchRef = ref();
     const configSort = computed(() => props.config?.configSort || configSortStub)
+    const communityList = computed(() => configSort.value['社区功能'] || []);
     const { t } = useI18n();
 
     const { ctrl_f } = useMagicKeys({
@@ -93,7 +105,7 @@ export default defineComponent({
 
     const bigSections = computed(() => {
       if (props.useNewSort) {
-        return Object.keys(configSort.value).filter(it => filteredSections.value!.some(s => configSort.value[it].includes(s.path!)));
+        return Object.keys(configSort.value).filter(it => it !== '社区功能').filter(it => filteredSections.value!.some(s => configSort.value[it].includes(s.path!)));
       }
       return _.uniq(filteredSections.value!.filter(it => !it.attribute?.exampleHidden).map(s => s.path?.split('.')[0]));
     });
@@ -141,6 +153,7 @@ export default defineComponent({
           }).map((section) => {
             return <ConfigSection key={section.path!} section={section}
                                   entryStates={props.config.entryStates!}
+                                  isCommunity={communityList.value.includes(section.path!)}
                                   sectionState={props.config.sectionStates![section.path!]}/>;
           })}
         </div>)}
@@ -148,8 +161,9 @@ export default defineComponent({
           <div id={t('mod.other')}>
             <NDivider titlePlacement="left" class="mt-2!">{t('mod.other')}</NDivider>
             {otherSection.value.map((section) =>
-              <ConfigSection key={t('mod.other')} section={section}
+              <ConfigSection key={section.path!} section={section}
                              entryStates={props.config.entryStates!}
+                             isCommunity={communityList.value.includes(section.path!)}
                              sectionState={props.config.sectionStates![section.path!]}/>)}
           </div>}
       </NScrollbar>

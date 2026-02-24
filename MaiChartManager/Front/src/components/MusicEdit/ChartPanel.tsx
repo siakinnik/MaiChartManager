@@ -1,13 +1,14 @@
 import { computed, defineComponent, PropType, watch } from "vue";
 import { Chart } from "@/client/apiGen";
-import { NFlex, NForm, NFormItem, NInput, NInputNumber, NSelect, NSwitch } from "naive-ui";
+import { NFlex } from "naive-ui";
 import api from "@/client/api";
-import { selectedADir, selectedMusic } from "@/store/refs";
+import { disableSync, selectedADir, selectedMusic } from "@/store/refs";
 import { LEVELS } from "@/consts";
 import ProblemsDisplay from "@/components/ProblemsDisplay";
 import PreviewChartButton from "@/components/MusicEdit/PreviewChartButton";
 import { useI18n } from 'vue-i18n';
-import { CheckBox, NumberInput, Select, TextInput } from "@munet/ui";
+import { Button, CheckBox, NumberInput, Select, TextInput } from "@munet/ui";
+import { prepareReplaceChart } from "@/components/DragDropDispatcher/ReplaceChartModal";
 
 const LEVELS_OPTIONS = LEVELS.map((level, index) => ({label: level, value: index}));
 
@@ -28,7 +29,7 @@ export default defineComponent({
     })
 
     const sync = (key: keyof Chart, method: Function) => async () => {
-      if (!props.chart) return;
+      if (disableSync.value || !props.chart) return;
       selectedMusic.value!.modified = true;
       await method(props.songId, props.chartIndex, selectedADir.value, props.chart[key]!);
     }
@@ -43,6 +44,9 @@ export default defineComponent({
     return () => <div class="flex flex-col gap-2">
         <div class="absolute right-0 top-0 m-xy mt-2 z-2">
           <PreviewChartButton songId={props.songId} level={props.chartIndex}/>
+          <Button onClick={() => prepareReplaceChart()}>
+            {t('music.edit.replaceChart')}
+          </Button>
         </div>
         <div class="flex items-center gap-2">
           <CheckBox v-model:value={props.chart.enable} class="m-1">{t('music.edit.chartEnable')}</CheckBox>

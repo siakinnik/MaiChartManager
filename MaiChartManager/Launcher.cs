@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -17,7 +17,7 @@ public partial class Launcher : Form
         InitializeComponent();
         label3.Text = $@"v{Application.ProductVersion}";
 # if CRACK
-        label3.Text += " 此版本不可流通";
+        label3.Text += " 内部版本";
 # endif
         checkBox1.Checked = StaticSettings.Config.Export;
         textBox1.Text = StaticSettings.Config.GamePath;
@@ -29,11 +29,18 @@ public partial class Launcher : Form
 # if DEBUG
         checkBox1.Checked = true;
         StaticSettings.Config.Export = true;
-        textBox1.Text = @"D:\Arcade\Maimai\SDEZ160 Debug\Package";
+        textBox1.Text = @"D:\Arcade\Maimai\SDEZ160 Debug";
         StartClicked(null, null);
         notifyIcon1.Visible = true;
         WindowState = FormWindowState.Minimized;
 # endif
+        comboBox1.SelectedIndex = StaticSettings.CurrentLocale switch
+        {
+            "zh" => 0,
+            "zh-TW" => 1,
+            "en" => 2,
+            _ => 2,
+        };
         if (!AppMain.IsFromStartup)
         {
             Visible = true;
@@ -114,15 +121,19 @@ public partial class Launcher : Form
         }
 
         StaticSettings.GamePath = textBox1.Text;
-        if (ContainsSpecialCharacters(StaticSettings.GamePath))
+        if (!Directory.Exists(StaticSettings.StreamingAssets) && Directory.Exists(Path.Combine(StaticSettings.GamePath, "Package")))
         {
-            MessageBox.Show(Locale.PathContainsSpecialChars, Locale.PathContainsSpecialCharsTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            StaticSettings.GamePath = Path.Combine(StaticSettings.GamePath, "Package");
         }
-
-        if (!Path.Exists(StaticSettings.StreamingAssets))
+        if (!Directory.Exists(StaticSettings.StreamingAssets))
         {
             MessageBox.Show(Locale.PathNotGameDir);
             return;
+        }
+
+        if (ContainsSpecialCharacters(StaticSettings.GamePath))
+        {
+            MessageBox.Show(Locale.PathContainsSpecialChars, Locale.PathContainsSpecialCharsTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         if (!checkBox1.Checked && checkBox_startup.Checked)
@@ -256,5 +267,41 @@ public partial class Launcher : Form
     {
         textBoxLanAuthUser.Visible = checkBoxLanAuth.Checked;
         textBoxLanAuthPass.Visible = checkBoxLanAuth.Checked;
+    }
+
+    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        switch (comboBox1.SelectedIndex)
+        {
+            case 0:
+                AppMain.SetLocale("zh");
+                break;
+            case 1:
+                AppMain.SetLocale("zh-TW");
+                break;
+            case 2:
+                AppMain.SetLocale("en");
+                break;
+        }
+
+        RefreshLocalizedTexts();
+    }
+
+    private void RefreshLocalizedTexts()
+    {
+        button1.Text = Locale.LauncherSelectGameDir;
+        button4.Text = Locale.LauncherExit;
+        label2.Text = Locale.LauncherGameDir;
+        checkBox1.Text = Locale.LauncherOpenToLan;
+        checkBox_startup.Text = Locale.LauncherStartup;
+        checkBoxLanAuth.Text = Locale.LauncherNeedLogin;
+        if (button2.Text == Locale.LauncherStop || button2.Text.Contains("Stop") || button2.Text.Contains("停止"))
+        {
+            button2.Text = Locale.LauncherStop;
+        }
+        else
+        {
+            button2.Text = Locale.LauncherStart;
+        }
     }
 }

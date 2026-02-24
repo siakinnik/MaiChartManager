@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
+using System.Globalization;
 using SingleInstanceCore;
 using System.Text.Json;
 using Windows.ApplicationModel;
@@ -9,9 +10,8 @@ using Xabe.FFmpeg;
 
 namespace MaiChartManager;
 
-public class AppMain : ISingleInstance
+public partial class AppMain : ISingleInstance
 {
-    public const string Version = "1.6.0";
     public static Browser? BrowserWin { get; set; }
 
     private Launcher _launcher;
@@ -24,23 +24,47 @@ public class AppMain : ISingleInstance
 
     public static ILogger GetLogger<T>() => _loggerFactory.CreateLogger<T>();
 
+    public static void InitConfiguration(bool noPopup = false)
+    {
+        SentrySdk.Init(o =>
+            {
+                // Tells which project in Sentry to send events to:
+                o.Dsn = "https://be7a9ae3a9a88f4660737b25894b3c20@sentry.c5y.moe/3";
+                // Set TracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+                // We recommend adjusting this value in production.
+                o.TracesSampleRate = 0.5;
+# if DEBUG
+                o.Environment = "development";
+# endif
+            }
+        );
+
+        var cfgFilePath = Path.Combine(StaticSettings.appData, "config.json");
+        if (File.Exists(cfgFilePath))
+        {
+            try
+            {
+                var cfg = JsonSerializer.Deserialize<Config>(File.ReadAllText(Path.Combine(StaticSettings.appData, "config.json")));
+                if (cfg == null)
+                {
+                    throw new Exception("config.json is null");
+                }
+                StaticSettings.Config = cfg;
+            }
+            catch (Exception e)
+            {
+                SentrySdk.CaptureException(e, s => s.TransactionName = "读取配置文件");
+                if (!noPopup)
+                    MessageBox.Show(Locale.ConfigCorrupted, Locale.ConfigCorruptedTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                File.Delete(cfgFilePath);
+            }
+        }
+    }
+
     public void Run()
     {
         try
         {
-            SentrySdk.Init(o =>
-                {
-                    // Tells which project in Sentry to send events to:
-                    o.Dsn = "https://be7a9ae3a9a88f4660737b25894b3c20@sentry.c5y.moe/3";
-                    // Set TracesSampleRate to 1.0 to capture 100% of transactions for tracing.
-                    // We recommend adjusting this value in production.
-                    o.TracesSampleRate = 0.5;
-# if DEBUG
-                    o.Environment = "development";
-# endif
-                }
-            );
-
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
             ApplicationConfiguration.Initialize();
             FFmpeg.SetExecutablesPath(StaticSettings.exeDir);
@@ -48,25 +72,7 @@ public class AppMain : ISingleInstance
 
             Directory.CreateDirectory(StaticSettings.appData);
             Directory.CreateDirectory(StaticSettings.tempPath);
-            var cfgFilePath = Path.Combine(StaticSettings.appData, "config.json");
-            if (File.Exists(cfgFilePath))
-            {
-                try
-                {
-                    var cfg = JsonSerializer.Deserialize<Config>(File.ReadAllText(Path.Combine(StaticSettings.appData, "config.json")));
-                    if (cfg == null)
-                    {
-                        throw new Exception("config.json is null");
-                    }
-                    StaticSettings.Config = cfg;
-                }
-                catch (Exception e)
-                {
-                    SentrySdk.CaptureException(e, s => s.TransactionName = "读取配置文件");
-                    MessageBox.Show(Locale.ConfigCorrupted, Locale.ConfigCorruptedTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    File.Delete(cfgFilePath);
-                }
-            }
+            InitConfiguration();
 
             // 初始化语言设置
             if (StaticSettings.Config.Locale == null)
@@ -74,7 +80,7 @@ public class AppMain : ISingleInstance
                 // 首次启动，从系统语言检测
                 var systemCulture = System.Globalization.CultureInfo.CurrentUICulture;
                 var cultureName = systemCulture.Name;
-                
+
                 // 检测语言：简体中文、繁体中文、英文
                 if (cultureName.StartsWith("zh-CN") || cultureName.StartsWith("zh-Hans") || cultureName == "zh")
                 {
@@ -89,18 +95,8 @@ public class AppMain : ISingleInstance
                     // 非中文系统默认英文
                     StaticSettings.CurrentLocale = "en";
                 }
-                
+
                 StaticSettings.Config.Locale = StaticSettings.CurrentLocale;
-                // 保存配置
-                try
-                {
-                    var json = JsonSerializer.Serialize(StaticSettings.Config, new JsonSerializerOptions { WriteIndented = true });
-                    File.WriteAllText(cfgFilePath, json);
-                }
-                catch (Exception e)
-                {
-                    _loggerFactory.CreateLogger<AppMain>().LogError(e, "保存配置文件失败");
-                }
             }
             else
             {
@@ -178,4 +174,41 @@ public class AppMain : ISingleInstance
     {
         _launcher.ShowWindow();
     }
+
+    public static void SetLocale(string locale)
+    {
+        if (locale != "zh" && locale != "zh-TW" && locale != "en")
+        {
+            throw new ArgumentException("Invalid locale. Must be 'zh', 'zh-TW', or 'en'");
+        }
+
+        StaticSettings.CurrentLocale = locale;
+        StaticSettings.Config.Locale = locale;
+
+        // 设置 Locale 资源管理器的 Culture（这会影响所有线程）
+        var culture = locale switch
+        {
+            "zh" => new CultureInfo("zh-CN"),
+            "zh-TW" => new CultureInfo("zh-TW"),
+            _ => new CultureInfo("en-US"),
+        };
+        Locale.Culture = culture;
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
+
+        // 保存配置文件
+        var cfgFilePath = Path.Combine(StaticSettings.appData, "config.json");
+        var json = JsonSerializer.Serialize(StaticSettings.Config, new JsonSerializerOptions { WriteIndented = true });
+        System.IO.File.WriteAllText(cfgFilePath, json);
+    }
 }
+
+
+
+
+
+
+
+
+
+

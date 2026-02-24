@@ -8,3 +8,4 @@ riderModule.iml
 *.code-workspace
 /MaiChartManager/Resources/AquaMai.dll
 node_modules
+nul

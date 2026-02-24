@@ -1,5 +1,5 @@
 import { computed, defineComponent } from "vue";
-import { NButton, NFlex, NModal } from "naive-ui";
+
 import { useI18n } from 'vue-i18n';
 import { Modal } from "@munet/ui";
 

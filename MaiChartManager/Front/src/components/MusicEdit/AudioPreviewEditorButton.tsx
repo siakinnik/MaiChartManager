@@ -1,4 +1,4 @@
-import { NButton, NFlex, NFormItem, NInput, NModal } from "naive-ui";
+import { Button, Modal } from "@munet/ui";
 import { defineComponent, ref } from "vue";
 import AudioPreviewEditor from "@/components/MusicEdit/AudioPreviewEditor";
 import { showNeedPurchaseDialog, version } from "@/store/refs";
@@ -20,21 +20,18 @@ export default defineComponent({
       show.value = true
     }
 
-    return () => <NButton secondary onClick={handleClick} disabled={props.disabled}>
+    return () => <Button variant="secondary" onClick={handleClick} disabled={props.disabled}>
       {t('music.edit.editPreview')}
 
-      <NModal
-        preset="card"
-        class="w-[min(60vw,80em)]"
+      <Modal
+        width="min(60vw,80em)"
         title={t('music.edit.editPreview')}
         v-model:show={show.value}
-        maskClosable={false}
-        closeOnEsc={false}
-        closable={false}
+        esc={false}
       >{{
         default: () =>
           <AudioPreviewEditor closeModel={() => show.value = false}/>,
-      }}</NModal>
-    </NButton>;
+      }}</Modal>
+    </Button>;
   }
 })

@@ -1,5 +1,5 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { NBadge, NButton } from "naive-ui";
+
 import { useStorage, watchOnce } from "@vueuse/core";
 import ModNotInstalledWarning from "@/components/ModManager/ModNotInstalledWarning";
 import ConfigEditor from "@/components/ModManager/ConfigEditor";
@@ -27,11 +27,12 @@ export default defineComponent({
     })
 
     return () => <>
-      <NBadge dot show={!!badgeType.value} type={badgeType.value as any} offset={[-3, 5]}>
+      <span class="relative">
         <button onClick={() => showConfigurator.value = true}>
           {t('mod.title')}
         </button>
-      </NBadge>
+        {!!badgeType.value && <span class={["absolute -top-1 -right-2 w-8px h-8px rd-full", badgeType.value === 'error' ? 'bg-red' : 'bg-orange']} />}
+      </span>
       <ModNotInstalledWarning show={showWarning.value} closeModal={(dismiss: boolean) => {
         showWarning.value = false
         isWarningConfirmed.value = dismiss

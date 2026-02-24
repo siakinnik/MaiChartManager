@@ -2,7 +2,7 @@ import {defineComponent, PropType, ref, computed, h} from 'vue';
 import {IEntryState, ISectionState} from "@/client/apiGen";
 import api from "@/client/api";
 import {modInfo, updateModInfo} from "@/store/refs";
-import {NButton, NFlex} from "naive-ui";
+import { Button } from '@munet/ui';
 import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
@@ -21,11 +21,11 @@ export default defineComponent({
       load.value = false
     }
 
-    return () => <NFlex class="p-l-10em" align="center">
-      {modInfo.value?.isJudgeDisplay4BInstalled ? <NFlex class="c-green-6">{t('mod.resourcesInstalled')}</NFlex> : <NFlex class="c-orange">{t('mod.resourcesNotInstalled')}</NFlex>}
-      <NButton secondary onClick={installAssets} loading={load.value}>
+    return () => <div class="flex gap-2 p-l-10em items-center">
+      {modInfo.value?.isJudgeDisplay4BInstalled ? <span class="c-green-6">{t('mod.resourcesInstalled')}</span> : <span class="c-orange">{t('mod.resourcesNotInstalled')}</span>}
+      <Button variant="secondary" onClick={installAssets} ing={load.value}>
         {modInfo.value?.isJudgeDisplay4BInstalled ? t('mod.reinstall') : t('mod.installResources')}
-      </NButton>
-    </NFlex>;
+      </Button>
+    </div>;
   },
 });

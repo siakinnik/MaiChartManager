@@ -5,7 +5,7 @@ import dataUrl from './majdata-wasm/Build.bin?url';
 import frameworkUrl from './majdata-wasm/Build.framework.js?url';
 import codeUrl from './majdata-wasm/Build.wasm?url';
 import loaderUrl from './majdata-wasm/Build.loader.js?url';
-import { NButton, NFlex, NInputNumber, NModal } from "naive-ui";
+
 import UnityVue from 'unity-webgl/vue'
 import { selectedADir } from "@/store/refs";
 import { getUrl } from "@/client/api";
@@ -48,10 +48,10 @@ export default defineComponent({
         title={t('chart.preview.title')}
         v-model:show={show.value}
       >{{
-        default: () => <NFlex vertical>
+        default: () => <div class="flex flex-col gap-2">
           {t('music.edit.previewChartWarning')}
           <UnityVue unity={unityContext} height="32vw"/>
-        </NFlex>,
+        </div>,
       }}</Modal>
     </>
   },

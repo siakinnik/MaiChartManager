@@ -1,6 +1,6 @@
 import { defineComponent, PropType, ref, computed, h } from 'vue';
 import { IEntryState, ISectionState, Section } from "@/client/apiGen";
-import { NButton, NFlex, NFormItem, NGrid, NGridItem, NSelect } from "naive-ui";
+import { Button, Select } from '@munet/ui';
 import api from "@/client/api";
 import { modInfo, updateModInfo } from "@/store/refs";
 import { useI18n } from 'vue-i18n';
@@ -32,54 +32,58 @@ export default defineComponent({
       load.value = false
     }
 
-    return () => <NFlex vertical>
-      {modInfo.value?.isHidConflictExist ? <NFlex align="center" class="m-l-35">
+    return () => <div class="flex flex-col gap-2">
+      {modInfo.value?.isHidConflictExist ? <div class="flex gap-2 items-center m-l-35">
           <span class="c-orange">{t('mod.adxHid.conflictDetected')}</span>
-          <NButton secondary onClick={del} loading={load.value}>{t('mod.adxHid.oneClickDelete')}</NButton>
-        </NFlex>
-        : <NFlex align="center" class="m-l-35">
+          <Button variant="secondary" onClick={del} ing={load.value}>{t('mod.adxHid.oneClickDelete')}</Button>
+        </div>
+        : <div class="flex gap-2 items-center m-l-35">
           <span class="c-green-6">{t('mod.adxHid.noConflict')}</span>
-        </NFlex>}
-      <NGrid cols="1 500:2" yGap="12px">
-        <NGridItem>
-          <NFlex vertical>
-            <NFormItem label={t('mod.adxHid.button1')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-              <NFlex vertical class="w-full ws-pre-line">
-                <NSelect v-model:value={props.entryStates['GameSystem.AdxHidInput.Button1'].value} options={options}/>
+        </div>}
+      <div class="grid grid-cols-1 min-[500px]:grid-cols-2 gap-y-12px">
+        <div>
+          <div class="flex flex-col gap-2">
+            <div class="flex gap-2 items-start">
+              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.adxHid.button1')}</div>
+              <div class="flex flex-col gap-2 w-full ws-pre-line">
+                <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button1'].value} options={options}/>
                 {t('mod.adxHid.button1Desc')}
-              </NFlex>
-            </NFormItem>
-            <NFormItem label={t('mod.adxHid.button2')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-              <NFlex vertical class="w-full ws-pre-line">
-                <NSelect v-model:value={props.entryStates['GameSystem.AdxHidInput.Button2'].value} options={options}/>
+              </div>
+            </div>
+            <div class="flex gap-2 items-start">
+              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.adxHid.button2')}</div>
+              <div class="flex flex-col gap-2 w-full ws-pre-line">
+                <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button2'].value} options={options}/>
                 {t('mod.adxHid.button2Desc')}
-              </NFlex>
-            </NFormItem>
-          </NFlex>
-        </NGridItem>
-        <NGridItem>
-          <NFlex vertical>
-            <NFormItem label={t('mod.adxHid.button3')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-              <NFlex vertical class="w-full ws-pre-line">
-                <NSelect v-model:value={props.entryStates['GameSystem.AdxHidInput.Button3'].value} options={options}/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="flex flex-col gap-2">
+            <div class="flex gap-2 items-start">
+              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.adxHid.button3')}</div>
+              <div class="flex flex-col gap-2 w-full ws-pre-line">
+                <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button3'].value} options={options}/>
                 {t('mod.adxHid.button3Desc')}
-              </NFlex>
-            </NFormItem>
-            <NFormItem label={t('mod.adxHid.button4')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-              <NFlex vertical class="w-full ws-pre-line">
-                <NSelect v-model:value={props.entryStates['GameSystem.AdxHidInput.Button4'].value} options={options}/>
+              </div>
+            </div>
+            <div class="flex gap-2 items-start">
+              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.adxHid.button4')}</div>
+              <div class="flex flex-col gap-2 w-full ws-pre-line">
+                <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button4'].value} options={options}/>
                 {t('mod.adxHid.button4Desc')}
-              </NFlex>
-            </NFormItem>
-          </NFlex>
-        </NGridItem>
-      </NGrid>
-      <NFlex vertical class="p-l-3">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2 p-l-3">
         {props.section.entries?.filter(it=>
           ['GameSystem.AdxHidInput.DisableButtons']
           .includes(it.path!))
           .map((entry) => <ConfigEntry key={entry.path!} entry={entry} entryState={props.entryStates[entry.path!]}/>)}
-      </NFlex>
-    </NFlex>
+      </div>
+    </div>
   },
 });

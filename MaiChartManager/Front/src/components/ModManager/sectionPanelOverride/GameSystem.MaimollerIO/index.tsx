@@ -3,7 +3,7 @@ import { Entry, IEntryState, ISectionState, Section } from '@/client/apiGen';
 import { t } from '@/locales';
 import { globalCapture, modInfo, updateModInfo } from '@/store/refs';
 import { useAsyncState } from '@vueuse/core';
-import { NFlex, NButton, NGrid, NGridItem, NFormItem, NSelect, NSwitch } from 'naive-ui';
+import { Button, Select, CheckBox } from '@munet/ui';
 import { defineComponent, PropType, ref, computed, watch } from 'vue';
 
 export default defineComponent({
@@ -34,67 +34,73 @@ export default defineComponent({
 
     const PREFIX = 'GameSystem.MaimollerIO.';
 
-    return () => <NFlex vertical>
-      {!modInfo.value?.isMmlLibInstalled ? <NFlex align="center" class="m-l-35">
+    return () => <div class="flex flex-col gap-2">
+      {!modInfo.value?.isMmlLibInstalled ? <div class="flex gap-2 items-center m-l-35">
         <span class="c-orange">{t('mod.mmlIo.notInstalled')}</span>
-        <NButton secondary onClick={() => install.execute()} loading={install.isLoading.value}>{t('mod.mmlIo.oneClickInstall')}</NButton>
-      </NFlex>
-        : <NFlex align="center" class="m-l-35">
+        <Button variant="secondary" onClick={() => install.execute()} ing={install.isLoading.value}>{t('mod.mmlIo.oneClickInstall')}</Button>
+      </div>
+        : <div class="flex gap-2 items-center m-l-35">
           <span class="c-green-6">{t('mod.mmlIo.installed')}</span>
-        </NFlex>}
+        </div>}
       <div class="m-l-35">
         {t('mod.mmlIo.tip')}
       </div>
-      <NGrid cols="1 500:2" yGap="12px">
-        <NGridItem>
-          <NFlex vertical>
+      <div class="grid grid-cols-1 min-[500px]:grid-cols-2 gap-y-12px">
+        <div>
+          <div class="flex flex-col gap-2">
             {props.section.entries?.filter(it=>
               ['P1', 'Touch1p', 'Button1p', 'Led1p'].map(it=>PREFIX + it).includes(it.path!))
               .map((entry) => {
-                return <NFormItem label={t(`mod.mmlIo.${entry.path!.split('.').pop()}`)} labelPlacement="left" labelWidth="10em" showFeedback={false}>
+                return <div class="flex gap-2 items-start">
+                  <div class="ml-1 text-sm w-10em shrink-0">{t(`mod.mmlIo.${entry.path!.split('.').pop()}`)}</div>
                   <div class="flex h-34px items-center">
-                    <NSwitch v-model:value={props.entryStates[entry.path!].value}/>
+                    <CheckBox v-model:value={props.entryStates[entry.path!].value}>{props.entryStates[entry.path!].value ? '开' : '关'}</CheckBox>
                   </div>
-                </NFormItem>
+                </div>
               })
             }
-            <NFormItem label={t('mod.mmlIo.button1')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-              <NFlex vertical class="w-full ws-pre-line">
-                <NSelect v-model:value={props.entryStates[PREFIX + 'Button1'].value} options={options}/>
-              </NFlex>
-            </NFormItem>
-            <NFormItem label={t('mod.mmlIo.button2')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-              <NFlex vertical class="w-full ws-pre-line">
-                <NSelect v-model:value={props.entryStates[PREFIX + 'Button2'].value} options={options}/>
-              </NFlex>
-            </NFormItem>
-          </NFlex>
-        </NGridItem>
-        <NGridItem>
-          <NFlex vertical>
+            <div class="flex gap-2 items-start">
+              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.mmlIo.button1')}</div>
+              <div class="flex flex-col gap-2 w-full ws-pre-line">
+                <Select v-model:value={props.entryStates[PREFIX + 'Button1'].value} options={options}/>
+              </div>
+            </div>
+            <div class="flex gap-2 items-start">
+              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.mmlIo.button2')}</div>
+              <div class="flex flex-col gap-2 w-full ws-pre-line">
+                <Select v-model:value={props.entryStates[PREFIX + 'Button2'].value} options={options}/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="flex flex-col gap-2">
             {props.section.entries?.filter(it=>
               ['P2', 'Touch2p', 'Button2p', 'Led2p'].map(it=>PREFIX + it).includes(it.path!))
               .map((entry) => {
-                return <NFormItem label={t(`mod.mmlIo.${entry.path!.split('.').pop()}`)} labelPlacement="left" labelWidth="10em" showFeedback={false}>
+                return <div class="flex gap-2 items-start">
+                  <div class="ml-1 text-sm w-10em shrink-0">{t(`mod.mmlIo.${entry.path!.split('.').pop()}`)}</div>
                   <div class="flex h-34px items-center">
-                    <NSwitch v-model:value={props.entryStates[entry.path!].value}/>
+                    <CheckBox v-model:value={props.entryStates[entry.path!].value}>{props.entryStates[entry.path!].value ? '开' : '关'}</CheckBox>
                   </div>
-                </NFormItem>
+                </div>
               })
             }
-            <NFormItem label={t('mod.mmlIo.button3')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-              <NFlex vertical class="w-full ws-pre-line">
-                <NSelect v-model:value={props.entryStates[PREFIX + 'Button3'].value} options={options}/>
-              </NFlex>
-            </NFormItem>
-            <NFormItem label={t('mod.mmlIo.button4')} labelPlacement="left" labelWidth="10em" showFeedback={false}>
-              <NFlex vertical class="w-full ws-pre-line">
-                <NSelect v-model:value={props.entryStates[PREFIX + 'Button4'].value} options={options}/>
-              </NFlex>
-            </NFormItem>
-          </NFlex>
-        </NGridItem>
-      </NGrid>
-    </NFlex>;
+            <div class="flex gap-2 items-start">
+              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.mmlIo.button3')}</div>
+              <div class="flex flex-col gap-2 w-full ws-pre-line">
+                <Select v-model:value={props.entryStates[PREFIX + 'Button3'].value} options={options}/>
+              </div>
+            </div>
+            <div class="flex gap-2 items-start">
+              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.mmlIo.button4')}</div>
+              <div class="flex flex-col gap-2 w-full ws-pre-line">
+                <Select v-model:value={props.entryStates[PREFIX + 'Button4'].value} options={options}/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>;
   },
 });

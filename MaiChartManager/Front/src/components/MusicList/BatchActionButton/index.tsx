@@ -1,5 +1,4 @@
 import { defineComponent, ref } from "vue";
-import { NButton, NModal } from "naive-ui";
 import MusicSelector from "@/components/MusicList/BatchActionButton/MusicSelector";
 import EditProps from "@/components/MusicList/BatchActionButton/EditProps";
 import { MusicXmlWithABJacket } from "@/client/apiGen";

@@ -1,7 +1,6 @@
 import { computed, defineComponent, PropType } from "vue";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
 import noJacket from '@/assets/noJacket.webp';
-import { NBadge, NFlex } from "naive-ui";
 import { DIFFICULTY } from "@/consts";
 import ProblemsDisplay from "@/components/ProblemsDisplay";
 import { musicListAll, selectedADir } from "@/store/refs";
@@ -38,19 +37,19 @@ export default defineComponent({
       <div class={`flex gap-5 h-20 w-full p-2 m-y-1 hover:bg-op-40 rd-md relative ${props.selected ? 'bg-[var(--selected-bg)]' : 'hover:bg-zinc-3'}`} onClick={props.onClick} title={props.music.name!}>
         <img src={jacketUrl.value} class="h-16 w-16 object-fill shrink-0" key={props.music.id} />
         <div class="flex flex-col grow-1 w-0">
-          <NFlex class="text-xs c-gray-5" align="center" size="small">
-            {props.music.modified && <NBadge dot type="warning" />}
+          <div class="flex items-center gap-1 text-xs c-gray-5">
+            {props.music.modified && <span class="inline-block w-2 h-2 rounded-full bg-yellow-500" />}
             {props.music.id?.toString().padStart(6, '0')}
-          </NFlex>
+          </div>
           <div class="text-ellipsis of-hidden ws-nowrap">{props.music.name}</div>
           <LevelTagsDisplay charts={props.music.charts!}></LevelTagsDisplay>
         </div>
-        <NFlex class="absolute right-0 bottom-0 mr-2 mb-2" size="small">
+        <div class="flex gap-1 absolute right-0 bottom-0 mr-2 mb-2">
           {props.music.longMusic && <LongMusicIcon />}
           <ConflictDisplay conflicts={overridingOthers.value} type="up" />
           <ConflictDisplay conflicts={overrideByOthers.value} type="down" />
           <ProblemsDisplay problems={problems.value} />
-        </NFlex>
+        </div>
       </div>
     )
   }

@@ -1,6 +1,5 @@
 import { computed, defineComponent, PropType, watch } from "vue";
 import { Chart } from "@/client/apiGen";
-import { NFlex } from "naive-ui";
 import api from "@/client/api";
 import { disableSync, selectedADir, selectedMusic } from "@/store/refs";
 import { LEVELS } from "@/consts";

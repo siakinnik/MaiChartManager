@@ -1,5 +1,5 @@
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import { NButton, NCheckbox, NFlex, NSwitch, useDialog, useMessage } from "naive-ui";
+
 import api from "@/client/api";
 import { globalCapture, modInfo, updateModInfo, updateMusicList, aquaMaiConfig as config, modUpdateInfo } from "@/store/refs";
 import AquaMaiConfigurator from "./AquaMaiConfigurator";
@@ -9,7 +9,7 @@ import _ from "lodash";
 import ModInstallDropdown from "@/components/ModManager/ModInstallDropdown";
 import styles from "./styles.module.sass";
 import { useI18n } from 'vue-i18n';
-import { Button, Modal } from "@munet/ui";
+import { Button, Modal, addToast } from '@munet/ui';
 import { debounce } from 'perfect-debounce';
 import AquaMaiSignatureStatusDisplay from "./AquaMaiSignatureStatusDisplay";
 
@@ -28,9 +28,9 @@ export default defineComponent({
 
     const configReadErr = ref('')
     const configReadErrTitle = ref('')
-    const dialog = useDialog()
+
     const installingMelonLoader = ref(false)
-    const message = useMessage();
+
     const { t } = useI18n();
     const errTitle = ref('');
 
@@ -91,7 +91,7 @@ export default defineComponent({
       try {
         await api.SetAquaMaiConfig(config.value)
         await updateMusicList()
-        message.success(t('music.save.saveSuccess'))
+        addToast({ message: t('music.save.saveSuccess'), type: 'success' })
       } catch (e) {
         globalCapture(e, t('mod.saveConfigFailed'))
       }
@@ -120,7 +120,7 @@ export default defineComponent({
 
       let editorPart = <></>;
       if (configReadErrTitle.value.includes('ConfigCorruptedException')) {
-        editorPart = <NFlex vertical justify="center" align="center" class="min-h-100">
+        editorPart = <div class="flex flex-col gap-2 justify-center items-center min-h-100">
           <div class="text-8">{t('mod.configCorrupted')}</div>
           <div class="c-gray-5 text-lg">{t('mod.configCorruptedMessage')}</div>
           <div>
@@ -128,10 +128,10 @@ export default defineComponent({
               {t('mod.resetToDefault')}
             </Button>
           </div>
-        </NFlex>
+        </div>
       }
       else if (configReadErrTitle.value.includes('AquaMaiSignatureVerificationFailedException')) {
-        editorPart = <NFlex vertical justify="center" align="center" class="min-h-100">
+        editorPart = <div class="flex flex-col gap-2 justify-center items-center min-h-100">
           <div class="text-8">{t('mod.aquaMaiSignatureVerificationFailed')}</div>
           <div class="c-gray-5 text-lg">{t('mod.aquaMaiSignatureVerificationFailedMessage')}</div>
           <div>
@@ -139,14 +139,14 @@ export default defineComponent({
               {t('mod.loadConfigIgnoreSignature')}
             </Button>
           </div>
-        </NFlex>
+        </div>
       }
       else if (configReadErr.value) {
-        editorPart = <NFlex vertical justify="center" align="center" class="min-h-100">
+        editorPart = <div class="flex flex-col gap-2 justify-center items-center min-h-100">
           <div class="text-8">{errTitle.value}</div>
           <div class="c-gray-5 text-lg">{configReadErr.value}</div>
           <div class="c-gray-4 text-sm">{configReadErrTitle.value}</div>
-        </NFlex>
+        </div>
       }
       else {
         editorPart = <AquaMaiConfigurator config={config.value!} useNewSort={true}/>
@@ -158,8 +158,8 @@ export default defineComponent({
         title={t('mod.title')}
         v-model:show={show.value}
       >
-        {!!modInfo.value && <NFlex vertical>
-          <NFlex align="center">
+        {!!modInfo.value && <div class="flex flex-col gap-2">
+          <div class="flex gap-2 items-center">
             <span class="max-[1060px]:hidden">MelonLoader:</span>
             {modInfo.value.melonLoaderInstalled ? <span class="c-green-6 max-[1060px]:hidden">{t('mod.installed')}</span> : <span class="c-red-6">{t('mod.notInstalled')}</span>}
             {!modInfo.value.melonLoaderInstalled && <Button ing={installingMelonLoader.value} onClick={installMelonLoader}>{t('mod.install')}</Button>}
@@ -177,9 +177,9 @@ export default defineComponent({
             <Button onClick={() => api.KillGameProcess()}>
               {t('mod.killGameProcess')}
             </Button>
-          </NFlex>
+          </div>
           {editorPart}
-        </NFlex>}
+        </div>}
       </Modal>
     };
   }

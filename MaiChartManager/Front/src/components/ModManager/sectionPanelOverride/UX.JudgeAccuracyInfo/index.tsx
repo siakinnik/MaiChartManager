@@ -1,6 +1,6 @@
 import { defineComponent, PropType, ref, computed } from 'vue';
 import { IEntryState, ISectionState } from "@/client/apiGen";
-import { NButton, NFlex } from "naive-ui";
+import { Button } from '@munet/ui';
 import api from "@/client/api";
 import { useI18n } from 'vue-i18n';
 
@@ -11,9 +11,9 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const { t } = useI18n();
-    return () => <NFlex align="center" class="m-l-35 translate-y--3">
+    return () => <div class="flex gap-2 items-center m-l-35 translate-y--3">
       {t('mod.judgeAccuracyInfo.author')}Minepig
-      <NButton secondary onClick={() => api.OpenJudgeAccuracyInfoPdf()}>{t('mod.judgeAccuracyInfo.viewDoc')}</NButton>
-    </NFlex>;
+      <Button variant="secondary" onClick={() => api.OpenJudgeAccuracyInfoPdf()}>{t('mod.judgeAccuracyInfo.viewDoc')}</Button>
+    </div>;
   },
 });

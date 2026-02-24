@@ -1,5 +1,6 @@
 import { computed, defineComponent, PropType, reactive, ref } from "vue";
-import { DataTableBaseColumn, DataTableColumns, NButton, NDataTable, NFlex, NInput } from "naive-ui";
+import { DataTableBaseColumn, DataTableColumns, NDataTable } from "naive-ui";
+import { Button, TextInput } from "@munet/ui";
 import { addVersionList, b15ver, genreList, musicList, musicListAll, selectedADir, selectMusicId, version } from "@/store/refs";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
 import JacketBox from "@/components/JacketBox";
@@ -90,12 +91,12 @@ export default defineComponent({
       {
         title: t('music.list.tableCharts'),
         key: 'charts',
-        render: (row) => <NFlex class="pt-1 text-sm" size="small">
+        render: (row) => <div class="flex gap-1 pt-1 text-sm">
           {
             (row.charts || []).map((chart, index) =>
               chart.enable && <div key={index} class="c-white rounded-full px-2" style={{ backgroundColor: LEVEL_COLOR[index!] }}>{LEVELS[chart.levelId!]}</div>)
           }
-        </NFlex>,
+        </div>,
         width: '20em',
         filterOptions: [t('music.list.filterBasic'), t('music.list.filterAdvanced'), t('music.list.filterExpert'), t('music.list.filterMaster'), t('music.list.filterReMaster')].map((label, value) => ({ label, value })),
         filter: (value, row) => row.charts![value as number].enable!
@@ -104,13 +105,13 @@ export default defineComponent({
         title: t('music.list.tableJump'),
         key: 'jump',
         width: '5em',
-        render: (row) => <NButton quaternary class="p-2" onClick={() => {
+        render: (row) => <Button variant="ghost" class="p-2" onClick={() => {
           selectedADir.value = row.assetDir!;
           selectMusicId.value = row.id!;
           props.cancel();
         }}>
           <span class="i-tabler:external-link c-neutral-5"/>
-        </NButton>,
+        </Button>,
       },
     ] satisfies DataTableColumns<MusicXmlWithABJacket>)
 
@@ -130,13 +131,13 @@ export default defineComponent({
       })),
     });
 
-    return () => <NFlex vertical size="large">
+    return () => <div class="flex flex-col gap-3">
       {/*<NFlex>*/}
       {/*  <NButton onClick={() => {*/}
       {/*    emit('update:selectedMusicIds', musicListAll.value.filter(it => !props.selectedMusicIds!.includes(it)));*/}
       {/*  }}>反选</NButton>*/}
       {/*</NFlex>*/}
-      <NInput placeholder={t('music.list.searchPlaceholder')} v-model:value={filter.value}/>
+      <TextInput placeholder={t('music.list.searchPlaceholder')} v-model:value={filter.value}/>
       <NDataTable
         columns={columns.value}
         data={musicListAll.value}
@@ -147,9 +148,9 @@ export default defineComponent({
         rowKey={row => `${row.assetDir}:${row.id}`}
         v-model:checkedRowKeys={selectedMusicIds.value}
       />
-      <NFlex justify="end">
-        <NButton onClick={() => props.continue()} disabled={!selectedMusicIds.value.length}>{t('purchase.continue')}</NButton>
-      </NFlex>
-    </NFlex>;
+      <div class="flex justify-end gap-2">
+        <Button onClick={() => props.continue()} disabled={!selectedMusicIds.value.length}>{t('purchase.continue')}</Button>
+      </div>
+    </div>;
   }
 })

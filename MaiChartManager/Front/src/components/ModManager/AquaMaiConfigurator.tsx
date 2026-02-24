@@ -1,6 +1,7 @@
 import { defineComponent, PropType, ref, computed } from 'vue';
 import { ConfigDto, IEntryState, ISectionState, Section } from "@/client/apiGen";
-import { NAnchor, NAnchorLink, NButton, NDivider, NFlex, NForm, NFormItem, NInput, NInputNumber, NPopover, NScrollbar, NSelect, NSwitch } from "naive-ui";
+import { NAnchor, NAnchorLink } from "naive-ui";
+import { CheckBox, Popover, TextInput, Button } from '@munet/ui';
 import _ from "lodash";
 import ProblemsDisplay from "@/components/ProblemsDisplay";
 import configSortStub from './configSort.yaml'
@@ -34,37 +35,38 @@ const ConfigSection = defineComponent({
       return props.section.attribute?.comment?.commentEn;
     })
 
-    return () => <NFlex vertical class="p-1 border-transparent border-solid border-1px rd hover:border-yellow-5">
-      {!props.section.attribute!.alwaysEnabled && <NFormItem label={getNameForPath(props.section.path!, props.section.path!.split('.').pop()!, props.section.attribute?.comment?.nameZh)} labelPlacement="left" labelWidth="9em" showFeedback={false}
+    return () => <div class="flex flex-col gap-2 p-1 border-transparent border-solid border-1px rd hover:border-yellow-5">
+      {!props.section.attribute!.alwaysEnabled && <div class="flex gap-2 items-start"
         // @ts-ignore
-                                                             title={props.section.path!}
+                                                       title={props.section.path!}
       >
-        <NFlex vertical class="w-full ws-pre-line">
-          <NFlex class="h-34px" align="center">
-            <NSwitch v-model:value={props.sectionState.enabled}/>
+        <div class="ml-1 text-sm w-9em shrink-0">{getNameForPath(props.section.path!, props.section.path!.split('.').pop()!, props.section.attribute?.comment?.nameZh)}</div>
+        <div class="flex flex-col gap-2 w-full ws-pre-line">
+          <div class="flex gap-2 h-34px items-center">
+            <CheckBox v-model:value={props.sectionState.enabled}>{props.sectionState.enabled ? '开' : '关'}</CheckBox>
             {comments.shouldEnableOptions[props.section.path!] && !props.sectionState.enabled && <ProblemsDisplay problems={[t('mod.needEnableOption')]}/>}
-            {props.isCommunity && <NPopover trigger="hover">{{
+            {props.isCommunity && <Popover trigger="hover">{{
               trigger: () => <div class="i-ic-baseline-info text-lg c-neutral-5"/>,
               default: () => <div>
                 <div class="text-lg mb-2">{t('mod.community.title')}</div>
                 <div class="text-sm whitespace-pre-line lh-1.7em">{t('mod.community.description')}</div>
               </div>
-            }}</NPopover>}
-          </NFlex>
+            }}</Popover>}
+          </div>
           {comment.value}
-        </NFlex>
-      </NFormItem>}
+        </div>
+      </div>}
       {props.sectionState.enabled && <>
         {customPanelPosition === 'top' && <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/>}
         {(CustomPanel && customPanelPosition === 'override') ?
           <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/> :
-          !!props.section.entries?.length && <NFlex vertical class="p-l-15 max-[900px]:p-l-10 max-[500px]:p-l-5!">
+          !!props.section.entries?.length && <div class="flex flex-col gap-2 p-l-15 max-[900px]:p-l-10 max-[500px]:p-l-5!">
             {props.section.entries?.filter(it => !it.attribute?.hideWhenDefault || (it.attribute?.hideWhenDefault && !props.entryStates[it.path!].isDefault))
               .map((entry) => <ConfigEntry key={entry.path!} entry={entry} entryState={props.entryStates[entry.path!]}/>)}
-          </NFlex>}
+          </div>}
         {customPanelPosition === 'bottom' && <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/>}
         </>}
-    </NFlex>;
+    </div>;
   },
 });
 
@@ -121,27 +123,31 @@ export default defineComponent({
         {bigSections.value.map((key) => <NAnchorLink key={key} title={getBigSectionName(key!)} href={`#${key}`}/>)}
         {otherSection.value.length > 0 && <NAnchorLink key={t('mod.other')} title={t('mod.other')} href={`#${t('mod.other')}`}/>}
       </NAnchor>
-      <NScrollbar class="h-[calc(100dvh-160px)] p-2 relative text-14px"
+      <div class="of-y-auto cst h-[calc(100dvh-160px)] p-2 relative text-14px"
         // @ts-ignore
                   id="scroll"
       >
         <div class={'absolute top-1 left-4 max-[900px]:left-0 right-4 z-200 flex gap-2'}>
           <div class={["min-[900px]:hidden"]}>
-            <NPopover trigger="click">{{
-              trigger: () => <NButton secondary size="small"><span class="i-ic-baseline-menu text-lg"/></NButton>,
+            <Popover trigger="click">{{
+              trigger: () => <Button variant="secondary" size="small"><span class="i-ic-baseline-menu text-lg"/></Button>,
               default: () => <NAnchor type="block" offsetTarget="#scroll">
                 {bigSections.value.map((key) => <NAnchorLink key={key} title={getBigSectionName(key!)} href={`#${key}`}/>)}
                 {otherSection.value.length > 0 && <NAnchorLink key={t('mod.other')} title={t('mod.other')} href={`#${t('mod.other')}`}/>}
               </NAnchor>
-            }}</NPopover>
+            }}</Popover>
           </div>
-          <NInput v-model:value={search.value} placeholder={t('mod.searchPlaceholder')} size="small" clearable ref={searchRef}/>
+          {/* @ts-ignore */}
+          <TextInput v-model:value={search.value} placeholder={t('mod.searchPlaceholder')} ref={searchRef}/>
         </div>
         {bigSections.value.map((big) => <div id={big} key={big}>
-          <NDivider titlePlacement="left" class={["mt-0! pt-8 sticky top-0! z-1 bg-modal"]}
-            // @ts-ignore
+          <div class={["mt-0! pt-8 sticky top-0! z-1 bg-modal flex items-center gap-2 cursor-pointer"]}
             onClick={() => location.href = `#${big}`}
-          >{getBigSectionName(big!)}</NDivider>
+          >
+            <hr class="border-white/10 flex-1"/>
+            <span>{getBigSectionName(big!)}</span>
+            <hr class="border-white/10 flex-1"/>
+          </div>
           {filteredSections.value?.filter(it => {
             if (props.useNewSort) {
               return configSort.value[big!].includes(it.path!);
@@ -159,14 +165,18 @@ export default defineComponent({
         </div>)}
         {otherSection.value.length > 0 &&
           <div id={t('mod.other')}>
-            <NDivider titlePlacement="left" class="mt-2!">{t('mod.other')}</NDivider>
+            <div class="mt-2! flex items-center gap-2">
+              <hr class="border-white/10 flex-1"/>
+              <span>{t('mod.other')}</span>
+              <hr class="border-white/10 flex-1"/>
+            </div>
             {otherSection.value.map((section) =>
               <ConfigSection key={section.path!} section={section}
                              entryStates={props.config.entryStates!}
                              isCommunity={communityList.value.includes(section.path!)}
                              sectionState={props.config.sectionStates![section.path!]}/>)}
           </div>}
-      </NScrollbar>
+      </div>
     </div>;
   },
 });

@@ -1,5 +1,5 @@
 import { defineComponent, PropType, ref } from "vue";
-import { NButton, NCheckbox, NDrawer, NDrawerContent, NFlex, NFormItem, NInputNumber, NModal, NProgress, NSelect, useDialog, useMessage } from "naive-ui";
+import { Button, CheckBox, Modal, NumberInput, Progress, Select, addToast, showTransactionalDialog } from "@munet/ui";
 import FileTypeIcon from "@/components/FileTypeIcon";
 import { LicenseStatus, MusicXmlWithABJacket } from "@/client/apiGen";
 import api, { getUrl } from "@/client/api";
@@ -29,10 +29,10 @@ export default defineComponent({
     const load = ref(false)
     const okResolve = ref<Function>(() => {
     })
-    const dialog = useDialog();
+
     const step = ref(STEP.None)
     const progress = ref(0)
-    const message = useMessage();
+
     const noScale = ref(false)
     const savedOptions = useStorage('importMusicOptions', defaultSavedOptions, undefined, { mergeDefaults: true });
 
@@ -111,24 +111,12 @@ export default defineComponent({
 
         if (file.name.endsWith('.dat')) {
           load.value = true;
-          await new Promise<void>((resolve, reject) => {
-            dialog.info({
-              showIcon: false,
-              title: t('common.confirm'),
-              content: t('music.edit.confirmSetMovie', { filename: file.name }),
-              positiveText: t('common.confirm'),
-              negativeText: t('common.cancel'),
-              positiveButtonProps: {
-                type: 'primary',
-              },
-              onPositiveClick: () => {
-                resolve();
-              },
-              onNegativeClick: () => {
-                reject(new DOMException('', 'AbortError'));
-              },
-            })
-          })
+          const confirmed = await showTransactionalDialog(
+            t('common.confirm'),
+            t('music.edit.confirmSetMovie', { filename: file.name }),
+            [{ text: t('common.confirm'), action: true }, { text: t('common.cancel'), action: false }]
+          );
+          if (!confirmed) throw new DOMException('', 'AbortError');
           await api.SetMovie(props.song.id!, selectedADir.value, { file, padding: 0 });
         } else if (version.value?.license !== LicenseStatus.Active) {
           showNeedPurchaseDialog.value = true;
@@ -145,7 +133,7 @@ export default defineComponent({
           step.value = STEP.Progress
           await uploadMovie(props.song.id!, file, offset.value);
           console.log("upload movie success")
-          message.success(t('message.saveSuccess'))
+          addToast({message: t('message.saveSuccess'), type: 'success'})
         }
       } catch (e: any) {
         if (e?.name === 'AbortError') return
@@ -157,72 +145,54 @@ export default defineComponent({
       }
     }
 
-    return () => <NButton secondary onClick={() => uploadFlow()} loading={load.value} disabled={props.disabled}>
+    return () => <Button variant="secondary" onClick={() => uploadFlow()} ing={load.value} disabled={props.disabled}>
       {t('music.edit.setPv')}
 
-      <NDrawer show={step.value === STEP.Select} height={250} placement="bottom">
-        <NDrawerContent title={t('music.edit.selectFileTypes')}>
-          <NFlex vertical>
-            {t('music.edit.pvFileHint')}
-            <div class="grid cols-4 justify-items-center text-8em gap-10">
-              <FileTypeIcon type="MP4"/>
-              <FileTypeIcon type="JPG"/>
-              <FileTypeIcon type="DAT"/>
-            </div>
-          </NFlex>
-        </NDrawerContent>
-      </NDrawer>
-      <NModal
-        preset="card"
-        class="w-[min(30vw,30em)]"
+      <Modal title={t('music.edit.selectFileTypes')} show={step.value === STEP.Select} onUpdateShow={() => step.value = STEP.None} width="40em">
+        <div class="flex flex-col gap-2">
+          {t('music.edit.pvFileHint')}
+          <div class="grid cols-4 justify-items-center text-8em gap-10">
+            <FileTypeIcon type="MP4"/>
+            <FileTypeIcon type="JPG"/>
+            <FileTypeIcon type="DAT"/>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        width="min(30vw,30em)"
         title={t('music.edit.setOffsetSeconds')}
         show={step.value === STEP.Offset}
         onUpdateShow={() => step.value = STEP.None}
       >{{
-        default: () => <NFlex vertical size="large">
+        default: () => <div class="flex flex-col gap-3">
           <div>{t('music.edit.offsetHint')}</div>
-          <NInputNumber v-model:value={offset.value} class="w-full" step={0.01}/>
-          <NCheckbox v-model:checked={noScale.value}>
+          <NumberInput v-model:value={offset.value} class="w-full" step={0.01}/>
+          <CheckBox v-model:value={noScale.value}>
             {t('chart.import.option.noScale')}
-          </NCheckbox>
-          <NFormItem label={t('chart.import.option.pvCodec')} labelPlacement="left" showFeedback={false}>
-            <NFlex vertical class="w-full">
-              <NFlex class="h-34px" align="center">
-                <NSelect v-model:value={savedOptions.value.movieCodec} options={[
-                  { label: t('chart.import.option.codecPreferH264'), value: MOVIE_CODEC.PreferH264 },
-                  { label: t('chart.import.option.codecForceH264'), value: MOVIE_CODEC.ForceH264 },
-                  { label: t('chart.import.option.codecForceVP9'), value: MOVIE_CODEC.ForceVP9 },
-                ]}/>
-              </NFlex>
-            </NFlex>
-          </NFormItem>
-          <NCheckbox v-model:checked={savedOptions.value.yuv420p}>
+          </CheckBox>
+          <div class="ml-1 text-sm">{t('chart.import.option.pvCodec')}</div>
+          <Select v-model:value={savedOptions.value.movieCodec} options={[
+            { label: t('chart.import.option.codecPreferH264'), value: MOVIE_CODEC.PreferH264 },
+            { label: t('chart.import.option.codecForceH264'), value: MOVIE_CODEC.ForceH264 },
+            { label: t('chart.import.option.codecForceVP9'), value: MOVIE_CODEC.ForceVP9 },
+          ]}/>
+          <CheckBox v-model:value={savedOptions.value.yuv420p}>
             {t('chart.import.option.yuv420p')}
-          </NCheckbox>
-        </NFlex>,
-        footer: () => <NFlex justify="end">
-          <NButton onClick={okResolve.value as any}>{t('common.confirm')}</NButton>
-        </NFlex>
-      }}</NModal>
-      <NModal
-        preset="card"
-        class="w-[min(40vw,40em)]"
+          </CheckBox>
+        </div>,
+        actions: () => <button class="w-0 grow" onClick={okResolve.value as any}>{t('common.confirm')}</button>
+      }}</Modal>
+      <Modal
+        width="min(40vw,40em)"
         title={t('tools.converting')}
         show={step.value === STEP.Progress}
-        closable={false}
-        maskClosable={false}
-        closeOnEsc={false}
+        esc={false}
       >
-        <NProgress
-          type="line"
-          status="success"
-          percentage={progress.value}
-          indicator-placement="inside"
-          processing
-        >
-          {progress.value === 100 ? t('tools.videoOptions.processing') : `${progress.value}%`}
-        </NProgress>
-      </NModal>
-    </NButton>;
+        <div class="flex flex-col gap-2">
+          <Progress status="success" percentage={progress.value} showIndicator/>
+          <div class="text-center text-sm">{progress.value === 100 ? t('tools.videoOptions.processing') : `${progress.value}%`}</div>
+        </div>
+      </Modal>
+    </Button>;
   }
 })

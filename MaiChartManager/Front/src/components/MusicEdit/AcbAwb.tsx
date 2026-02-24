@@ -1,12 +1,13 @@
 import { computed, defineComponent, PropType, ref } from "vue";
 import { HttpResponse, MusicXmlWithABJacket } from "@/client/apiGen";
-import { NButton, NDrawer, NDrawerContent, NFlex, NForm, NFormItem, NInputNumber, NModal, NPopover, NRadio, useDialog } from "naive-ui";
+import { Button, Modal, NumberInput, Popover, showTransactionalDialog } from "@munet/ui";
 import { globalCapture, selectedADir } from "@/store/refs";
 import FileTypeIcon from "@/components/FileTypeIcon";
 import api, { getUrl } from "@/client/api";
 import AudioPreviewEditorButton from "@/components/MusicEdit/AudioPreviewEditorButton";
 import SetMovieButton from "@/components/MusicEdit/SetMovieButton";
 import { t } from "@/locales";
+
 
 export let uploadFlow = async (fileHandle?: FileSystemFileHandle) => {
 }
@@ -25,7 +26,7 @@ export default defineComponent({
     const load = ref(false)
     const okResolve = ref<Function>(() => {
     })
-    const dialog = useDialog();
+
     const cueIdNotMatch = computed(() => props.song.nonDxId !== props.song.cueId)
     const movieIdNotMatch = computed(() => props.song.nonDxId !== props.song.movieId)
 
@@ -83,7 +84,7 @@ export default defineComponent({
         }
         if (res.error) {
           const error = res.error as any;
-          dialog.warning({ title: t('jacket.setFailed'), content: error.message || error });
+          showTransactionalDialog(t('jacket.setFailed'), error.message || error, undefined, true);
           return;
         }
         updateTime.value = Date.now()
@@ -100,55 +101,48 @@ export default defineComponent({
       }
     }
 
-    return () => <NFlex align="center">
+    return () => <div class="flex items-center gap-2">
       {props.song.isAcbAwbExist && <audio controls src={url.value} class="w-0 grow"/>}
       {selectedADir.value !== 'A000' &&
-        <NPopover trigger="hover" disabled={!cueIdNotMatch.value}>{{
-          trigger: () => <NButton secondary class={`${!props.song.isAcbAwbExist && "w-full"}`} onClick={() => uploadFlow()} loading={load.value} disabled={cueIdNotMatch.value}>{props.song.isAcbAwbExist ? t('music.edit.replaceAudio') : t('music.edit.setAudio')}</NButton>,
+        <Popover trigger="hover">{{
+          trigger: () => <Button variant="secondary" class={`${!props.song.isAcbAwbExist && "w-full"}`} onClick={() => uploadFlow()} ing={load.value} disabled={cueIdNotMatch.value}>{props.song.isAcbAwbExist ? t('music.edit.replaceAudio') : t('music.edit.setAudio')}</Button>,
           default: () => t('music.edit.cueIdNotMatch')
-        }}</NPopover>
+        }}</Popover>
       }
       {selectedADir.value !== 'A000' && props.song.isAcbAwbExist &&
-        <NPopover trigger="hover" disabled={!cueIdNotMatch.value}>{{
+        <Popover trigger="hover">{{
           trigger: () => <AudioPreviewEditorButton disabled={cueIdNotMatch.value}/>,
           default: () => t('music.edit.cueIdNotMatchPreview')
-        }}</NPopover>
+        }}</Popover>
       }
       {selectedADir.value !== 'A000' && props.song.isAcbAwbExist &&
-        <NPopover trigger="hover" disabled={!movieIdNotMatch.value}>{{
+        <Popover trigger="hover">{{
           trigger: () => <SetMovieButton song={props.song} disabled={movieIdNotMatch.value}/>,
           default: () => t('music.edit.movieIdNotMatch')
-        }}</NPopover>
+        }}</Popover>
       }
 
       {/* 打开文件对话框一般在左上角，所以在下边显示一个 Drawer */}
-      <NDrawer v-model:show={tipShow.value} height={200} placement="bottom">
-        <NDrawerContent title={t('music.edit.selectFileTypes')}>
+      <Modal title={t('music.edit.selectFileTypes')} v-model:show={tipShow.value} width="40em">
           <div class="grid cols-4 justify-items-center text-8em gap-10">
             <FileTypeIcon type="WAV"/>
             <FileTypeIcon type="MP3"/>
             <FileTypeIcon type="OGG"/>
             <FileTypeIcon type="ACB"/>
           </div>
-        </NDrawerContent>
-      </NDrawer>
-      <NDrawer v-model:show={tipSelectAwbShow.value} width={500} placement="right">
-        <NDrawerContent title={t('music.edit.selectAwb')}/>
-      </NDrawer>
-      <NModal
-        preset="card"
-        class="w-[min(30vw,25em)]"
+      </Modal>
+      <Modal title={t('music.edit.selectAwb')} v-model:show={tipSelectAwbShow.value} width="30em"/>
+      <Modal
+        width="min(30vw,25em)"
         title={t('music.edit.setOffsetSeconds')}
         v-model:show={setOffsetShow.value}
       >{{
-        default: () => <NFlex vertical size="large">
+        default: () => <div class="flex flex-col gap-3">
           <div>{t('music.edit.audioOffsetHint')}</div>
-          <NInputNumber v-model:value={offset.value} class="w-full" step={0.01}/>
-        </NFlex>,
-        footer: () => <NFlex justify="end">
-          <NButton onClick={okResolve.value as any}>{t('common.confirm')}</NButton>
-        </NFlex>
-      }}</NModal>
-    </NFlex>
+          <NumberInput v-model:value={offset.value} class="w-full" step={0.01}/>
+        </div>,
+        actions: () => <button class="w-0 grow" onClick={okResolve.value as any}>{t('common.confirm')}</button>
+      }}</Modal>
+    </div>
   }
 })

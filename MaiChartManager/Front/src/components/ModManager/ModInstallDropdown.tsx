@@ -1,5 +1,5 @@
 import { defineComponent, PropType, ref, computed } from 'vue';
-import { NButton, NDropdown, NText } from "naive-ui";
+
 import { globalCapture, modInfo, modUpdateInfo, updateModInfo } from "@/store/refs";
 import api from "@/client/api";
 import { latestVersion } from './shouldShowUpdateController';

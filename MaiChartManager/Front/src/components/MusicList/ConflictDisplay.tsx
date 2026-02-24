@@ -1,5 +1,5 @@
 import { defineComponent, PropType } from "vue";
-import { NFlex, NPopover } from "naive-ui";
+import { Popover } from "@munet/ui";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
 import OverrideUpIcon from '@/icons/override-up.svg'
 import OverrideDownIcon from '@/icons/override-down.svg'
@@ -13,16 +13,16 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
     
-    return () => !!props.conflicts.length && <NPopover trigger="hover">
+    return () => !!props.conflicts.length && <Popover trigger="hover">
       {{
         trigger: () => props.type === 'up' ?
           // @ts-ignore
           <OverrideUpIcon class="c-blue text-2em"/> : <OverrideDownIcon class="c-indigo text-2em"/>,
-        default: () => <NFlex vertical>
+        default: () => <div class="flex flex-col gap-2">
           {props.type === 'up' ? t('assetDir.conflictOverrides') : t('assetDir.conflictOverriddenBy')}
           {props.conflicts!.map((p, index) => <div key={index}>{p.assetDir}</div>)}
-        </NFlex>
+        </div>
       }}
-    </NPopover>;
+    </Popover>;
   }
 })

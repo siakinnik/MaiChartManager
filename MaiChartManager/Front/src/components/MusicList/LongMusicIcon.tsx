@@ -1,4 +1,4 @@
-import { NPopover, NFlex } from 'naive-ui';
+import { Popover } from '@munet/ui';
 import { defineComponent, PropType, ref, computed, watch } from 'vue';
 
 export default defineComponent({
@@ -6,11 +6,11 @@ export default defineComponent({
   // },
   setup(props, { emit }) {
 
-    return () => <NPopover trigger="hover">
+    return () => <Popover trigger="hover">
     {{
       trigger: () => <div class="text-#5b79c4 i-mdi:arrow-left-right-bold text-2em" />,
       default: () => "LongMusic"
     }}
-  </NPopover>;
+  </Popover>;
   },
 });

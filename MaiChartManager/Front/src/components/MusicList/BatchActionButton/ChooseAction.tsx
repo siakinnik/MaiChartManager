@@ -1,6 +1,6 @@
 import { defineComponent, PropType, ref } from "vue";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
-import { NButton, NFlex, NPopover, NRadio, NRadioGroup, NSelect, useMessage, useNotification } from "naive-ui";
+import { Button, Radio, Select, Popover } from "@munet/ui";
 import { STEP } from "@/components/MusicList/BatchActionButton/index";
 import api from "@/client/api";
 import { showNeedPurchaseDialog, updateMusicList, version } from "@/store/refs";
@@ -35,7 +35,7 @@ export default defineComponent({
     const selectedOption = ref(OPTIONS.None);
     const selectedMaidataSubdir = useStorage('selectedMaidataSubdir', MAIDATA_SUBDIR.None);
     const load = ref(false);
-    const notify = useNotification();
+
     const { t } = useI18n();
 
     const proceed = async () => {
@@ -68,67 +68,69 @@ export default defineComponent({
             showNeedPurchaseDialog.value = true
             break;
           }
-          remoteExport(props.continue as any, props.selectedMusic!, selectedOption.value, notify, selectedMaidataSubdir.value);
+          remoteExport(props.continue as any, props.selectedMusic!, selectedOption.value, selectedMaidataSubdir.value);
           break;
       }
     }
 
-    return () => <NFlex vertical>
-      <NRadioGroup v-model:value={selectedOption.value} disabled={load.value}>
-        <NFlex vertical>
+    return () => <div class="flex flex-col gap-2">
+      <fieldset disabled={load.value}>
+        <div class="flex flex-col gap-2">
           {
             props.selectedMusic?.some(it => it.assetDir === 'A000') ?
               <>
-                <NPopover trigger="hover" placement="top-start">{{
+                <Popover trigger="hover">{{
                   trigger: () =>
-                    <NRadio disabled>
-                      {t('music.batch.editProperties')}
-                    </NRadio>,
+                    <div class="flex gap-2 items-center opacity-50">
+                      <input type="radio" disabled />
+                      <label>{t('music.batch.editProperties')}</label>
+                    </div>,
                   default: () => t('music.batch.selectedA000Warning')
-                }}</NPopover>
-                <NPopover trigger="hover" placement="top-start">{{
+                }}</Popover>
+                <Popover trigger="hover">{{
                   trigger: () =>
-                    <NRadio disabled>
-                      {t('common.delete')}
-                    </NRadio>,
+                    <div class="flex gap-2 items-center opacity-50">
+                      <input type="radio" disabled />
+                      <label>{t('common.delete')}</label>
+                    </div>,
                   default: () => t('music.batch.selectedA000Warning')
-                }}</NPopover>
+                }}</Popover>
               </> :
               <>
-                <NRadio value={OPTIONS.EditProps}>
+                <Radio k={OPTIONS.EditProps} v-model:value={selectedOption.value}>
                   {t('music.batch.editProperties')}
-                </NRadio>
-                <NRadio value={OPTIONS.Delete}>
+                </Radio>
+                <Radio k={OPTIONS.Delete} v-model:value={selectedOption.value}>
                   {t('common.delete')}
-                </NRadio>
+                </Radio>
               </>
           }
-          <NRadio value={OPTIONS.CreateNewOpt}>
+          <Radio k={OPTIONS.CreateNewOpt} v-model:value={selectedOption.value}>
             {t('music.batch.exportOriginal')}
-          </NRadio>
-          <NRadio value={OPTIONS.CreateNewOptCompatible}>
+          </Radio>
+          <Radio k={OPTIONS.CreateNewOptCompatible} v-model:value={selectedOption.value}>
             {t('music.batch.exportPreserveFormat')}
-          </NRadio>
-          <NRadio value={OPTIONS.CreateNewOptMa2_103}>
+          </Radio>
+          <Radio k={OPTIONS.CreateNewOptMa2_103} v-model:value={selectedOption.value}>
             {t('music.batch.exportMa2Format')}
-          </NRadio>
-          <NRadio value={OPTIONS.ConvertToMaidata}>
+          </Radio>
+          <Radio k={OPTIONS.ConvertToMaidata} v-model:value={selectedOption.value}>
             {t('music.batch.convertToMaidata')}
-          </NRadio>
-          <NRadio value={OPTIONS.ConvertToMaidataIgnoreVideo}>
+          </Radio>
+          <Radio k={OPTIONS.ConvertToMaidataIgnoreVideo} v-model:value={selectedOption.value}>
             {t('music.batch.convertToMaidataNoVideo')}
-          </NRadio>
+          </Radio>
 
           <TransitionVertical>
             {(selectedOption.value === OPTIONS.ConvertToMaidata || selectedOption.value === OPTIONS.ConvertToMaidataIgnoreVideo) &&
-              <NSelect v-model:value={selectedMaidataSubdir.value} options={[{label: t('music.batch.subdirOption.none'), value: MAIDATA_SUBDIR.None}, {label: t('music.batch.subdirOption.genre'), value: MAIDATA_SUBDIR.Genre}, {label: t('music.batch.subdirOption.version'), value: MAIDATA_SUBDIR.Version}]}/>}
+              <Select v-model:value={selectedMaidataSubdir.value} options={[{label: t('music.batch.subdirOption.none'), value: MAIDATA_SUBDIR.None}, {label: t('music.batch.subdirOption.genre'), value: MAIDATA_SUBDIR.Genre}, {label: t('music.batch.subdirOption.version'), value: MAIDATA_SUBDIR.Version}]}/>}
           </TransitionVertical>
-        </NFlex>
-      </NRadioGroup>
-      <NFlex justify="end">
-        <NButton onClick={() => props.continue(STEP.Select)} disabled={load.value}>{t('common.previous')}</NButton>
-        <NButton onClick={proceed} loading={load.value} disabled={selectedOption.value === OPTIONS.None}>{t('purchase.continue')}</NButton>
-      </NFlex>
-    </NFlex>;
+        </div>
+      </fieldset>
+      <div class="flex justify-end gap-2">
+        <Button onClick={() => props.continue(STEP.Select)} disabled={load.value}>{t('common.previous')}</Button>
+        <Button onClick={proceed} ing={load.value} disabled={selectedOption.value === OPTIONS.None}>{t('purchase.continue')}</Button>
+      </div>
+    </div>;
   }
 })

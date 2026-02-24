@@ -1,6 +1,6 @@
 import {computed, defineComponent, h, PropType, ref} from "vue";
 import TouchSensitivityDisplay from "./TouchSensitivityDisplay";
-import {NButton, NButtonGroup, NFlex, NFormItem, NInputNumber, NSwitch} from "naive-ui";
+import { Button, Select, CheckBox, NumberInput } from '@munet/ui';
 import {IEntryState, ISectionState} from "@/client/apiGen";
 import { useI18n } from 'vue-i18n';
 
@@ -45,22 +45,22 @@ export default defineComponent({
       }
     }
 
-    return () => <NFlex size="large" class="m-l-10">
+    return () => <div class="flex gap-4 m-l-10">
       <TouchSensitivityDisplay config={display.value} v-model:currentSelected={selected.value}/>
-      <NFlex vertical>
+      <div class="flex flex-col gap-2">
         {t('mod.touchSensitivity.applyPresetToGlobal')}
-        <NButtonGroup class="mb">
-          {Array.from({length: 11}, (_, i) => <NButton size="small" secondary class={i > 0 ? 'b-l b-l-solid b-l-[rgba(255,255,255,0.5)]' : ''} onClick={() => applyPreset(i)}>{i - 5 > 0 && '+'}{i - 5}</NButton>)}
-        </NButtonGroup>
+        <div class="flex mb">
+          {Array.from({length: 11}, (_, i) => <Button size="small" variant="secondary" class={i > 0 ? 'b-l b-l-solid b-l-[rgba(255,255,255,0.5)]' : ''} onClick={() => applyPreset(i)}>{i - 5 > 0 && '+'}{i - 5}</Button>)}
+        </div>
         {selected.value ? <>
             {t('mod.touchSensitivity.settingsFor', {area: selected.value.toUpperCase()})}
-            <NInputNumber v-model:value={props.entryStates[`GameSettings.TouchSensitivity.${selected.value.toUpperCase()}`].value} min={0} max={100} step={1}/>
-            <NFlex class="mb">
-              <NButton secondary onClick={() => applyToGlobal(props.entryStates[`GameSettings.TouchSensitivity.${selected.value!.toUpperCase()}`].value)}>{t('mod.touchSensitivity.applyToGlobal')}</NButton>
-              <NButton secondary onClick={() => applyToArea(selected.value!.substring(0, 1) as any, props.entryStates[`GameSettings.TouchSensitivity.${selected.value!.toUpperCase()}`].value)}>
+            <NumberInput v-model:value={props.entryStates[`GameSettings.TouchSensitivity.${selected.value.toUpperCase()}`].value} min={0} max={100} step={1}/>
+            <div class="flex gap-2 mb">
+              <Button variant="secondary" onClick={() => applyToGlobal(props.entryStates[`GameSettings.TouchSensitivity.${selected.value!.toUpperCase()}`].value)}>{t('mod.touchSensitivity.applyToGlobal')}</Button>
+              <Button variant="secondary" onClick={() => applyToArea(selected.value!.substring(0, 1) as any, props.entryStates[`GameSettings.TouchSensitivity.${selected.value!.toUpperCase()}`].value)}>
                 {t('mod.touchSensitivity.applyToArea', {area: selected.value.substring(0, 1).toUpperCase()})}
-              </NButton>
-            </NFlex>
+              </Button>
+            </div>
           </> :
           <div class="mb">
             {t('mod.touchSensitivity.selectAreaHint')}
@@ -69,7 +69,7 @@ export default defineComponent({
         <div class="lh-relaxed whitespace-pre-wrap">
           {t('mod.touchSensitivity.helpText')}
         </div>
-      </NFlex>
-    </NFlex>;
+      </div>
+    </div>;
   }
 })

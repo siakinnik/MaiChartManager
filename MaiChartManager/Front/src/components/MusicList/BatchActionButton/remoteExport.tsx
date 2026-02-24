@@ -11,7 +11,7 @@ import {
   MAIDATA_SUBDIR,
   OPTIONS,
 } from "@/components/MusicList/BatchActionButton/ChooseAction";
-import { useNotification } from "naive-ui";
+import { addToast } from "@munet/ui";
 import { getUrl } from "@/client/api";
 import { addVersionList, genreList } from "@/store/refs";
 import { t } from "@/locales";
@@ -21,7 +21,6 @@ export default async (
   setStep: (step: STEP) => void,
   musicList: MusicXmlWithABJacket[],
   action: OPTIONS,
-  notify: ReturnType<typeof useNotification>,
   dirOption: MAIDATA_SUBDIR,
 ) => {
   let folderHandle: FileSystemDirectoryHandle;
@@ -151,20 +150,14 @@ export default async (
         }
 
         if (hasEntryError) {
-          notify.error({
-            title: t("error.exportFailed"),
-            content: musicName,
-          });
+          addToast({ type: 'error', message: `${t('error.exportFailed')}: ${musicName}` });
         }
       } finally {
         await zipReader.close();
       }
     } catch (e) {
       console.error(e);
-      notify.error({
-        title: t("error.exportFailed"),
-        content: musicName,
-      });
+      addToast({ type: 'error', message: `${t('error.exportFailed')}: ${musicName}` });
     }
   };
 

@@ -3,7 +3,7 @@ import { NDropdown, NButton, useMessage } from 'naive-ui';
 import { computed, defineComponent, ref } from 'vue';
 import VideoConvertButton from './VideoConvertButton';
 import { useI18n } from 'vue-i18n';
-import DropDown from '@munet/ui/src/components/DropMenu/DropDown';
+
 import { DropMenu } from '@munet/ui';
 
 enum DROPDOWN_OPTIONS {

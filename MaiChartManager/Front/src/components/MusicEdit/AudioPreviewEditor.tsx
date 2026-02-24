@@ -1,11 +1,11 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { NButton, NFlex, NModal, NSpin, useMessage } from "naive-ui";
-import RegionsPlugin, { Region } from "wavesurfer.js/dist/plugins/regions";
+import { Button, addToast } from "@munet/ui";
 import WaveSurfer from "wavesurfer.js";
 import { globalCapture, selectedADir, selectMusicId } from "@/store/refs";
 import ZoomPlugin from 'wavesurfer.js/dist/plugins/zoom'
 import Hover from 'wavesurfer.js/dist/plugins/hover'
 import TimelinePlugin from 'wavesurfer.js/dist/plugins/timeline'
+import RegionsPlugin, { Region } from 'wavesurfer.js/dist/plugins/regions'
 import api, { getUrl } from "@/client/api";
 import { AudioPreviewTime } from "@/client/apiGen";
 import { useMagicKeys } from "@vueuse/core";
@@ -24,7 +24,7 @@ export default defineComponent({
     const load = ref(false)
     const dataLoad = ref(true)
     const {ctrl, shift} = useMagicKeys()
-    const message = useMessage()
+
 
     onMounted(async () => {
       dataLoad.value = true
@@ -72,13 +72,13 @@ export default defineComponent({
         const time = ws.value?.getDuration()! * e;
         if (ctrl.value) {
           if (time >= region.value!.end) {
-            message.warning(t('music.edit.audioPreviewStartGtEnd'))
+            addToast({message: t('music.edit.audioPreviewStartGtEnd'), type: 'warning'})
             return
           }
           region.value!.setOptions({start: time})
         } else if (shift.value) {
           if (time <= region.value!.start) {
-            message.warning(t('music.edit.audioPreviewEndLtStart'))
+            addToast({message: t('music.edit.audioPreviewEndLtStart'), type: 'warning'})
             return
           }
           region.value!.setOptions({end: time, start: region.value!.start})
@@ -110,37 +110,38 @@ export default defineComponent({
 
     const playIcon = computed(() => isPlaying.value ? 'i-mdi-pause' : 'i-mdi-play')
 
-    return () => <NSpin show={dataLoad.value}>
-      <NFlex vertical size="large">
+    return () => <div class="relative">
+      {dataLoad.value && <div class="absolute inset-0 flex items-center justify-center bg-black/10 z-10"><div class="i-mdi-loading animate-spin text-2xl"/></div>}
+      <div class="flex flex-col gap-3">
         {t('music.edit.audioPreviewCtrlShiftClick')}
         <div ref={waveSurferContainer}/>
-        <NFlex justify="center">
-          <NButton secondary onClick={() => {
+        <div class="flex gap-2 justify-center">
+          <Button variant="secondary" onClick={() => {
             isPlaySection.value = false
             if (isPlaying.value) ws.value?.pause()
             else ws.value?.play()
             isPlaying.value = !isPlaying.value
           }}>
             <span class={`text-lg ${playIcon.value}`}/>
-          </NButton>
-          <NButton secondary onClick={() => {
+          </Button>
+          <Button variant="secondary" onClick={() => {
             isPlaySection.value = true
             isPlaying.value = true
             region.value?.play()
           }}>
             <span class="i-mdi-play text-lg m-r-2"/>
             {t('music.edit.audioPreviewSelectRegion')}
-          </NButton>
-        </NFlex>
-        <NFlex justify="end">
-          <NButton type="error" secondary onClick={props.closeModel as any} disabled={load.value}>
+          </Button>
+        </div>
+        <div class="flex gap-2 justify-end">
+          <Button variant="secondary" danger onClick={props.closeModel as any} disabled={load.value}>
             {t('common.dismiss')}
-          </NButton>
-          <NButton secondary onClick={save} loading={load.value}>
+          </Button>
+          <Button variant="secondary" onClick={save} ing={load.value}>
             {t('common.save')}
-          </NButton>
-        </NFlex>
-      </NFlex>
-    </NSpin>;
+          </Button>
+        </div>
+      </div>
+    </div>;
   }
 })

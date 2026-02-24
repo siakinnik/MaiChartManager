@@ -1,7 +1,8 @@
 import { defineComponent, onMounted } from "vue";
 import api from "@/client/api";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
-import { NButton, NFlex, NSelect, NVirtualList, useDialog } from "naive-ui";
+import { Button, Select } from "@munet/ui";
+import { VList } from 'virtua/vue';
 import MusicEntry from "@/components/MusicList/MusicEntry";
 import { assetDirs, musicList, selectedADir, selectMusicId, updateMusicList } from "@/store/refs";
 import RefreshAllButton from "@/components/RefreshAllButton";
@@ -12,7 +13,7 @@ export default defineComponent({
     toggleMenu: { type: Function, required: true },
   },
   setup(props) {
-    const dialog = useDialog();
+
 
     const setAssetsDir = async (dir: string) => {
       selectedADir.value = dir;
@@ -20,30 +21,26 @@ export default defineComponent({
     }
 
     return () => (
-      <NFlex vertical class="h-full" size="large">
+      <div class="flex flex-col gap-3 h-full">
         <div class="flex items-center gap-2">
-          <NButton secondary onClick={() => props.toggleMenu()} class="min-[1440px]:hidden">
+          <Button variant="secondary" onClick={() => props.toggleMenu()} class="min-[1440px]:hidden">
             <span class="i-ic-baseline-menu text-lg" />
-          </NButton>
-          <NSelect
+          </Button>
+          <Select
             class="grow w-0"
             value={selectedADir.value}
             options={assetDirs.value.map(dir => ({ label: dir.dirName! + (dir.version ? ` (Ver.${dir.version})` : ''), value: dir.dirName! }))}
-            onUpdateValue={setAssetsDir}
+            onChange={setAssetsDir}
           />
           <RefreshAllButton class="shrink-0" />
           <BatchActionButton />
         </div>
-        <NVirtualList class="flex-1" itemSize={20 / 4 * 16} items={musicList.value}>
-          {{
-            default({ item }: { item: MusicXmlWithABJacket }) {
-              return (
-                <MusicEntry music={item} selected={selectMusicId.value === item.id} onClick={() => selectMusicId.value = item.id!} key={item.id} />
-              )
-            }
-          }}
-        </NVirtualList>
-      </NFlex>
+        <VList class="flex-1" data={musicList.value}>
+          {(item: MusicXmlWithABJacket) => (
+            <MusicEntry music={item} selected={selectMusicId.value === item.id} onClick={() => selectMusicId.value = item.id!} key={item.id} />
+          )}
+        </VList>
+      </div>
     )
   }
 })

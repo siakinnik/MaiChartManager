@@ -1,8 +1,8 @@
-import { computed, defineComponent, onMounted, PropType, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { addVersionList, genreList, globalCapture, selectedADir, selectedMusic as info, selectMusicId, updateAddVersionList, updateGenreList, updateMusicList, selectedLevel, disableSync } from "@/store/refs";
-import { Chart, GenreXml, MusicXmlWithABJacket, ShiftMethod } from "@/client/apiGen";
+import { MusicXmlWithABJacket } from "@/client/apiGen";
 import api from "@/client/api";
-import { NButton, NFlex, NForm, NFormItem, NInput, NInputNumber, NPopover, NRadio, NSelect, NSwitch, NTabPane, NTabs, SelectOption, useDialog, useMessage } from "naive-ui";
+
 import JacketBox from "../JacketBox";
 import dxIcon from "@/assets/dxIcon.png";
 import stdIcon from "@/assets/stdIcon.png";
@@ -16,11 +16,10 @@ import { captureException } from "@sentry/vue"
 import noJacket from "@/assets/noJacket.webp";
 import { getUrl } from "@/client/api";
 import { t } from "@/locales";
-import { CheckBox, NumberInput, TextInput } from "@munet/ui";
+import { CheckBox, NumberInput, TextInput, Tabs, TabPane, Popover } from "@munet/ui";
 
 const Component = defineComponent({
   setup() {
-    const message = useMessage();
 
     const firstEnabledChart = info.value?.charts?.findIndex(chart => chart.enable);
     if (firstEnabledChart && firstEnabledChart >= 0) {
@@ -67,16 +66,16 @@ const Component = defineComponent({
     return () => info.value && <div class="flex flex-col gap-2">
         <div class="grid cols-[1fr_12em] gap-5">
             <div class="flex flex-col gap-2 relative">
-                <NFlex align="center" class="absolute right-0 top-0 mr-2 mt-2">
+                <div class="flex items-center gap-2 absolute right-0 top-0 mr-2 mt-2">
                     <ProblemsDisplay problems={info.value.problems!}/>
-                </NFlex>
-                <NFlex align="center">
+                </div>
+                <div class="flex items-center gap-2">
                     <img src={info.value.id! >= 1e4 ? dxIcon : stdIcon} class="h-6"/>
                     <div class="c-gray-5">
                         <span class="op-70">ID: </span>
                         <span class="select-text">{info.value.id}</span>
                     </div>
-                </NFlex>
+                </div>
 
                 <div class="ml-1 text-sm">{t('music.edit.name')}</div>
                 <div class="flex items-center gap-4 w-full">
@@ -104,56 +103,27 @@ const Component = defineComponent({
                   <div class="ml-1 text-sm">{t('music.edit.utageComment')}</div>
                   <TextInput v-model:value={info.value.comment}/>
               </>}
-            <NFormItem label={t('music.edit.sortName')}>
-              <NPopover trigger="hover">
-                {{
-                  trigger: () => <NInput v-model:value={info.value!.sortName} class="w-0 grow"/>,
-                  default: () => <div>{t('music.edit.sortNameTips')}</div>
-                }}
-              </NPopover>
-            </NFormItem>
+            <div class="ml-1 text-sm">{t('music.edit.sortName')}</div>
+            <Popover trigger="hover">
+              {{
+                trigger: () => <TextInput v-model:value={info.value!.sortName} class="w-0 grow"/>,
+                default: () => <div>{t('music.edit.sortNameTips')}</div>
+              }}
+            </Popover>
             <AcbAwb song={info.value}/>
-            <NTabs type="line" animated barWidth={0} v-model:value={selectedLevel.value} class="levelTabs"
-                   style={{'--n-tab-padding': 0, '--n-pane-padding-top': 0, '--n-tab-text-color-hover': ''}}>
+            <Tabs v-model:value={selectedLevel.value}>
               {new Array(5).fill(0).map((_, index) =>
-                <NTabPane key={index} name={index} tab={DIFFICULTY[index]}>
-                  {{
-                    tab: () => <Tab index={index} chart={info.value?.charts![index]!} selected={selectedLevel.value === index}/>,
-                    default: () => <ChartPanel chart={info.value?.charts![index]!} songId={info.value?.id!} chartIndex={index}
-                                               class="pxy pt-2 rounded-[0_0_.5em_.5em]" style={{backgroundColor: `color-mix(in srgb, ${LEVEL_COLOR[index]}, transparent 90%)`, '--hue': LEVEL_HUE[index]}}/>
-                  }}
-                </NTabPane>
+                <TabPane key={index} name={index} tab={DIFFICULTY[index]} color={LEVEL_COLOR[index]}>
+                  <ChartPanel chart={info.value?.charts![index]!} songId={info.value?.id!} chartIndex={index}
+                              class="pxy pt-2 rounded-[0_0_.5em_.5em]" style={{backgroundColor: `color-mix(in srgb, ${LEVEL_COLOR[index]}, transparent 90%)`, '--hue': LEVEL_HUE[index]}}/>
+                </TabPane>
               )}
-            </NTabs>
+            </Tabs>
         </div>
     </div>;
   },
 })
 
-const Tab = defineComponent({
-  props: {
-    index: {type: Number, required: true},
-    chart: {type: Object as PropType<Chart>, required: true},
-    selected: Boolean,
-  },
-  setup(props) {
-    return () => <div class={`w-full py-3 flex justify-center rounded-[.5em_.5em_0_0] pos-relative of-hidden ${props.selected && 'c-white font-500 pb-4'}`}
-                      style={{
-                        backgroundColor: `color-mix(in srgb, ${LEVEL_COLOR[props.index]}, transparent ${props.selected ? 0 : 40}%)`,
-                        transition: 'background-color 0.3s, padding-bottom 0.3s'
-                      }}>
-      {
-        !props.chart.enable &&
-          <div class="pos-absolute top-0 bottom-0 left-0 right-0" style={{
-            backgroundPosition: '0 0',
-            background: `repeating-linear-gradient(-45deg,
-                        rgba(255, 255, 255, .3) 0, rgba(255, 255, 255, .3) 5%, rgba(255, 255, 255, .05) 5%, rgba(255, 255, 255, .05) 10%)`
-          }}/>
-      }
-      <span class="z-1">{DIFFICULTY[props.index]}</span>
-    </div>
-  }
-})
 
 export default defineComponent({
   setup() {

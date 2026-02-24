@@ -1,5 +1,5 @@
 import { defineComponent, PropType, ref } from "vue";
-import { NButton, NCheckbox, NFlex, NForm, NFormItem, NSelect } from "naive-ui";
+import { Button, CheckBox, Select } from "@munet/ui";
 import GenreInput from "@/components/GenreInput";
 import { addVersionList, genreList, globalCapture, selectedADir, selectMusicId, updateMusicList, version } from "@/store/refs";
 import api from "@/client/api";
@@ -57,28 +57,31 @@ export default defineComponent({
       }
     }
 
-    return () => <NForm showFeedback={false} labelPlacement="top" disabled={loading.value}>
-      <NFlex vertical>
-        <NFormItem label={t('music.edit.version')}>
-          <NSelect v-model:value={versionOpt.value} options={versionOptions}/>
-        </NFormItem>
-        <NFormItem label={t('music.edit.genre')}>
+    return () => <fieldset disabled={loading.value}>
+      <div class="flex flex-col gap-2">
+        <div>
+          <div class="ml-1 text-sm">{t('music.edit.version')}</div>
+          <Select v-model:value={versionOpt.value} options={versionOptions}/>
+        </div>
+        <div>
+          <div class="ml-1 text-sm">{t('music.edit.genre')}</div>
           <GenreInput options={[
             {id: -1, genreName: t('music.batch.notChange')},
             ...genreList.value
           ]} v-model:value={genre.value}/>
-        </NFormItem>
-        <NFormItem label={t('music.edit.versionCategory')}>
+        </div>
+        <div>
+          <div class="ml-1 text-sm">{t('music.edit.versionCategory')}</div>
           <GenreInput options={[
             {id: -1, genreName: t('music.batch.notChange')},
             ...addVersionList.value
           ]} v-model:value={addVersion.value}/>
-        </NFormItem>
-        <NCheckbox v-model:checked={removeLevels.value}>{t('music.batch.removeLevels')}</NCheckbox>
-        <NFlex justify="end">
-          <NButton loading={loading.value} onClick={save}>{t('common.save')}</NButton>
-        </NFlex>
-      </NFlex>
-    </NForm>
+        </div>
+        <CheckBox v-model:value={removeLevels.value}>{t('music.batch.removeLevels')}</CheckBox>
+        <div class="flex justify-end">
+          <Button ing={loading.value} onClick={save}>{t('common.save')}</Button>
+        </div>
+      </div>
+    </fieldset>
   }
 })

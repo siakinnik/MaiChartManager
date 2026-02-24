@@ -1,5 +1,5 @@
 import { IEntryState, Entry } from "@/client/apiGen";
-import { NFormItem, NFlex, NSelect, NSwitch, NInput, NInputNumber } from "naive-ui";
+import { Select, CheckBox, TextInput, NumberInput } from '@munet/ui';
 import { computed, defineComponent, PropType } from "vue";
 import ProblemsDisplay from "../ProblemsDisplay";
 import { KeyCodeName } from "./types/KeyCodeName";
@@ -40,50 +40,51 @@ export default defineComponent({
       return props.entry.attribute?.comment?.commentEn;
     })
 
-    return () => <NFormItem label={getNameForPath(props.entry.path!, props.entry.name!, props.entry.attribute?.comment?.nameZh)} labelPlacement="left" labelWidth="9em" showFeedback={false}
+    return () => <div class="flex gap-2 items-start"
       // @ts-ignore
-                            title={props.entry.path!}
+                      title={props.entry.path!}
     >
-      <NFlex vertical class="w-full ws-pre-line">
-        <NFlex class="h-34px" align="center">
+      <div class="ml-1 text-sm w-9em shrink-0">{getNameForPath(props.entry.path!, props.entry.name!, props.entry.attribute?.comment?.nameZh)}</div>
+      <div class="flex flex-col gap-2 w-full ws-pre-line">
+        <div class="flex gap-2 h-34px items-center">
           {(() => {
             const choices = comments.options[props.entry.path!]
             if (choices) {
-              return <NSelect v-model:value={props.entryState.value} options={choices} clearable/>
+              return <Select v-model:value={props.entryState.value} options={choices}/>
             }
             switch (props.entry.fieldType) {
               case 'System.Boolean':
-                return <NSwitch v-model:value={props.entryState.value}/>;
+                return <CheckBox v-model:value={props.entryState.value}>{props.entryState.value ? '开' : '关'}</CheckBox>;
               case 'System.String':
-                return <NInput v-model:value={props.entryState.value} placeholder="" onUpdateValue={v => props.entryState.value = typeof v === 'string' ? v : ''}/>;
+                return <TextInput v-model:value={props.entryState.value} placeholder=""/>;
               case 'System.Int32':
               case 'System.Int64':
-                return <NInputNumber value={props.entryState.value} onUpdateValue={v => props.entryState.value = typeof v === 'number' ? v : 0} placeholder="" precision={0} step={1}/>;
+                return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1}/>;
               case 'System.UInt32':
               case 'System.UInt64':
-                return <NInputNumber value={props.entryState.value} onUpdateValue={v => props.entryState.value = typeof v === 'number' ? v : 0} placeholder="" precision={0} step={1} min={0}/>;
+                return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1} min={0}/>;
               case 'System.Byte':
-                return <NInputNumber value={props.entryState.value} onUpdateValue={v => props.entryState.value = typeof v === 'number' ? v : 0} placeholder="" precision={0} step={1} min={0} max={255}/>;
+                return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1} min={0} max={255}/>;
               case 'System.Double':
               case 'System.Single':
-                return <NInputNumber value={props.entryState.value} onUpdateValue={v => props.entryState.value = typeof v === 'number' ? v : 0} placeholder="" step={.1}/>;
+                return <NumberInput v-model:value={props.entryState.value} step={.1}/>;
               case 'AquaMai.Config.Types.KeyCodeOrName':
-                return <NSelect v-model:value={props.entryState.value} options={Object.entries(KeyCodeName).map(([label, value]) => ({ label, value }))}/>;
+                return <Select v-model:value={props.entryState.value} options={Object.entries(KeyCodeName).map(([label, value]) => ({ label, value }))}/>;
               case 'AquaMai.Config.Types.KeyCodeID':
-                return <NSelect v-model:value={props.entryState.value} options={Object.entries(KeyCodeID).map(([label, value]) => ({label, value}))}/>;
+                return <Select v-model:value={props.entryState.value} options={Object.entries(KeyCodeID).map(([label, value]) => ({label, value}))}/>;
               case 'AquaMai.Config.Types.IOKeyMap':
-                return <NSelect v-model:value={props.entryState.value} options={optionsIoKeyMap}/>;
+                return <Select v-model:value={props.entryState.value} options={optionsIoKeyMap}/>;
               case 'AquaMai.Config.Types.AdxKeyMap':
-                return <NSelect v-model:value={props.entryState.value} options={optionsIoKeyMap}/>;
+                return <Select v-model:value={props.entryState.value} options={optionsIoKeyMap}/>;
               case 'AquaMai.Config.Types.SoundChannel':
-                return <NSelect v-model:value={props.entryState.value} options={optionsSoundChannel}/>;
+                return <Select v-model:value={props.entryState.value} options={optionsSoundChannel}/>;
             }
             return t('mod.unsupportedType', { type: props.entry.fieldType });
           })()}
           {comments.shouldEnableOptions[props.entry.path!] && !props.entryState.value && <ProblemsDisplay problems={[t('mod.needEnableOption')]}/>}
-        </NFlex>
+        </div>
         {comment.value}
-      </NFlex>
-    </NFormItem>;
+      </div>
+    </div>;
   },
 });

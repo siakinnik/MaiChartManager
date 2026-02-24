@@ -1,0 +1,4 @@
+Found 1 match(es) in 1 file(s)
+
+D:\Projects\MuNET\MuFront\packages\ui\src\index.ts
+  33: export { default as Tabs, TabPane } from './components/Tabs';

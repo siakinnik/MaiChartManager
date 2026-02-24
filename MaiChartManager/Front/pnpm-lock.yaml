@@ -7,10 +7,23 @@ settings:
 importers:
 
   .:
+    dependencies:
+      virtua:
+        specifier: ^0.41.5
+        version: 0.41.5(vue@3.5.11(typescript@5.6.2))
     devDependencies:
       '@fontsource/nerko-one':
         specifier: ^5.1.0
         version: 5.1.0
+      '@fontsource/noto-sans-sc':
+        specifier: ^5.2.8
+        version: 5.2.9
+      '@fontsource/quicksand':
+        specifier: ^5.2.10
+        version: 5.2.10
+      '@gekichumai/dxdata':
+        specifier: https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08
+        version: https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08
       '@iconify/json':
         specifier: ^2.2.308
         version: 2.2.308
@@ -20,6 +33,9 @@ importers:
       '@modyfi/vite-plugin-yaml':
         specifier: ^1.1.0
         version: 1.1.0(rollup@4.24.0)(vite@5.4.8(@types/node@22.7.4)(sass@1.79.4))
+      '@munet/ui':
+        specifier: link:D:/Projects/MuNET/MuFront/packages/ui
+        version: link:../../../../MuNET/MuFront/packages/ui
       '@sentry/vite-plugin':
         specifier: ^2.22.5
         version: 2.22.5
@@ -59,6 +75,9 @@ importers:
       '@zip.js/zip.js':
         specifier: ^2.7.52
         version: 2.7.52
+      animate.css:
+        specifier: ^4.1.1
+        version: 4.1.1
       axios:
         specifier: ^1.7.7
         version: 1.7.7
@@ -629,6 +648,16 @@ packages:
   '@fontsource/nerko-one@5.1.0':
     resolution: {integrity: sha512-gjtge/eeVxWisONX4/0hbu+6Z9HZG5Gh9Psbpc7izjDNCLTWvN44PkXnS+ka/xpvr4kG1vTX7JvvDzPEmjHO9A==}
 
+  '@fontsource/noto-sans-sc@5.2.9':
+    resolution: {integrity: sha512-bTUIWGBgJDpwi5qAr+x0/lcgv80IHTB9vl6s2f6EymZEa7qYV99yNRBZuKFT+SYDKVunZrjCEhWtpxqmbXWl5Q==}
+
+  '@fontsource/quicksand@5.2.10':
+    resolution: {integrity: sha512-rck0ccT6vJF9RnbSW2ON1grq5qFZvjVOGvYIUixATXF8mNh4KglD+8Sn8QpRgKQBSBJF5yOR3SBYBWPg/Y8YbQ==}
+
+  '@gekichumai/dxdata@https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08':
+    resolution: {tarball: https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08}
+    version: 0.0.0
+
   '@iconify/json@2.2.308':
     resolution: {integrity: sha512-tT+fOVu/cU9Q6GOZfFE+rcfrK4rqwM7ucn3PnTXG+bIcr9PmuvJExZ4oSXwdgPKLdjPqFnQFGgEvDtWFfJVP2g==}
 
@@ -1100,6 +1129,9 @@ packages:
   agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
+
+  animate.css@4.1.1:
+    resolution: {integrity: sha512-+mRmCTv6SbCmtYJCN4faJMNFVNN5EuCTTprDTAo7YzIGji2KADmakjVA3+8mVDkZ2Bf09vayB35lSQIex2+QaQ==}
 
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
@@ -1976,6 +2008,26 @@ packages:
     peerDependencies:
       vue: ^3.0.11
 
+  virtua@0.41.5:
+    resolution: {integrity: sha512-x1vsA9qIQNBFcCs1rzCjyYdMvDu/kT6o6zwwQnyqFOFdOyIzqyzU3WfR/hJC8WxUZXSCo2LkuoqapL8VDDMQPg==}
+    peerDependencies:
+      react: '>=16.14.0'
+      react-dom: '>=16.14.0'
+      solid-js: '>=1.0'
+      svelte: '>=5.0'
+      vue: '>=3.2'
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      solid-js:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+
   vite-svg-loader@5.1.0:
     resolution: {integrity: sha512-M/wqwtOEjgb956/+m5ZrYT/Iq6Hax0OakWbokj8+9PXOnB7b/4AxESHieEtnNEy7ZpjsjYW1/5nK8fATQMmRxw==}
     peerDependencies:
@@ -2566,6 +2618,12 @@ snapshots:
   '@exodus/schemasafe@1.3.0': {}
 
   '@fontsource/nerko-one@5.1.0': {}
+
+  '@fontsource/noto-sans-sc@5.2.9': {}
+
+  '@fontsource/quicksand@5.2.10': {}
+
+  '@gekichumai/dxdata@https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08': {}
 
   '@iconify/json@2.2.308':
     dependencies:
@@ -3158,6 +3216,8 @@ snapshots:
       debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
+
+  animate.css@4.1.1: {}
 
   ansi-regex@5.0.1: {}
 
@@ -4068,6 +4128,10 @@ snapshots:
   vdirs@0.1.8(vue@3.5.11(typescript@5.6.2)):
     dependencies:
       evtd: 0.2.4
+      vue: 3.5.11(typescript@5.6.2)
+
+  virtua@0.41.5(vue@3.5.11(typescript@5.6.2)):
+    optionalDependencies:
       vue: 3.5.11(typescript@5.6.2)
 
   vite-svg-loader@5.1.0(vue@3.5.11(typescript@5.6.2)):

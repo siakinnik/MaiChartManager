@@ -87,3 +87,17 @@ pre
   left: 0
   right: 0
   bottom: 0
+
+@media (hover: hover)
+  .cst
+    &::-webkit-scrollbar
+      width: 6px
+      height: 6px
+
+    &::-webkit-scrollbar-thumb
+      border-radius: 4px
+      background: #999
+      transition: background 0.2s
+
+      &:hover
+        background: #666

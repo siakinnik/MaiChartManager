@@ -490,3 +490,9 @@ jacket:
   select: 選擇封面
   setFailed: 設定失敗
   replaceFailed: 替換圖片失敗
+sidebar:
+  refreshData: 重新整理資料
+  charts: 譜面管理
+  mods: Mod 設定
+  batch: 批次操作
+  genres: 流派/版本管理

@@ -4,7 +4,6 @@ import { Button, Select } from "@munet/ui";
 import { VList } from 'virtua/vue';
 import MusicEntry from "@/views/Charts/MusicList/MusicEntry";
 import { assetDirs, musicList, selectedADir, selectMusicId, updateMusicList } from "@/store/refs";
-import RefreshAllButton from "@/components/RefreshAllButton";
 import BatchActionButton from "@/views/BatchAction";
 
 export default defineComponent({
@@ -31,7 +30,6 @@ export default defineComponent({
             options={assetDirs.value.map(dir => ({ label: dir.dirName! + (dir.version ? ` (Ver.${dir.version})` : ''), value: dir.dirName! }))}
             onChange={setAssetsDir}
           />
-          <RefreshAllButton class="shrink-0" />
         </div>
         <VList class="flex-1" data={musicList.value}>
           {({item}: {item: MusicXmlWithABJacket}) => (

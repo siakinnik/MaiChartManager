@@ -491,3 +491,9 @@ jacket:
   select: 选择封面
   setFailed: 设置失败
   replaceFailed: 替换图片失败
+sidebar:
+  refreshData: 刷新数据
+  charts: 谱面管理
+  mods: Mod 设置
+  batch: 批量操作
+  genres: 流派/版本管理

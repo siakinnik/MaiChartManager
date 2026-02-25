@@ -1,30 +1,19 @@
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, onMounted, ref, watch } from "vue";
 
 import api from "@/client/api";
 import { globalCapture, modInfo, updateModInfo, updateMusicList, aquaMaiConfig as config, modUpdateInfo } from "@/store/refs";
 import AquaMaiConfigurator from "./AquaMaiConfigurator";
 import { compareVersions, latestVersion, shouldShowUpdate } from "./shouldShowUpdateController";
-import { useStorage } from "@vueuse/core";
-import _ from "lodash";
 import ModInstallDropdown from "@/components/ModManager/ModInstallDropdown";
-import styles from "./styles.module.sass";
 import { useI18n } from 'vue-i18n';
-import { Button, Modal, addToast } from '@munet/ui';
+import { Button, addToast } from '@munet/ui';
 import { debounce } from 'perfect-debounce';
 import AquaMaiSignatureStatusDisplay from "./AquaMaiSignatureStatusDisplay";
 
 export let updateAquaMaiConfig = async (forceDefault = false, skipSignatureCheck = false)=>void 0;
 
 export default defineComponent({
-  props: {
-    show: Boolean,
-    badgeType: String,
-  },
-  setup(props, { emit }) {
-    const show = computed({
-      get: () => props.show,
-      set: (val) => emit('update:show', val)
-    })
+  setup() {
 
     const configReadErr = ref('')
     const configReadErrTitle = ref('')
@@ -100,7 +89,6 @@ export default defineComponent({
 
     watch(() => config.value, async (val) => {
       if (configReadErr.value) return
-      if (!show.value) return
       if (val) {
         console.log('配置变动')
         save()
@@ -152,14 +140,9 @@ export default defineComponent({
         editorPart = <AquaMaiConfigurator config={config.value!} useNewSort={true}/>
       }
 
-      return <Modal
-        width="min(99dvw,100em)"
-        innerClass={styles.modal}
-        title={t('mod.title')}
-        v-model:show={show.value}
-      >
+      return <div class="flex flex-col gap-2 h-full of-y-auto">
         {!!modInfo.value && <div class="flex flex-col gap-2">
-          <div class="flex gap-2 items-center">
+          <div class="flex gap-2 items-center flex-wrap">
             <span class="max-[1060px]:hidden">MelonLoader:</span>
             {modInfo.value.melonLoaderInstalled ? <span class="c-green-6 max-[1060px]:hidden">{t('mod.installed')}</span> : <span class="c-red-6">{t('mod.notInstalled')}</span>}
             {!modInfo.value.melonLoaderInstalled && <Button ing={installingMelonLoader.value} onClick={installMelonLoader}>{t('mod.install')}</Button>}
@@ -180,7 +163,7 @@ export default defineComponent({
           </div>
           {editorPart}
         </div>}
-      </Modal>
+      </div>
     };
   }
 })

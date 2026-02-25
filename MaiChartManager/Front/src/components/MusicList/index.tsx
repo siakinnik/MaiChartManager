@@ -32,7 +32,6 @@ export default defineComponent({
             onChange={setAssetsDir}
           />
           <RefreshAllButton class="shrink-0" />
-          <BatchActionButton />
         </div>
         <VList class="flex-1" data={musicList.value}>
           {({item}: {item: MusicXmlWithABJacket}) => (

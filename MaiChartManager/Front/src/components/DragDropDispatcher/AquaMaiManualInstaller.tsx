@@ -4,7 +4,7 @@ import { t } from '@/locales';
 import { globalCapture, updateModInfo } from '@/store/refs';
 import { Button, Modal, DateFormat, addToast } from '@munet/ui';
 import { defineComponent, PropType, ref, computed, watch } from 'vue';
-import { updateAquaMaiConfig } from '../ModManager/ConfigEditor';
+import { updateAquaMaiConfig } from '../../views/ModManager/ConfigEditor';
 
 const currentFile = ref<File>();
 const checkResult = ref<CheckAquaMaiFileResult>();

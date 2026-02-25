@@ -5,12 +5,12 @@ import { computed, defineComponent, ref, shallowRef } from 'vue';
 import JacketBox from '../JacketBox';
 import { DIFFICULTY } from '@/consts';
 import api from '@/client/api';
-import CheckingModal from "@/components/ImportCreateChartButton/ImportChartButton/CheckingModal";
+import CheckingModal from "@/views/Charts/ImportCreateChartButton/ImportChartButton/CheckingModal";
 import LevelTagsDisplay from "@/components/LevelTagsDisplay";
 import { Chart, ImportChartCheckResult, ImportChartResult, ShiftMethod } from "@/client/apiGen";
-import ImportAlert from "@/components/ImportCreateChartButton/ImportChartButton/ImportAlert";
-import { defaultTempOptions, ImportChartMessageEx, TempOptions } from "@/components/ImportCreateChartButton/ImportChartButton/types";
-import ShiftModeSelector from "@/components/ImportCreateChartButton/ImportChartButton/ShiftModeSelector";
+import ImportAlert from "@/views/Charts/ImportCreateChartButton/ImportChartButton/ImportAlert";
+import { defaultTempOptions, ImportChartMessageEx, TempOptions } from "@/views/Charts/ImportCreateChartButton/ImportChartButton/types";
+import ShiftModeSelector from "@/views/Charts/ImportCreateChartButton/ImportChartButton/ShiftModeSelector";
 
 // noinspection JSUnusedLocalSymbols
 export let prepareReplaceChart = async (fileHandle?: FileSystemFileHandle) => {

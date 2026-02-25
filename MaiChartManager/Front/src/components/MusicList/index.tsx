@@ -1,5 +1,4 @@
 import { defineComponent, onMounted } from "vue";
-import api from "@/client/api";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
 import { Button, Select } from "@munet/ui";
 import { VList } from 'virtua/vue';
@@ -36,7 +35,7 @@ export default defineComponent({
           <BatchActionButton />
         </div>
         <VList class="flex-1" data={musicList.value}>
-          {(item: MusicXmlWithABJacket) => (
+          {({item}: {item: MusicXmlWithABJacket}) => (
             <MusicEntry music={item} selected={selectMusicId.value === item.id} onClick={() => selectMusicId.value = item.id!} key={item.id} />
           )}
         </VList>

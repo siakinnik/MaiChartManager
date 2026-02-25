@@ -51,3 +51,14 @@
 - 默认不传新 props 时只保留基础类 relative/of-hidden，按钮外观和尺寸与旧实现一致。
 - 颜色映射使用 CSS 变量 --link-color；danger 且 variant=primary 使用红底白字，其他 danger 使用红字红边。
 - 尺寸映射: size=small -> h-8 text-sm px-2；size=medium -> h-10 text-base px-4。
+
+## [2026-02-25] F4 Scope Fidelity Audit
+- Task 8/9/13/14/21 checked against plan What to do and Must NOT do: all compliant in current snapshot.
+- Sidebar contract confirmed: 4 items + desktop 48px rail + mobile bottom tab bar +  update channel.
+- Intentional naive-ui residuals confirmed unchanged:  (MusicSelector) and  (AquaMaiConfigurator).
+- App.tsx confirmed provider removal while preserving  and CSS vars ().
+
+### Audit Clarification
+- Sidebar contract confirmed: 4 items + desktop 48px rail + mobile bottom tab bar + `v-model:active` update channel.
+- Intentional naive-ui residuals confirmed unchanged: `NDataTable` (MusicSelector) and `NAnchor` (AquaMaiConfigurator).
+- App.tsx confirmed provider removal while preserving `GlobalElementsContainer` and CSS vars (`--screen-width`/`--screen-height`).

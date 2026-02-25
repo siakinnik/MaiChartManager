@@ -17,7 +17,7 @@ export default defineComponent({
     const { t } = useI18n();
     const mobileShowMenu = ref(false);
 
-    return () => <div class="contents">
+    return () => <div class="grid cols-[40em_1fr] max-[1440px]:cols-1">
       <div class={[
         'p-xy h-100dvh',
         'max-[1440px]:absolute max-[1440px]:left-12 max-[1440px]:w-40em max-[1440px]:max-w-[calc(100dvw-48px)] z-10 transition-transform duration-300',

@@ -24,7 +24,7 @@ export default defineComponent({
     return () => (
       <>
         {/* Desktop sidebar */}
-        <div class="max-[767px]:hidden w-16 flex flex-col items-center py-2 gap-1 h-100dvh shrink-0 border-r border-r-gray-200 border-r-solid bg-gray-50">
+        <div class="max-[767px]:hidden w-16 flex flex-col items-center py-2 gap-1 h-100dvh shrink-0 border-r border-r-[oklch(0.9_0.02_var(--hue))] border-r-solid bg-[oklch(0.98_0.01_var(--hue))]">
           {items.map((item) => (
             <div
               key={item.key}

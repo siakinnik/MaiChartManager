@@ -16,7 +16,7 @@ export default defineComponent({
     })
 
     return () => <div class="flex">
-      <NumberInput showButton={false} class="w-full" v-model:value={value.value} min={0}/>
+      <NumberInput class="w-full" v-model:value={value.value} min={0}/>
       {!!version.value?.gameVersion && <>
         <Button class={value.value < b15ver.value ? "z-1" : ""} variant={value.value < b15ver.value ? 'primary' : 'ghost'}
                  disabled={selectedADir.value === 'A000'} onClick={() => value.value = 20000}>{t('music.edit.includeB35')}</Button>

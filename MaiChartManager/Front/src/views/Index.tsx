@@ -54,9 +54,9 @@ export default defineComponent({
 
 
     return () => (
-      <div class="flex justify-center" ref={mainDivRef}>
+      <div class="" ref={mainDivRef}>
         <DragDropDispatcher />
-        <div class={['grid w-[min(100rem,100%)] max-[767px]:cols-1', sidebarActive.value === 'charts' ? 'cols-[48px_40em_1fr] max-[1440px]:cols-[48px_1fr]' : 'cols-[48px_1fr]']}>
+        <div class={['grid cols-[auto_1fr]']}>
           <Sidebar v-model:active={sidebarActive.value} />
           {sidebarActive.value === 'charts' && <Charts />}
           {sidebarActive.value === 'mods' && <ModManager />}

@@ -1,8 +1,0 @@
-11:    variant: String as PropType<'primary' | 'secondary' | 'ghost'>,
-12:    danger: Boolean,
-13:    size: String as PropType<'small' | 'medium'>,
-17:      if (props.danger) {
-18:        if (props.variant === 'primary') {
-24:      switch (props.variant) {
-37:      if (props.size === 'small') {
-40:      if (props.size === 'medium') {

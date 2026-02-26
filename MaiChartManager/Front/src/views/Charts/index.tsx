@@ -1,18 +1,18 @@
-import { defineComponent, PropType, ref, computed, watch } from 'vue';
+import { defineComponent, ref } from 'vue';
 import MusicList from './MusicList';
 import MusicEdit from './MusicEdit';
 import MusicSelectedTopRightToolbar from './MusicSelectedTopRightToolbar';
 import AssetDirsManager from './AssetDirsManager';
 import ImportCreateChartButton from './ImportCreateChartButton';
 import CopyToButton from './CopyToButton';
+import MemoBox from './AssetDirsManager/MemoBox';
 import TransitionOpacity from '@/components/TransitionOpacity';
 import { useI18n } from 'vue-i18n';
 import { selectedADir, selectedMusic } from '@/store/refs';
+import { leftPanel, rightPanel } from './refs';
 
 export default defineComponent({
-  // props: {
-  // },
-  setup(props, { emit }) {
+  setup() {
     const { t } = useI18n();
     const mobileShowMenu = ref(false);
 
@@ -24,7 +24,10 @@ export default defineComponent({
         'max-[767px]:left-0 max-[767px]:max-w-100dvw',
         mobileShowMenu.value ? 'max-[1440px]:translate-x-0' : 'max-[1440px]:translate-x-[-100%]',
       ]}>
-        <MusicList toggleMenu={() => (mobileShowMenu.value = false)} />
+        {leftPanel.value === 'musicList'
+          ? <MusicList toggleMenu={() => (mobileShowMenu.value = false)} />
+          : <AssetDirsManager />
+        }
       </div>
       <TransitionOpacity>
         {mobileShowMenu.value && (
@@ -38,27 +41,31 @@ export default defineComponent({
         class="flex flex-col gap-4 p-xy h-100dvh"
         style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 16px, rgba(255, 255, 255, 0.1) calc(100% - 16px), transparent 100%)' }}
       >
-        <div class="flex items-center gap-2 shrink-0">
-          <button onClick={() => (mobileShowMenu.value = true)} class="min-[1440px]:hidden">
-            <span class="i-ic-baseline-menu text-lg" />
-          </button>
-          <AssetDirsManager />
-          <div class="grow-1" />
-          {!!selectedMusic.value && <CopyToButton />}
-          {selectedADir.value === 'A000' ? (
-            t('assetDir.selectNonA000')
-          ) : (
-            <>
-              <MusicSelectedTopRightToolbar />
-              <ImportCreateChartButton />
-            </>
-          )}
-        </div>
-        <div class="of-y-auto cst grow-1">
-          <MusicEdit />
-        </div>
+        {rightPanel.value === 'memoEdit' ? (
+          <MemoBox />
+        ) : (
+          <>
+            <div class="flex items-center gap-2 shrink-0">
+              <button onClick={() => (mobileShowMenu.value = true)} class="min-[1440px]:hidden">
+                <span class="i-ic-baseline-menu text-lg" />
+              </button>
+              <div class="grow-1" />
+              {!!selectedMusic.value && <CopyToButton />}
+              {selectedADir.value === 'A000' ? (
+                t('assetDir.selectNonA000')
+              ) : (
+                <>
+                  <MusicSelectedTopRightToolbar />
+                  <ImportCreateChartButton />
+                </>
+              )}
+            </div>
+            <div class="of-y-auto cst grow-1">
+              <MusicEdit />
+            </div>
+          </>
+        )}
       </div>
-
     </div>;
   },
 });

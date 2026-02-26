@@ -11,11 +11,13 @@ import Sidebar, { SidebarItem } from '@/components/Sidebar';
 import BatchActionButton from '@/views/BatchAction';
 import Charts from './Charts';
 import Tools from './Tools';
+import Splash from '@/components/Splash';
 
 export default defineComponent({
   setup() {
     const { t } = useI18n();
     const sidebarActive = ref<SidebarItem>('charts');
+    const loaded = ref(false);
 
     onMounted(async () => {
       document.title = `MaiChartManager (${location.host})`;
@@ -48,7 +50,9 @@ export default defineComponent({
       });
       try {
         await updateAll();
+        loaded.value = true;
       } catch (err) {
+        loaded.value = true;
         globalCapture(err, t('error.initFailed'));
       }
     });
@@ -57,6 +61,7 @@ export default defineComponent({
     return () => (
       <div class="" ref={mainDivRef}>
         <DragDropDispatcher />
+        <Splash show={!loaded.value} />
         <div class={['grid cols-[auto_1fr]']}>
           <Sidebar v-model:active={sidebarActive.value} />
           {sidebarActive.value === 'charts' && <Charts />}

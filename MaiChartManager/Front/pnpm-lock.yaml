@@ -7,13 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      virtua:
-        specifier: ^0.48.6
-        version: 0.48.6(vue@3.5.29(typescript@5.9.3))
-      vue-router:
-        specifier: ^5.0.3
-        version: 5.0.3(@vue/compiler-sfc@3.5.29)(vue@3.5.29(typescript@5.9.3))
     devDependencies:
       '@fontsource/nerko-one':
         specifier: ^5.2.7
@@ -24,9 +17,6 @@ importers:
       '@fontsource/quicksand':
         specifier: ^5.2.10
         version: 5.2.10
-      '@gekichumai/dxdata':
-        specifier: https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08
-        version: https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08
       '@iconify/json':
         specifier: ^2.2.443
         version: 2.2.443
@@ -37,8 +27,8 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1(rollup@4.59.0)(vite@7.3.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2))
       '@munet/ui':
-        specifier: link:D:/Projects/MuNET/MuFront/packages/ui
-        version: link:../../../../MuNET/MuFront/packages/ui
+        specifier: ^1.0.5
+        version: 1.0.5(@chenfengyuan/vue-qrcode@2.0.0(qrcode@1.5.4)(vue@3.5.29(typescript@5.9.3)))(@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3)))(lodash-es@4.17.23)(sass@1.97.3)(vue@3.5.29(typescript@5.9.3))
       '@sentry/vite-plugin':
         specifier: ^5.1.0
         version: 5.1.0(rollup@4.59.0)
@@ -123,6 +113,9 @@ importers:
       unocss:
         specifier: ^66.6.2
         version: 66.6.2(vite@7.3.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2))
+      virtua:
+        specifier: ^0.48.6
+        version: 0.48.6(vue@3.5.29(typescript@5.9.3))
       vite:
         specifier: ^7.3.1
         version: 7.3.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2)
@@ -138,6 +131,9 @@ importers:
       vue-i18n:
         specifier: ^11.2.8
         version: 11.2.8(vue@3.5.29(typescript@5.9.3))
+      vue-router:
+        specifier: ^5.0.3
+        version: 5.0.3(@vue/compiler-sfc@3.5.29)(vue@3.5.29(typescript@5.9.3))
       wavesurfer.js:
         specifier: ^7.12.1
         version: 7.12.1
@@ -289,6 +285,12 @@ packages:
 
   '@biomejs/wasm-nodejs@2.3.15':
     resolution: {integrity: sha512-MGt/D5Y3v2VQuhyGspB+26T1SickuQFC3+HUMe9seMSnDqoNNN4vyZdUoKcORe7DVBcqs9+eBzns15lEkq3AGw==}
+
+  '@chenfengyuan/vue-qrcode@2.0.0':
+    resolution: {integrity: sha512-33Cfr0zjbc3Dd8d5b1IgzXRAgXH0c2Gv19VI4snS25V/x9Z41eg769tC+Us1x+vqgQQhgD5YUjLnkpkrQfeMSw==}
+    peerDependencies:
+      qrcode: ^1.5.0
+      vue: ^3.0.0
 
   '@css-render/plugin-bem@0.15.14':
     resolution: {integrity: sha512-QK513CJ7yEQxm/P3EwsI+d+ha8kSOcjGvD6SevM41neEMxdULE+18iuQK6tEChAWMOQNQPLG/Rw3Khb69r5neg==}
@@ -471,10 +473,6 @@ packages:
   '@fontsource/quicksand@5.2.10':
     resolution: {integrity: sha512-rck0ccT6vJF9RnbSW2ON1grq5qFZvjVOGvYIUixATXF8mNh4KglD+8Sn8QpRgKQBSBJF5yOR3SBYBWPg/Y8YbQ==}
 
-  '@gekichumai/dxdata@https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08':
-    resolution: {tarball: https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08}
-    version: 0.0.0
-
   '@iconify/json@2.2.443':
     resolution: {integrity: sha512-xyDqw1FeuNWPhYj+Sp2I1kyD6J5U5s8GxEW+dgIY1/Vl0b65t+PlRVCxEBtx73CanfDUPrSEHbxKQJwzXrcV/w==}
 
@@ -522,6 +520,15 @@ packages:
     resolution: {integrity: sha512-rEbfFNlMGLKpAYs2RsfLAhxCHFa6M4QKHHk0A4EYcCJAUwFtFO6qiEdLjUGUTtnRUxAC7GxxCa+ZbeUILSDvqQ==}
     peerDependencies:
       vite: '>=3.2.7'
+
+  '@munet/ui@1.0.5':
+    resolution: {integrity: sha512-qyPsi2rT+/hF6sb4Tm6xItsLdqrErtUh4UTGdVeAz5xNEzPKJyhz/A6fthT/NRin65kGv+AfYXJBY9szcq8S6g==}
+    peerDependencies:
+      '@chenfengyuan/vue-qrcode': ^2.0.0
+      '@vueuse/core': ^13.0.0
+      lodash-es: ^4.17.0
+      sass: ^1.70.0
+      vue: ^3.5.0
 
   '@opentelemetry/api-logs@0.208.0':
     resolution: {integrity: sha512-CjruKY9V6NMssL/T1kAFgzosF1v9o6oeN+aX5JB/C/xPNtmgIJqcXHG7fA82Ou1zCpWGl4lROQUKwUNE1pMCyg==}
@@ -1261,6 +1268,10 @@ packages:
   call-me-maybe@1.0.2:
     resolution: {integrity: sha512-HpX65o1Hnr9HH25ojC1YGs7HCQLq0GCOibSaWER0eNpgJ/Z1MZv2mTc7+xh6WOPxbRVcmgbv4hGU+uSQ/2xFZQ==}
 
+  camelcase@5.3.1:
+    resolution: {integrity: sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==}
+    engines: {node: '>=6'}
+
   caniuse-lite@1.0.30001774:
     resolution: {integrity: sha512-DDdwPGz99nmIEv216hKSgLD+D4ikHQHjBC/seF98N9CPqRX4M5mSxT9eTV6oyisnJcuzxtZy4n17yKKQYmYQOA==}
 
@@ -1280,6 +1291,9 @@ packages:
 
   citty@0.2.1:
     resolution: {integrity: sha512-kEV95lFBhQgtogAPlQfJJ0WGVSokvLr/UEoFPiKKOXF7pl98HfUVUD0ejsuTCld/9xH9vogSywZ5KqHzXrZpqg==}
+
+  cliui@6.0.0:
+    resolution: {integrity: sha512-t6wbgtoCXvAzst7QgXxJYqPt0usEfbgQdftEPbLL/cvv6HPE5VgvqCuAIDR0NgU52ds6rFwqrgakNLrHEjCbrQ==}
 
   cliui@8.0.1:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
@@ -1392,6 +1406,10 @@ packages:
       supports-color:
         optional: true
 
+  decamelize@1.2.0:
+    resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==}
+    engines: {node: '>=0.10.0'}
+
   defu@6.1.4:
     resolution: {integrity: sha512-mEQCMmwJu317oSz8CwdIOdwf3xMif1ttiM8LTufzc3g6kR+9Pe236twL8j3IYT1F7GfRgGcW6MWxzZjLIkuHIg==}
 
@@ -1405,6 +1423,9 @@ packages:
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
+
+  dijkstrajs@1.0.3:
+    resolution: {integrity: sha512-qiSlmBq9+BCdCA/L46dw8Uy93mloxsPSbwnm5yrKn2vMPiy8KyAskTF6zuV/j5BMsmOGZDPs7KjU+mjb670kfA==}
 
   dom-serializer@2.0.0:
     resolution: {integrity: sha512-wIkAryiqt/nV5EQKqQpo3SToSOV9J0DnbJqwK7Wv/Trc92zIAYZ4FlMu+JPFW1DfGFt81ZTCGgDEabffXeLyJg==}
@@ -1509,6 +1530,10 @@ packages:
 
   fflate@0.4.8:
     resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
+
+  find-up@4.1.0:
+    resolution: {integrity: sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw==}
+    engines: {node: '>=8'}
 
   find-up@5.0.0:
     resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
@@ -1646,6 +1671,10 @@ packages:
   local-pkg@1.1.2:
     resolution: {integrity: sha512-arhlxbFRmoQHl33a0Zkle/YWlmNwoyt6QNZEIJcqNbdrsix5Lvc4HyyI3EnwxTYlZYc32EbYrQ8SzEZ7dqgg9A==}
     engines: {node: '>=14'}
+
+  locate-path@5.0.0:
+    resolution: {integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==}
+    engines: {node: '>=8'}
 
   locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
@@ -1796,13 +1825,25 @@ packages:
   openapi-types@12.1.3:
     resolution: {integrity: sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==}
 
+  p-limit@2.3.0:
+    resolution: {integrity: sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==}
+    engines: {node: '>=6'}
+
   p-limit@3.1.0:
     resolution: {integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==}
     engines: {node: '>=10'}
 
+  p-locate@4.1.0:
+    resolution: {integrity: sha512-R79ZZ/0wAxKGu3oYMlz8jy/kbhsNrS7SKZ7PxEHBgJ5+F2mtFW2fK2cOtBh1cHYkQsbzFV7I+EoRKe6Yt0oK7A==}
+    engines: {node: '>=8'}
+
   p-locate@5.0.0:
     resolution: {integrity: sha512-LaNjtRWUBY++zB5nE/NwcaoMylSPk+S+ZHNB1TzdbMJMny6dynpAGt7X/tl/QYq3TIeE6nxHppbo2LGymrG5Pw==}
     engines: {node: '>=10'}
+
+  p-try@2.2.0:
+    resolution: {integrity: sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==}
+    engines: {node: '>=6'}
 
   package-manager-detector@1.6.0:
     resolution: {integrity: sha512-61A5ThoTiDG/C8s8UMZwSorAGwMJ0ERVGj2OjoW5pAalsNOg15+iQiPzrLJ4jhZ1HJzmC2PIHT2oEiH3R5fzNA==}
@@ -1848,6 +1889,10 @@ packages:
   pkg-types@2.3.0:
     resolution: {integrity: sha512-SIqCzDRg0s9npO5XQ3tNZioRY1uK06lA41ynBC1YmFTmnY6FjUjVt6s4LoADmwoig1qqD0oK8h1p/8mlMx8Oig==}
 
+  pngjs@5.0.0:
+    resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
+    engines: {node: '>=10.13.0'}
+
   postcss@8.5.6:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
@@ -1868,6 +1913,11 @@ packages:
 
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
+
+  qrcode@1.5.4:
+    resolution: {integrity: sha512-1ca71Zgiu6ORjHqFBDpnSMTR2ReToX4l1Au1VFLyVeBTFavzQnv5JxMFr3ukHVKpSrSA2MCk0lNJSykjUfz7Zg==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
 
   quansync@0.2.11:
     resolution: {integrity: sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==}
@@ -1896,6 +1946,9 @@ packages:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
 
+  require-main-filename@2.0.0:
+    resolution: {integrity: sha512-NKN5kMDylKuldxYLSUfrbo5Tuzh4hd+2E8NPPX02mZtn1VuREQToYe/ZdlJy+J3uCpfaiGF05e7B8W0iXbQHmg==}
+
   resolve-pkg-maps@1.0.0:
     resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
 
@@ -1921,6 +1974,9 @@ packages:
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
+
+  set-blocking@2.0.0:
+    resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
 
   shebang-command@2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
@@ -2223,14 +2279,24 @@ packages:
   whatwg-url@5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
 
+  which-module@2.0.1:
+    resolution: {integrity: sha512-iBdZ57RDvnOR9AGBhML2vFZf7h8vmBjhoaZqODJBFWHVtKkDmKuHai3cx5PgVMrX5YDNp27AofYbAwctSS+vhQ==}
+
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
     hasBin: true
 
+  wrap-ansi@6.2.0:
+    resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
+    engines: {node: '>=8'}
+
   wrap-ansi@7.0.0:
     resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}
     engines: {node: '>=10'}
+
+  y18n@4.0.3:
+    resolution: {integrity: sha512-JKhqTOwSrqNA1NY5lSztJ1GrBiUodLMmIZuLiDaMRJ+itFd+ABVE8XBjOvIWL+rSqNDC74LCSFmlb/U4UZ4hJQ==}
 
   y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
@@ -2248,9 +2314,17 @@ packages:
     engines: {node: '>= 14.6'}
     hasBin: true
 
+  yargs-parser@18.1.3:
+    resolution: {integrity: sha512-o50j0JeToy/4K6OZcaQmW6lyXXKhq7csREXcDwk2omFPJEwUNOVtJKvmDr9EI1fAJZUyZcRF7kxGBWmRXudrCQ==}
+    engines: {node: '>=6'}
+
   yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
     engines: {node: '>=12'}
+
+  yargs@15.4.1:
+    resolution: {integrity: sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==}
+    engines: {node: '>=8'}
 
   yargs@17.7.2:
     resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
@@ -2456,6 +2530,11 @@ snapshots:
 
   '@biomejs/wasm-nodejs@2.3.15': {}
 
+  '@chenfengyuan/vue-qrcode@2.0.0(qrcode@1.5.4)(vue@3.5.29(typescript@5.9.3))':
+    dependencies:
+      qrcode: 1.5.4
+      vue: 3.5.29(typescript@5.9.3)
+
   '@css-render/plugin-bem@0.15.14(css-render@0.15.14)':
     dependencies:
       css-render: 0.15.14
@@ -2552,8 +2631,6 @@ snapshots:
 
   '@fontsource/quicksand@5.2.10': {}
 
-  '@gekichumai/dxdata@https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08': {}
-
   '@iconify/json@2.2.443':
     dependencies:
       '@iconify/types': 2.0.0
@@ -2610,6 +2687,14 @@ snapshots:
       vite: 7.3.1(@types/node@25.3.1)(jiti@2.6.1)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:
       - rollup
+
+  '@munet/ui@1.0.5(@chenfengyuan/vue-qrcode@2.0.0(qrcode@1.5.4)(vue@3.5.29(typescript@5.9.3)))(@vueuse/core@14.2.1(vue@3.5.29(typescript@5.9.3)))(lodash-es@4.17.23)(sass@1.97.3)(vue@3.5.29(typescript@5.9.3))':
+    dependencies:
+      '@chenfengyuan/vue-qrcode': 2.0.0(qrcode@1.5.4)(vue@3.5.29(typescript@5.9.3))
+      '@vueuse/core': 14.2.1(vue@3.5.29(typescript@5.9.3))
+      lodash-es: 4.17.23
+      sass: 1.97.3
+      vue: 3.5.29(typescript@5.9.3)
 
   '@opentelemetry/api-logs@0.208.0':
     dependencies:
@@ -3381,6 +3466,8 @@ snapshots:
 
   call-me-maybe@1.0.2: {}
 
+  camelcase@5.3.1: {}
+
   caniuse-lite@1.0.30001774: {}
 
   change-case@5.4.4: {}
@@ -3398,6 +3485,12 @@ snapshots:
       consola: 3.4.2
 
   citty@0.2.1: {}
+
+  cliui@6.0.0:
+    dependencies:
+      string-width: 4.2.3
+      strip-ansi: 6.0.1
+      wrap-ansi: 6.2.0
 
   cliui@8.0.1:
     dependencies:
@@ -3502,6 +3595,8 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
+  decamelize@1.2.0: {}
+
   defu@6.1.4: {}
 
   delayed-stream@1.0.0: {}
@@ -3510,6 +3605,8 @@ snapshots:
 
   detect-libc@2.1.2:
     optional: true
+
+  dijkstrajs@1.0.3: {}
 
   dom-serializer@2.0.0:
     dependencies:
@@ -3618,6 +3715,11 @@ snapshots:
       picomatch: 4.0.3
 
   fflate@0.4.8: {}
+
+  find-up@4.1.0:
+    dependencies:
+      locate-path: 5.0.0
+      path-exists: 4.0.0
 
   find-up@5.0.0:
     dependencies:
@@ -3744,6 +3846,10 @@ snapshots:
       mlly: 1.8.0
       pkg-types: 2.3.0
       quansync: 0.2.11
+
+  locate-path@5.0.0:
+    dependencies:
+      p-locate: 4.1.0
 
   locate-path@6.0.0:
     dependencies:
@@ -3905,13 +4011,23 @@ snapshots:
 
   openapi-types@12.1.3: {}
 
+  p-limit@2.3.0:
+    dependencies:
+      p-try: 2.2.0
+
   p-limit@3.1.0:
     dependencies:
       yocto-queue: 0.1.0
 
+  p-locate@4.1.0:
+    dependencies:
+      p-limit: 2.3.0
+
   p-locate@5.0.0:
     dependencies:
       p-limit: 3.1.0
+
+  p-try@2.2.0: {}
 
   package-manager-detector@1.6.0: {}
 
@@ -3949,6 +4065,8 @@ snapshots:
       confbox: 0.2.4
       exsolve: 1.0.8
       pathe: 2.0.3
+
+  pngjs@5.0.0: {}
 
   postcss@8.5.6:
     dependencies:
@@ -3993,6 +4111,12 @@ snapshots:
 
   proxy-from-env@1.1.0: {}
 
+  qrcode@1.5.4:
+    dependencies:
+      dijkstrajs: 1.0.3
+      pngjs: 5.0.0
+      yargs: 15.4.1
+
   quansync@0.2.11: {}
 
   quansync@1.0.0: {}
@@ -4011,6 +4135,8 @@ snapshots:
   reftools@1.1.9: {}
 
   require-directory@2.1.1: {}
+
+  require-main-filename@2.0.0: {}
 
   resolve-pkg-maps@1.0.0: {}
 
@@ -4060,6 +4186,8 @@ snapshots:
   seemly@0.3.10: {}
 
   semver@6.3.1: {}
+
+  set-blocking@2.0.0: {}
 
   shebang-command@2.0.0:
     dependencies:
@@ -4369,15 +4497,25 @@ snapshots:
       tr46: 0.0.3
       webidl-conversions: 3.0.1
 
+  which-module@2.0.1: {}
+
   which@2.0.2:
     dependencies:
       isexe: 2.0.0
+
+  wrap-ansi@6.2.0:
+    dependencies:
+      ansi-styles: 4.3.0
+      string-width: 4.2.3
+      strip-ansi: 6.0.1
 
   wrap-ansi@7.0.0:
     dependencies:
       ansi-styles: 4.3.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
+
+  y18n@4.0.3: {}
 
   y18n@5.0.8: {}
 
@@ -4387,7 +4525,26 @@ snapshots:
 
   yaml@2.8.2: {}
 
+  yargs-parser@18.1.3:
+    dependencies:
+      camelcase: 5.3.1
+      decamelize: 1.2.0
+
   yargs-parser@21.1.1: {}
+
+  yargs@15.4.1:
+    dependencies:
+      cliui: 6.0.0
+      decamelize: 1.2.0
+      find-up: 4.1.0
+      get-caller-file: 2.0.5
+      require-directory: 2.1.1
+      require-main-filename: 2.0.0
+      set-blocking: 2.0.0
+      string-width: 4.2.3
+      which-module: 2.0.1
+      y18n: 4.0.3
+      yargs-parser: 18.1.3
 
   yargs@17.7.2:
     dependencies:

@@ -18,6 +18,7 @@ jobs:
       with:
         fetch-depth: 0
         submodules: recursive
+        clean: false
 
     - name: Checkout Assets
       uses: clansty/checkout@main

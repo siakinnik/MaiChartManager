@@ -13,11 +13,10 @@
     "@fontsource/nerko-one": "^5.2.7",
     "@fontsource/noto-sans-sc": "^5.2.8",
     "@fontsource/quicksand": "^5.2.10",
-    "@gekichumai/dxdata": "https://gitpkg.now.sh/gekichumai/dxrating/packages/dxdata?2bf234befeca795cf5f78e59d42d911e5c4edf08",
     "@iconify/json": "^2.2.443",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@modyfi/vite-plugin-yaml": "^1.1.1",
-    "@munet/ui": "link:D:/Projects/MuNET/MuFront/packages/ui",
+    "@munet/ui": "^1.0.5",
     "@sentry/vite-plugin": "^5.1.0",
     "@sentry/vue": "^10.40.0",
     "@types/color": "^4.2.0",
@@ -46,16 +45,14 @@
     "typescript": "^5.9.3",
     "unity-webgl": "^4.4.3",
     "unocss": "^66.6.2",
+    "virtua": "^0.48.6",
     "vite": "^7.3.1",
     "vite-svg-loader": "^5.1.0",
     "vue": "^3.5.29",
     "vue-contenteditable": "^4.1.0",
     "vue-i18n": "^11.2.8",
+    "vue-router": "^5.0.3",
     "wavesurfer.js": "^7.12.1"
   },
-  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd",
-  "dependencies": {
-    "virtua": "^0.48.6",
-    "vue-router": "^5.0.3"
-  }
+  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd"
 }

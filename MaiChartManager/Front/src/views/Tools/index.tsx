@@ -63,7 +63,7 @@ export default defineComponent({
             </div>
           ))}
         </div>
-        <VideoConvertButton ref={videoConvertRef} />
+        <VideoConvertButton ref={videoConvertRef as any} />
       </div>
     );
   },

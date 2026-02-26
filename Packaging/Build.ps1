@@ -103,7 +103,13 @@ try {
 Write-Host "Building Frontend..." -ForegroundColor Cyan
 Push-Location "$ProjectRoot\MaiChartManager\Front"
 try {
-    cmd /c pnpm build
+    pnpm install
+    if ($LASTEXITCODE -ne 0) { throw "pnpm install failed with exit code $LASTEXITCODE" }
+    Write-Host "Node: $(node -v) | pnpm: $(pnpm -v)" -ForegroundColor Yellow
+    Write-Host "Working dir: $(Get-Location)" -ForegroundColor Yellow
+    Write-Host "unocss/reset exists: $(Test-Path node_modules\@unocss\reset\tailwind-compat.css)" -ForegroundColor Yellow
+    pnpm build
+    if ($LASTEXITCODE -ne 0) { throw "Frontend build failed with exit code $LASTEXITCODE" }
 } finally {
     Pop-Location
 }
@@ -119,9 +125,12 @@ try {
     Write-Host "Using Configuration: $ConfigName" -ForegroundColor Yellow
     
     dotnet publish -p:Configuration=$ConfigName
+    if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed with exit code $LASTEXITCODE" }
 } finally {
     Pop-Location
 }
+
+Copy-Item "$ProjectRoot\MaiChartManager\wwwroot" "$PSScriptRoot\Pack\wwwroot" -Recurse -Force
 
 # ==========================================
 # 6. 准备打包目录

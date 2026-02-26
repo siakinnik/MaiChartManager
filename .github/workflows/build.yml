@@ -13,12 +13,12 @@ jobs:
     runs-on: self-hosted
     
     steps:
+    - run: git config --global core.longPaths true
     - name: Checkout
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
         submodules: recursive
-        clean: false
 
     - name: Checkout Assets
       uses: clansty/checkout@main
@@ -42,14 +42,6 @@ jobs:
         if (-not (dotnet nuget list source | Select-String "nuget.org")) {
             dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
         }
-
-    - name: Install Frontend Dependencies
-      shell: powershell
-      run: |
-        corepack enable
-        Push-Location MaiChartManager\Front
-        pnpm install
-        Pop-Location
 
 
     - name: Build

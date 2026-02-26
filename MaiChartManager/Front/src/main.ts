@@ -13,7 +13,7 @@ import './global.sass';
 
 createApp(App)
   .use(router)
-  .use(i18n)
+  .use(i18n as any)
   .use(posthog)
   .use(sentry)
   .mount('#app');

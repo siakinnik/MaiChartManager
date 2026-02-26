@@ -73,7 +73,7 @@ music:
     filterReMaster: 白
     filterAdvanced: 黄
   edit:
-    name: 歌曲名称
+    name: 名称
     artist: 作者
     bpm: BPM
     genre: 流派
@@ -89,7 +89,7 @@ music:
     editPreview: 编辑预览
     movie: 影片
     charts: 谱面
-    chartEnable: 启用
+    chartEnable: 启用此难度
     chartAuthor: 作者
     chartLevel: 显示等级
     chartConstant: 定数
@@ -434,6 +434,7 @@ message:
   refreshing: 刷新中…
   refreshAll: 刷新全部
 copy:
+  copyAndExport: 复制与导出
   title: 复制到
   selectTarget: 选择目标目录
   changeId: 修改 ID
@@ -491,3 +492,10 @@ jacket:
   select: 选择封面
   setFailed: 设置失败
   replaceFailed: 替换图片失败
+sidebar:
+  refreshData: 刷新数据
+  charts: 谱面管理
+  mods: Mod 设置
+  batch: 批量操作
+  genres: 流派/版本管理
+  tools: 工具

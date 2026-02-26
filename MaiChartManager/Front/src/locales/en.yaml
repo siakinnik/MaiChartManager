@@ -472,6 +472,7 @@ message:
   refreshing: Refreshing...
   refreshAll: Refresh All
 copy:
+  copyAndExport: Copy & Export
   title: Copy To
   selectTarget: Select target directory
   changeId: Change ID
@@ -531,3 +532,10 @@ jacket:
   select: Select Jacket
   setFailed: Set Failed
   replaceFailed: Failed to replace image
+sidebar:
+  refreshData: Refresh Data
+  charts: Charts
+  mods: Mods
+  batch: Batch
+  genres: Genres
+  tools: Tools

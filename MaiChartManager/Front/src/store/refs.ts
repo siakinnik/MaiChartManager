@@ -5,6 +5,7 @@ import { captureException } from "@sentry/vue";
 import posthog from "posthog-js";
 import { useStorage, useWindowFocus, whenever } from "@vueuse/core";
 import { locale } from "@/locales";
+import { updateAquaMaiConfig } from "@/views/ModManager/refs";
 
 export const error = ref();
 export const errorId = ref<string>();
@@ -59,7 +60,7 @@ export const selectedLevel = ref(0);
 // 因此，对于涉及内部对xml进行修改后会自动保存的后端接口，可以在updateMusicList期间打开本选项，以阻止MusicEdit/ChartPanel中的sync动作。
 export const disableSync = ref(false);
 
-export const aquaMaiConfig = ref<ConfigDto>()
+export { aquaMaiConfig } from "@/views/ModManager/refs";
 export const modUpdateInfo = ref<Awaited<ReturnType<typeof aquaMaiVersionConfig.getGetConfig>>['data']>([{
   type: 'builtin',
 }])
@@ -147,6 +148,7 @@ export const updateAll = async () => Promise.all([
   updateMusicList(),
   updateModInfo(),
   updateModUpdateInfo(),
+  updateAquaMaiConfig(),
 ])
 
 export const gameVersion = computed(() => version.value?.gameVersion || 45)

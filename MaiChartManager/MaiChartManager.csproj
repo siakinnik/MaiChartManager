@@ -25,22 +25,22 @@
     <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
     <CETCompat>false</CETCompat>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <IsPublishable>False</IsPublishable>
-    <PlatformTarget>x64</PlatformTarget>
     <DefineConstants>TRACE;CRACK</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <IsPublishable>True</IsPublishable>
-    <PlatformTarget>x64</PlatformTarget>
     <DefineConstants/>
     <Optimize>true</Optimize>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Crack|x64' ">
+  <PropertyGroup Condition="'$(Configuration)'=='Crack'">
     <IsPublishable>True</IsPublishable>
-    <PlatformTarget>x64</PlatformTarget>
     <DefineConstants>CRACK</DefineConstants>
     <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\AquaMai\AquaMai.Config.HeadlessLoader\AquaMai.Config.HeadlessLoader.csproj"/>

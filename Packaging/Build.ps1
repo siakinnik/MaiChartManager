@@ -97,21 +97,21 @@ try {
     Pop-Location
 }
 
-# ==========================================
-# 4. 构建前端
-# ==========================================
-Write-Host "Building Frontend..." -ForegroundColor Cyan
-Push-Location "$ProjectRoot\MaiChartManager\Front"
-try {
-    pnpm install
-    if ($LASTEXITCODE -ne 0) { throw "pnpm install failed with exit code $LASTEXITCODE" }
-    Write-Host "Node: $(node -v) | pnpm: $(pnpm -v)" -ForegroundColor Yellow
-    Write-Host "Working dir: $(Get-Location)" -ForegroundColor Yellow
-    Write-Host "unocss/reset exists: $(Test-Path node_modules\@unocss\reset\tailwind-compat.css)" -ForegroundColor Yellow
-    pnpm build
-    if ($LASTEXITCODE -ne 0) { throw "Frontend build failed with exit code $LASTEXITCODE" }
-} finally {
-    Pop-Location
+# Canary 模式下 wwwroot 由 CI 的 Linux job 预构建，跳过前端构建
+# Release 模式下（本地构建）始终构建前端
+if ($Mode -ne "Canary" -or -not (Test-Path "$ProjectRoot\MaiChartManager\wwwroot\index.html")) {
+    Write-Host "Building Frontend..." -ForegroundColor Cyan
+    Push-Location "$ProjectRoot\MaiChartManager\Front"
+    try {
+        pnpm install
+        if ($LASTEXITCODE -ne 0) { throw "pnpm install failed with exit code $LASTEXITCODE" }
+        pnpm build
+        if ($LASTEXITCODE -ne 0) { throw "Frontend build failed with exit code $LASTEXITCODE" }
+    } finally {
+        Pop-Location
+    }
+} else {
+    Write-Host "wwwroot already exists, skipping frontend build." -ForegroundColor Yellow
 }
 
 # ==========================================

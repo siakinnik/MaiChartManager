@@ -18,8 +18,7 @@ Sitreamai/
 │   ├── Models/               # DTO / XML 数据模型
 │   ├── Services/             # 业务逻辑服务
 │   ├── Utils/                # 音频/视频/图片转换、CRI 工具
-│   ├── WannaCRI/             # CRI 音频格式处理（Python 打包）
-│   ├── Python/               # 嵌入式 Python 运行时
+│   ├── WannaCRI/             # CRI 音频格式处理
 │   └── FFMpeg/               # 嵌入式 FFmpeg
 ├── MaiChartManager.CLI/      # 命令行工具 (mcm)，Spectre.Console
 ├── AquaMai/                  # [submodule] BepInEx/MelonLoader 游戏 mod

@@ -15,7 +15,7 @@ export default defineComponent({
     const displayVersion = computed(() => version.value?.version?.split('+')[0]);
     const { t } = useI18n();
 
-    return () => version.value && <div class={'w-15 py-1 flex items-center justify-center rounded-md cursor-pointer transition-all duration-200 bg-avatarMenuButton text-3.5'} onClick={() => show.value = true}>
+    return () => version.value && <div class={'w-15 py-1 flex items-center justify-center rounded-md cursor-pointer transition-all duration-200 bg-avatarMenuButton text-3.5 shrink-0'} onClick={() => show.value = true}>
       v{displayVersion.value}
 
       <Modal

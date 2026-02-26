@@ -65,6 +65,10 @@ export default defineComponent({
                 return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1} min={0}/>;
               case 'System.Byte':
                 return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1} min={0} max={255}/>;
+              case 'System.UInt16':
+                return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1} min={0} max={65535}/>;
+              case 'System.Int16':
+                return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1} min={-32768} max={32767}/>;
               case 'System.Double':
               case 'System.Single':
                 return <NumberInput v-model:value={props.entryState.value} step={.1}/>;

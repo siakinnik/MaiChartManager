@@ -26,89 +26,57 @@ export default defineComponent({
     const { t } = useI18n();
     const active = useVModel(props, 'active', emit);
 
+
+    const renderItem = (key: SidebarItem, icon: string, labelKey: string, desktop: boolean) => (
+      <div
+        key={key}
+        class={[
+          desktop ? 'w-15 h-15' : 'w-12 h-12',
+          'flex items-center justify-center rounded-md cursor-pointer shrink-0',
+          'transition-all duration-200 border-none bg-transparent relative group',
+          active.value === key
+            ? 'bg-[var(--link-color)]/12 text-[var(--link-color)]'
+            : 'text-gray-500 bg-avatarMenuButton hover:text-gray-700',
+        ]}
+        onClick={() => (active.value = key)}
+      >
+        {active.value === key && desktop && (
+          <div class="absolute left-0 top-1.5 bottom-1.5 w-0.75 rounded-r-full bg-[var(--link-color)]" />
+        )}
+        {active.value === key && !desktop && (
+          <div class="absolute bottom-0 left-1.5 right-1.5 h-0.75 rounded-t-full bg-[var(--link-color)]" />
+        )}
+        <span class={[icon, 'text-6']} />
+        {desktop && (
+          <span class="absolute left-full ml-2 px-3 py-1.5 rounded-lg bg-[oklch(0.7_0.13_var(--hue))] text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-100">
+            {t(labelKey)}
+          </span>
+        )}
+      </div>
+    );
+
     return () => (
       <>
         {/* Desktop sidebar */}
-        <div class="max-[767px]:hidden w-16 flex flex-col items-center py-2 gap-1 h-100dvh shrink-0 border-r border-r-[oklch(0.9_0.02_var(--hue))] border-r-solid bg-[oklch(0.98_0.01_var(--hue))]">
-          {items.map((item) => (
-            <div
-              key={item.key}
-              class={[
-                'w-15 h-15 flex flex-col items-center justify-center rounded-md cursor-pointer',
-                'transition-all duration-200 border-none bg-transparent relative group',
-                active.value === item.key
-                  ? 'bg-[var(--link-color)]/12 text-[var(--link-color)]'
-                  : 'text-gray-500 bg-avatarMenuButton hover:text-gray-700',
-              ]}
-              onClick={() => (active.value = item.key)}
-            >
-              {active.value === item.key && (
-                <div class="absolute left-0 top-1.5 bottom-1.5 w-0.75 rounded-r-full bg-[var(--link-color)]" />
-              )}
-              <span class={[item.icon, 'text-6']} />
-              <span class="absolute left-full ml-2 px-3 py-1.5 rounded-lg bg-[oklch(0.7_0.13_var(--hue))] text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-100">
-                {t(item.labelKey)}
-              </span>
-            </div>
-          ))}
+        <div class="max-[767px]:hidden w-16 flex flex-col items-center py-2 gap-1 h-100dvh shrink-0 border-r border-r-[oklch(0.9_0.02_var(--hue))] border-r-solid bg-[oklch(0.98_0.01_var(--hue))] z-20 relative of-y-auto of-x-hidden cst">
+          {items.map((item) => renderItem(item.key, item.icon, item.labelKey, true))}
           <div class="mt-auto" />
-          <div
-            class={[
-              'w-15 h-15 flex flex-col items-center justify-center rounded-md cursor-pointer',
-              'transition-all duration-200 border-none bg-transparent relative group',
-              active.value === 'settings'
-                ? 'bg-[var(--link-color)]/12 text-[var(--link-color)]'
-                : 'text-gray-500 bg-avatarMenuButton hover:text-gray-700',
-            ]}
-            onClick={() => (active.value = 'settings')}
-          >
-            {active.value === 'settings' && (
-              <div class="absolute left-0 top-1.5 bottom-1.5 w-0.75 rounded-r-full bg-[var(--link-color)]" />
-            )}
-            <span class={['i-mdi-cog', 'text-6']} />
-            <span class="absolute left-full ml-2 px-3 py-1.5 rounded-lg bg-[oklch(0.7_0.13_var(--hue))] text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-100">
-              {t('sidebar.settings')}
-            </span>
-          </div>
+          {renderItem('settings', 'i-mdi-cog', 'sidebar.settings', true)}
           <RefreshAllButton />
           <VersionInfo />
         </div>
 
-        {/* Mobile bottom tab bar */}
+        {/* Mobile bottom bar */}
         <div class={[
           'min-[768px]:hidden fixed bottom-0 left-0 right-0 z-50',
-          'flex justify-around items-center h-14',
-          'bg-white/90 backdrop-blur-sm border-t border-t-gray-200 border-t-solid',
+          'flex items-center h-14 gap-1 px-1',
+          'of-x-auto of-y-hidden cst',
+          'bg-[oklch(0.98_0.01_var(--hue))] border-t border-t-[oklch(0.9_0.02_var(--hue))] border-t-solid',
         ]}>
-          {items.map((item) => (
-            <button
-              key={item.key}
-              class={[
-                'flex-1 flex flex-col items-center justify-center gap-0.5 h-full',
-                'border-none bg-transparent cursor-pointer transition-colors duration-200',
-                active.value === item.key
-                  ? 'text-[var(--link-color)]'
-                  : 'text-gray-400',
-              ]}
-              onClick={() => (active.value = item.key)}
-            >
-              <span class={[item.icon, 'text-xl']} />
-              <span class="text-2.5 leading-tight">{t(item.labelKey)}</span>
-            </button>
-          ))}
-          <button
-            class={[
-              'flex-1 flex flex-col items-center justify-center gap-0.5 h-full',
-              'border-none bg-transparent cursor-pointer transition-colors duration-200',
-              active.value === 'settings'
-                ? 'text-[var(--link-color)]'
-                : 'text-gray-400',
-            ]}
-            onClick={() => (active.value = 'settings')}
-          >
-            <span class={['i-mdi-cog', 'text-xl']} />
-            <span class="text-2.5 leading-tight">{t('sidebar.settings')}</span>
-          </button>
+          {items.map((item) => renderItem(item.key, item.icon, item.labelKey, false))}
+          {renderItem('settings', 'i-mdi-cog', 'sidebar.settings', false)}
+          <RefreshAllButton />
+          <VersionInfo />
         </div>
       </>
     );

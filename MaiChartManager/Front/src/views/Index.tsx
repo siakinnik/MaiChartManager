@@ -66,10 +66,10 @@ export default defineComponent({
 
 
     return () => (
-      <div class="" ref={mainDivRef}>
+      <div class="" ref={mainDivRef as any}>
         <DragDropDispatcher />
         <Splash show={!loaded.value} />
-        <div class={['grid cols-[auto_1fr]']}>
+        <div class={['grid cols-[auto_1fr] max-[768px]:cols-1']}>
           <Sidebar v-model:active={sidebarActive.value} />
           {sidebarActive.value === 'charts' && <Charts />}
           {sidebarActive.value === 'mods' && <ModManager />}

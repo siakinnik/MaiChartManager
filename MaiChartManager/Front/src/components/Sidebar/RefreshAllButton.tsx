@@ -24,7 +24,7 @@ export default defineComponent({
     return () => (
       <div
         class={[
-          'w-15 h-15 flex flex-col items-center justify-center rounded-md cursor-pointer',
+          'w-12 h-12 min-[768px]:w-15 min-[768px]:h-15 flex items-center justify-center rounded-md cursor-pointer shrink-0',
           'transition-all duration-200 border-none bg-transparent relative group',
           load.value
             ? 'text-[var(--link-color)]'

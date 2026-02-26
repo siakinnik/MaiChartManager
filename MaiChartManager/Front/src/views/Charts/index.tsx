@@ -24,7 +24,7 @@ export default defineComponent({
     return () => <div class="grid cols-[40em_1fr] max-[1440px]:cols-1">
       <div class={[
         'h-100dvh',
-        'max-[1440px]:absolute max-[1440px]:left-12 max-[1440px]:w-40em max-[1440px]:max-w-[calc(100dvw-48px)] z-10 transition-transform duration-300',
+        'max-[1440px]:absolute max-[1440px]:left-16 max-[1440px]:w-40em max-[1440px]:max-w-[calc(100dvw-64px)] max-[1440px]:z-10 transition-transform duration-300',
         'max-[1440px]:bg-white max-[1440px]:border-r-solid max-[1440px]:border-r-1 max-[1440px]:border-r-gray-200',
         'max-[767px]:left-0 max-[767px]:max-w-100dvw',
         mobileShowMenu.value ? 'max-[1440px]:translate-x-0' : 'max-[1440px]:translate-x-[-100%]',

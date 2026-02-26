@@ -1,22 +1,16 @@
 import { computed, defineComponent, ref } from "vue";
 import api, { getUrl } from "@/client/api";
-import { globalCapture, selectedADir, selectedMusic, selectMusicId, showNeedPurchaseDialog, updateMusicList, version } from "@/store/refs";
-import { Button, DropDown, addToast } from "@munet/ui";
+import { globalCapture, selectedADir, selectedMusic, selectMusicId, showNeedPurchaseDialog, version } from "@/store/refs";
+import { DropMenu, addToast } from "@munet/ui";
 import { BlobWriter, ZipReader } from "@zip.js/zip.js";
 import ChangeIdDialog from "./ChangeIdDialog";
 import getSubDirFile from "@/utils/getSubDirFile";
 import { useI18n } from 'vue-i18n';
 
-enum DROPDOWN_OPTIONS {
+enum CopyType {
   export,
-  exportZip,
-  changeId,
-  showExplorer,
   exportMaidata,
   exportMaidataIgnoreVideo,
-  exportMaiDataZip,
-  exportMaiDataZipIgnoreVideo,
-  editXml,
 }
 
 export default defineComponent({
@@ -24,68 +18,17 @@ export default defineComponent({
     const wait = ref(false);
     const showChangeId = ref(false);
     const { t } = useI18n();
-    const ddRef = ref<any>(null);
 
-    const options = computed(() => [
-      {
-        label: () => <a href={getUrl(`ExportOptApi/${selectedADir.value}/${selectMusicId.value}`)} download={`${selectMusicId.value} - ${selectedMusic.value?.name}.zip`}>{t('copy.exportZip')}</a>,
-        key: DROPDOWN_OPTIONS.exportZip,
-      },
-      {
-        label: t('copy.exportMaidata'),
-        key: DROPDOWN_OPTIONS.exportMaidata,
-      },
-      {
-        label: () => <a href={getUrl(`ExportAsMaidataApi/${selectedADir.value}/${selectMusicId.value}`)} download={`${selectMusicId.value} - ${selectedMusic.value?.name} - Maidata.zip`}>{t('copy.exportMaidataZip')}</a>,
-        key: DROPDOWN_OPTIONS.exportMaiDataZip,
-      },
-      {
-        label: t('copy.exportMaidataNoVideo'),
-        key: DROPDOWN_OPTIONS.exportMaidataIgnoreVideo,
-      },
-      {
-        label: () => <a href={getUrl(`ExportAsMaidataApi/${selectedADir.value}/${selectMusicId.value}?ignoreVideo=true`)} download={`${selectMusicId.value} - ${selectedMusic.value?.name} - Maidata.zip`}>{t('copy.exportMaidataZipNoVideo')}</a>,
-        key: DROPDOWN_OPTIONS.exportMaiDataZipIgnoreVideo,
-      },
-      ...(selectedADir.value === 'A000' ? [] : [{
-        label: t('copy.changeId'),
-        key: DROPDOWN_OPTIONS.changeId,
-      }]),
-      {
-        label: t('copy.showInExplorer'),
-        key: DROPDOWN_OPTIONS.showExplorer,
-      },
-      {
-        label: t('copy.editXml'),
-        key: DROPDOWN_OPTIONS.editXml,
-      }
-    ])
+    const triggerDownload = (url: string, filename: string) => {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+    };
 
-    const handleOptionClick = (key: DROPDOWN_OPTIONS) => {
-      switch (key) {
-        case DROPDOWN_OPTIONS.changeId:
-          if (version.value?.license !== 'Active') {
-            showNeedPurchaseDialog.value = true
-            return
-          }
-          showChangeId.value = true;
-          break;
-        case DROPDOWN_OPTIONS.showExplorer:
-          api.RequestOpenExplorer(selectMusicId.value, selectedADir.value);
-          break;
-        case DROPDOWN_OPTIONS.exportMaidata:
-        case DROPDOWN_OPTIONS.exportMaidataIgnoreVideo:
-          copy(key);
-          break;
-        case DROPDOWN_OPTIONS.editXml:
-          api.RequestOpenXml(selectMusicId.value, selectedADir.value);
-          break;
-      }
-    }
-
-    const copy = async (type: DROPDOWN_OPTIONS) => {
+    const copy = async (type: CopyType) => {
       wait.value = true;
-      if (location.hostname !== 'mcm.invalid' || type === DROPDOWN_OPTIONS.exportMaidata || type === DROPDOWN_OPTIONS.exportMaidataIgnoreVideo) {
+      if (location.hostname !== 'mcm.invalid' || type === CopyType.exportMaidata || type === CopyType.exportMaidataIgnoreVideo) {
         // 浏览器模式，使用 zip.js 获取并解压
         let folderHandle: FileSystemDirectoryHandle;
         try {
@@ -99,8 +42,8 @@ export default defineComponent({
           return;
         }
         try {
-          let url = getUrl(`${type === DROPDOWN_OPTIONS.export ? 'ExportOptApi' : 'ExportAsMaidataApi'}/${selectedADir.value}/${selectMusicId.value}`);
-          if (type === DROPDOWN_OPTIONS.exportMaidataIgnoreVideo) {
+          let url = getUrl(`${type === CopyType.export ? 'ExportOptApi' : 'ExportAsMaidataApi'}/${selectedADir.value}/${selectMusicId.value}`);
+          if (type === CopyType.exportMaidataIgnoreVideo) {
             url += '?ignoreVideo=true';
           }
           const zip = await fetch(url)
@@ -146,26 +89,64 @@ export default defineComponent({
       }
     }
 
+    const options = computed(() => [
+      {
+        label: t('copy.title'),
+        action: () => copy(CopyType.export),
+      },
+      {
+        label: t('copy.exportZip'),
+        action: () => triggerDownload(
+          getUrl(`ExportOptApi/${selectedADir.value}/${selectMusicId.value}`),
+          `${selectMusicId.value} - ${selectedMusic.value?.name}.zip`,
+        ),
+      },
+      {
+        label: t('copy.exportMaidata'),
+        action: () => copy(CopyType.exportMaidata),
+      },
+      {
+        label: t('copy.exportMaidataZip'),
+        action: () => triggerDownload(
+          getUrl(`ExportAsMaidataApi/${selectedADir.value}/${selectMusicId.value}`),
+          `${selectMusicId.value} - ${selectedMusic.value?.name} - Maidata.zip`,
+        ),
+      },
+      {
+        label: t('copy.exportMaidataNoVideo'),
+        action: () => copy(CopyType.exportMaidataIgnoreVideo),
+      },
+      {
+        label: t('copy.exportMaidataZipNoVideo'),
+        action: () => triggerDownload(
+          getUrl(`ExportAsMaidataApi/${selectedADir.value}/${selectMusicId.value}?ignoreVideo=true`),
+          `${selectMusicId.value} - ${selectedMusic.value?.name} - Maidata.zip`,
+        ),
+      },
+      ...(selectedADir.value === 'A000' ? [] : [{
+        label: t('copy.changeId'),
+        action: () => {
+          if (version.value?.license !== 'Active') {
+            showNeedPurchaseDialog.value = true
+            return
+          }
+          showChangeId.value = true;
+        },
+      }]),
+      {
+        label: t('copy.showInExplorer'),
+        action: () => api.RequestOpenExplorer(selectMusicId.value, selectedADir.value),
+      },
+      {
+        label: t('copy.editXml'),
+        action: () => api.RequestOpenXml(selectMusicId.value, selectedADir.value),
+      },
+    ]);
+
     return () =>
       <div class="flex">
-        <Button variant="secondary" onClick={() => copy(DROPDOWN_OPTIONS.export)} ing={wait.value}>
-          {t('copy.title')}...
-        </Button>
-        <DropDown ref={ddRef}>
-          {{
-            trigger: (toggle: Function) => <Button variant="secondary" class="px-.5 b-l b-l-solid b-l-[rgba(255,255,255,0.5)]" onClick={() => toggle()}>
-              <span class="i-mdi-arrow-down-drop text-6 translate-y-.25"/>
-            </Button>,
-            default: () => <div class="flex flex-col gap-1 min-w-40">
-              {options.value.map(o => {
-                const label = typeof o.label === 'function' ? o.label() : o.label;
-                return <div key={o.key} class="px-4 py-2 rounded-lg bg-avatarMenuButton cursor-pointer" onClick={() => { ddRef.value?.setShow(false); handleOptionClick(o.key); }}>
-                  {label}
-                </div>
-              })}
-            </div>
-          }}
-        </DropDown>
+        <DropMenu options={options.value} buttonText={t('copy.copyAndExport')}>
+        </DropMenu>
         <ChangeIdDialog v-model:show={showChangeId.value}/>
       </div>
   }

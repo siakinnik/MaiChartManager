@@ -472,6 +472,7 @@ message:
   refreshing: Refreshing...
   refreshAll: Refresh All
 copy:
+  copyAndExport: Copy & Export
   title: Copy To
   selectTarget: Select target directory
   changeId: Change ID

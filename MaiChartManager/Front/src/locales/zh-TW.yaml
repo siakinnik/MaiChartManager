@@ -433,6 +433,7 @@ message:
   refreshing: 重新整理中…
   refreshAll: 重新整理全部
 copy:
+  copyAndExport: 複製與匯出
   title: 複製到
   selectTarget: 選擇目標目錄
   changeId: 修改 ID

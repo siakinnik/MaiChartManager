@@ -434,6 +434,7 @@ message:
   refreshing: 刷新中…
   refreshAll: 刷新全部
 copy:
+  copyAndExport: 复制与导出
   title: 复制到
   selectTarget: 选择目标目录
   changeId: 修改 ID

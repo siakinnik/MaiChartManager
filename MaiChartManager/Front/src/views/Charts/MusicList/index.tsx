@@ -1,6 +1,6 @@
 import { defineComponent } from "vue";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
-import { Button } from "@munet/ui";
+import { Button, theme } from "@munet/ui";
 import { VList } from 'virtua/vue';
 import MusicEntry from "@/views/Charts/MusicList/MusicEntry";
 import { assetDirs, musicList, selectedADir, selectMusicId } from "@/store/refs";
@@ -23,13 +23,12 @@ export default defineComponent({
           <Button variant="secondary" onClick={() => props.toggleMenu()} class="min-[1440px]:hidden">
             <span class="i-ic-baseline-menu text-lg" />
           </Button>
-          <button
-            class="grow w-0 flex items-center gap-1 px-3 py-1.5 rounded-lg bg-neutral/10 hover:bg-neutral/20 transition-colors text-left truncate cursor-pointer border-none"
+          <div
+            class={["grow w-0 flex items-center gap-1 px-3 py-1.5 rounded-lg transition-colors text-left truncate cursor-pointer border-none h-10", theme.value.listItem, theme.value.listItemHover]}
             onClick={() => leftPanel.value = 'assetDirs'}
           >
             <span class="truncate">{selectedDirLabel()}</span>
-            <span class="i-ic-baseline-settings text-base op-50 shrink-0" />
-          </button>
+          </div>
         </div>
         <VList class="flex-1" data={musicList.value}>
           {({item}: {item: MusicXmlWithABJacket}) => (

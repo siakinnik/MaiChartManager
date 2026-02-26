@@ -1,6 +1,6 @@
-import { computed, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { GetAssetsDirsResult } from "@/client/apiGen";
-import { DropDown, Button } from '@munet/ui';
+import { DropMenu, Button } from '@munet/ui';
 import { useI18n } from 'vue-i18n';
 import { rightPanel, editingMemoDir, editingMemoName } from "@/views/Charts/refs";
 
@@ -11,7 +11,6 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n();
     const memos = computed(() => props.dir.subFiles!.filter(f => f.toLowerCase().endsWith('.txt')));
-    const ddRef = ref<any>(null);
 
     const onSelect = (key: string) => {
       editingMemoDir.value = props.dir;
@@ -19,10 +18,22 @@ export default defineComponent({
       rightPanel.value = 'memoEdit';
     };
 
+    const options = computed(() => [
+      ...memos.value.map(it => ({
+        label: it,
+        action: () => onSelect(it),
+      })),
+      {
+        label: t('common.create'),
+        icon: 'i-mdi-plus',
+        action: () => onSelect('add'),
+      },
+    ]);
+
     return () => (
-      <DropDown ref={ddRef as any}>
+      <DropMenu options={options.value} buttonText="">
         {{
-          trigger: (toggle: Function) => (
+          trigger: (toggle: (val?: boolean) => void) => (
             <Button variant="secondary" onClick={() => toggle()}>
               <div class="flex items-center gap-1">
                 <span class="i-material-symbols-edit-note text-lg translate-y-.3" />
@@ -30,20 +41,8 @@ export default defineComponent({
               </div>
             </Button>
           ),
-          default: () => (
-            <div class="flex flex-col gap-1 min-w-30">
-              {memos.value.map(it => (
-                <div class="px-4 py-2 rounded-lg bg-avatarMenuButton cursor-pointer" onClick={() => { ddRef.value?.setShow(false); onSelect(it); }}>
-                  {it}
-                </div>
-              ))}
-              <div class="px-4 py-2 rounded-lg bg-avatarMenuButton cursor-pointer" onClick={() => { ddRef.value?.setShow(false); onSelect('add'); }}>
-                <span class="c-blue-5 flex items-center">{t('common.create')}</span>
-              </div>
-            </div>
-          ),
         }}
-      </DropDown>
+      </DropMenu>
     );
   }
 })

@@ -1,6 +1,7 @@
 import { defineComponent, PropType, ref } from "vue";
 import { Button, CheckBox, Modal, NumberInput, Progress, Select, addToast, showTransactionalDialog } from "@munet/ui";
 import FileTypeIcon from "@/components/FileTypeIcon";
+import BottomOverlay from "@/components/BottomOverlay";
 import { LicenseStatus, MusicXmlWithABJacket } from "@/client/apiGen";
 import api, { getUrl } from "@/client/api";
 import { aquaMaiConfig, globalCapture, selectedADir, showNeedPurchaseDialog, version } from "@/store/refs";
@@ -148,16 +149,16 @@ export default defineComponent({
     return () => <Button variant="secondary" onClick={() => uploadFlow()} ing={load.value} disabled={props.disabled}>
       {t('music.edit.setPv')}
 
-      <Modal title={t('music.edit.selectFileTypes')} show={step.value === STEP.Select} onUpdateShow={() => step.value = STEP.None} width="40em">
-        <div class="flex flex-col gap-2">
-          {t('music.edit.pvFileHint')}
+      <BottomOverlay title={t('music.edit.selectFileTypes')} show={step.value === STEP.Select}>
+        <div class="flex flex-col gap-2 items-center">
+          <div class="text-white op-70">{t('music.edit.pvFileHint')}</div>
           <div class="grid cols-4 justify-items-center text-8em gap-10">
             <FileTypeIcon type="MP4"/>
             <FileTypeIcon type="JPG"/>
             <FileTypeIcon type="DAT"/>
           </div>
         </div>
-      </Modal>
+      </BottomOverlay>
       <Modal
         width="min(30vw,30em)"
         title={t('music.edit.setOffsetSeconds')}

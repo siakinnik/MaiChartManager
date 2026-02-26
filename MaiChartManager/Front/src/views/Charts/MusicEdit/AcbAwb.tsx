@@ -3,6 +3,7 @@ import { HttpResponse, MusicXmlWithABJacket } from "@/client/apiGen";
 import { Button, Modal, NumberInput, Popover, showTransactionalDialog } from "@munet/ui";
 import { globalCapture, selectedADir } from "@/store/refs";
 import FileTypeIcon from "@/components/FileTypeIcon";
+import BottomOverlay from "@/components/BottomOverlay";
 import api, { getUrl } from "@/client/api";
 import AudioPreviewEditorButton from "@/views/Charts/MusicEdit/AudioPreviewEditorButton";
 import SetMovieButton from "@/views/Charts/MusicEdit/SetMovieButton";
@@ -123,15 +124,15 @@ export default defineComponent({
       }
 
       {/* 打开文件对话框一般在左上角，所以在下边显示一个 Drawer */}
-      <Modal title={t('music.edit.selectFileTypes')} v-model:show={tipShow.value} width="40em">
-          <div class="grid cols-4 justify-items-center text-8em gap-10">
-            <FileTypeIcon type="WAV"/>
-            <FileTypeIcon type="MP3"/>
-            <FileTypeIcon type="OGG"/>
-            <FileTypeIcon type="ACB"/>
-          </div>
-      </Modal>
-      <Modal title={t('music.edit.selectAwb')} v-model:show={tipSelectAwbShow.value} width="30em"/>
+      <BottomOverlay title={t('music.edit.selectFileTypes')} show={tipShow.value}>
+        <div class="grid cols-4 justify-items-center text-8em gap-10">
+          <FileTypeIcon type="WAV"/>
+          <FileTypeIcon type="MP3"/>
+          <FileTypeIcon type="OGG"/>
+          <FileTypeIcon type="ACB"/>
+        </div>
+      </BottomOverlay>
+      <BottomOverlay title={t('music.edit.selectAwb')} show={tipSelectAwbShow.value}/>
       <Modal
         width="min(30vw,25em)"
         title={t('music.edit.setOffsetSeconds')}

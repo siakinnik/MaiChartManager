@@ -1,10 +1,10 @@
 import { computed, defineComponent, PropType, ref } from "vue";
 import { GetAssetsDirsResult } from "@/client/apiGen";
-import { Button, DropDown, Popover } from '@munet/ui';
-import OfficialChartToggle from "@/views/Charts/AssetDirsManager/OfficialChartToggle";
+import { Button, DropMenu, Modal, addToast, showTransactionalDialog } from '@munet/ui';
+import api from "@/client/api";
+import { selectedADir, selectMusicId, updateAssetDirs, updateMusicList } from "@/store/refs";
 import MemosDisplay from "@/views/Charts/AssetDirsManager/MemosDisplay";
-import DeleteButton from "@/views/Charts/AssetDirsManager/DeleteButton";
-import CheckConflictButton from "@/views/Charts/AssetDirsManager/CheckConflictButton";
+import CheckContent from "@/views/Charts/AssetDirsManager/CheckConflictButton/CheckContent";
 import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
@@ -15,8 +15,63 @@ export default defineComponent({
   emits: ['select'],
   setup(props, { emit }) {
     const { t } = useI18n();
-    const ddRef = ref<any>(null);
+    const showCheckConflict = ref(false);
     const hasDataConfig = computed(() => props.dir.subFiles!.some(it => it === 'DataConfig.xml'));
+    const isOfficialChart = computed(() => props.dir.subFiles!.some(it => it === 'OfficialChartsMark.txt'));
+
+    const toggleOfficialChart = async () => {
+      if (isOfficialChart.value) {
+        await api.DeleteAssetDirTxt({
+          dirName: props.dir.dirName,
+          fileName: 'OfficialChartsMark.txt'
+        });
+      } else {
+        await api.PutAssetDirTxtValue({
+          dirName: props.dir.dirName,
+          fileName: 'OfficialChartsMark.txt',
+          content: t('assetDir.aquaMaiMarkDesc')
+        });
+      }
+      await updateAssetDirs();
+    };
+
+    const deleteDir = async () => {
+      const confirmed = await showTransactionalDialog(
+        t('assetDir.delete'),
+        props.dir.dirName!,
+        [{ text: t('common.confirm'), action: true }, { text: t('common.cancel'), action: false }]
+      );
+      if (!confirmed) return;
+      const res = await api.DeleteAssetDir(props.dir.dirName!);
+      if (res.error) {
+        const error = res.error as any;
+        addToast({ message: (error.message || error) as string, type: 'error' });
+        return;
+      }
+      if (selectedADir.value === props.dir.dirName) {
+        selectedADir.value = 'A000';
+        selectMusicId.value = 0;
+        await updateMusicList();
+      }
+      await updateAssetDirs();
+    };
+
+    const options = computed(() => [
+      {
+        label: t('assetDir.storing') + (isOfficialChart.value ? t('assetDir.officialChart') : t('assetDir.customChart')),
+        ...(hasDataConfig.value
+          ? { desc: t('assetDir.dataConfigExists'), disabled: true, action: () => {} }
+          : { icon: 'i-material-symbols-repeat', action: toggleOfficialChart }),
+      },
+      {
+        label: t('assetDir.checkConflict'),
+        action: () => { showCheckConflict.value = true; },
+      },
+      {
+        label: t('common.delete'),
+        action: deleteDir,
+      },
+    ]);
 
     return () => (
       <div
@@ -35,39 +90,24 @@ export default defineComponent({
         <div class="flex items-center gap-1 shrink-0" onClick={(e: Event) => e.stopPropagation()}>
           <MemosDisplay dir={props.dir} />
           {props.dir.dirName! !== 'A000' && (
-            <DropDown ref={ddRef as any}>
+            <DropMenu options={options.value} buttonText="">
               {{
-                trigger: (toggle: Function) => (
+                trigger: (toggle: (val?: boolean) => void) => (
                   <Button variant="secondary" onClick={() => toggle()}>
                     <span class="i-ic-baseline-more-vert text-lg" />
                   </Button>
                 ),
-                default: () => (
-                  <div class="flex flex-col gap-1 min-w-40 p-1">
-                    <div class="px-3 py-2 rounded-lg hover:bg-neutral/10 cursor-pointer">
-                      {hasDataConfig.value ? (
-                        <Popover trigger="hover">
-                          {{
-                            trigger: () => t('assetDir.storingOfficial'),
-                            default: () => t('assetDir.dataConfigExists'),
-                          }}
-                        </Popover>
-                      ) : (
-                        <OfficialChartToggle dir={props.dir} />
-                      )}
-                    </div>
-                    <div class="px-3 py-1 rounded-lg hover:bg-neutral/10">
-                      <CheckConflictButton dir={props.dir.dirName!} />
-                    </div>
-                    <div class="px-3 py-1 rounded-lg hover:bg-neutral/10">
-                      <DeleteButton dir={props.dir} />
-                    </div>
-                  </div>
-                ),
               }}
-            </DropDown>
+            </DropMenu>
           )}
         </div>
+        <Modal
+          width="min(60vw,60em)"
+          title={t('assetDir.conflictCheck')}
+          v-model:show={showCheckConflict.value}
+        >
+          <CheckContent dir={props.dir.dirName!} />
+        </Modal>
       </div>
     );
   }

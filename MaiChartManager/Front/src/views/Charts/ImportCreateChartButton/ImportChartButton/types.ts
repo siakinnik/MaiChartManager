@@ -42,22 +42,11 @@ export const defaultTempOptions: TempOptions = {
   shift: ShiftMethod.Bar,
 }
 
-export enum MOVIE_CODEC {
-  PreferH264,
-  ForceH264,
-  ForceVP9,
-}
-
 export const defaultSavedOptions = {
-  ignoreLevel: false,
   addVersionId: 0,
   genreId: 1,
   // 大家都喜欢写 22001，甚至不理解这个选项是干什么的
   version: 22001,
-  disableBga: false,
-  noScale: false,
-  movieCodec: MOVIE_CODEC.ForceVP9,
-  yuv420p: true,
 }
 
 export type TempOptions = {

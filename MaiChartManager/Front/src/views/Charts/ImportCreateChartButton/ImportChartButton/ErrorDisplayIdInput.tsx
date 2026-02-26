@@ -1,9 +1,10 @@
 import { computed, defineComponent, effect, PropType, watch } from "vue";
 import { Button, CheckBox, Modal, NumberInput, Select } from "@munet/ui";
-import { ImportChartMessage, MessageLevel, ShiftMethod } from "@/client/apiGen";
-import { ImportChartMessageEx, ImportMeta, MOVIE_CODEC, SavedOptions, TempOptions } from "./types";
+import { ImportChartMessage, MessageLevel, MovieCodec, ShiftMethod } from "@/client/apiGen";
+import { ImportChartMessageEx, ImportMeta, SavedOptions, TempOptions } from "./types";
 import noJacket from '@/assets/noJacket.webp';
 import { addVersionList, genreList, showNeedPurchaseDialog } from "@/store/refs";
+import { appSettings } from "@/store/settings";
 import GenreInput from "@/components/GenreInput";
 import VersionInput from "@/components/VersionInput";
 import { UTAGE_GENRE } from "@/consts";
@@ -62,32 +63,32 @@ export default defineComponent({
               <div class="ml-1 text-sm">{t('music.edit.version')}</div>
               <VersionInput v-model:value={props.savedOptions.version}/>
             </div>
-            <CheckBox v-model:value={props.savedOptions.ignoreLevel}>
+            <CheckBox v-model:value={appSettings.value.ignoreLevel}>
                 {t('chart.import.option.ignoreLevel')}
             </CheckBox>
-            <CheckBox v-model:value={props.savedOptions.disableBga}>
+            <CheckBox v-model:value={appSettings.value.disableBga}>
                 {t('chart.import.option.disableBga')}
             </CheckBox>
             <details>
                 <summary class="cursor-pointer">{t('chart.import.option.advancedOptions')}</summary>
                 <div class="flex flex-col gap-2 mt-2">
                     <ShiftModeSelector tempOptions={props.tempOptions}></ShiftModeSelector>
-                    <CheckBox v-model:value={props.savedOptions.noScale}>
+                    <CheckBox v-model:value={appSettings.value.noScale}>
                         {t('chart.import.option.noScale')}
                     </CheckBox>
                     <div>
                         <div class="ml-1 text-sm">{t('chart.import.option.pvCodec')}</div>
                         <div class="flex flex-col gap-2 w-full">
                             <div class="flex gap-2 h-34px items-center">
-                                <Select v-model:value={props.savedOptions.movieCodec} options={[
-                                  {label: t('chart.import.option.codecPreferH264'), value: MOVIE_CODEC.PreferH264},
-                                  {label: t('chart.import.option.codecForceH264'), value: MOVIE_CODEC.ForceH264},
-                                  {label: t('chart.import.option.codecForceVP9'), value: MOVIE_CODEC.ForceVP9},
+                        <Select v-model:value={appSettings.value.movieCodec} options={[
+                                  {label: t('chart.import.option.codecPreferH264'), value: MovieCodec.PreferH264},
+                                  {label: t('chart.import.option.codecForceH264'), value: MovieCodec.ForceH264},
+                                  {label: t('chart.import.option.codecForceVP9'), value: MovieCodec.ForceVp9},
                                 ]}/>
                             </div>
                         </div>
                     </div>
-                    <CheckBox v-model:value={props.savedOptions.yuv420p}>
+                    <CheckBox v-model:value={appSettings.value.yuv420p}>
                         {t('chart.import.option.yuv420p')}
                     </CheckBox>
                 </div>

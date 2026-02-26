@@ -1,7 +1,7 @@
 import { getUrl } from '@/client/api';
 import { Button, CheckBox, Modal, Progress, addToast } from '@munet/ui';
 import { defineComponent, ref } from 'vue';
-import { useStorage } from '@vueuse/core';
+import { appSettings, saveSettings } from '@/store/settings';
 import { LicenseStatus } from '@/client/apiGen';
 import { globalCapture, showNeedPurchaseDialog, version } from '@/store/refs';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
@@ -13,17 +13,10 @@ enum STEP {
   Progress,
 }
 
-// 视频转换选项的默认值
-const defaultVideoConvertOptions = {
-  noScale: false,
-  yuv420p: true,
-}
-
 export default defineComponent({
   setup(props, { expose }) {
     const step = ref(STEP.None);
     const progress = ref(0);
-    const videoConvertOptions = useStorage('videoConvertOptions', defaultVideoConvertOptions, undefined, { mergeDefaults: true });
     const { t } = useI18n();
 
     const handleVideoConvert = async () => {
@@ -34,7 +27,7 @@ export default defineComponent({
 
       try {
         await new Promise<void>((resolve, reject) => {
-          fetchEventSource(getUrl(`VideoConvertToolApi?noScale=${videoConvertOptions.value.noScale}&yuv420p=${videoConvertOptions.value.yuv420p}`), {
+          fetchEventSource(getUrl(`VideoConvertToolApi?noScale=${appSettings.value.noScale}&yuv420p=${appSettings.value.yuv420p}`), {
             signal: controller.signal,
             method: 'POST',
             onerror(e) {
@@ -102,10 +95,10 @@ export default defineComponent({
       >{{
         default: () => <div class="flex flex-col gap-3">
           <div>{t('tools.videoOptions.onlyForUsm')}</div>
-          <CheckBox v-model:value={videoConvertOptions.value.noScale}>
+          <CheckBox v-model:value={appSettings.value.noScale} onUpdateValue={saveSettings}>
             {t('tools.videoOptions.noScale')}
           </CheckBox>
-          <CheckBox v-model:value={videoConvertOptions.value.yuv420p}>
+          <CheckBox v-model:value={appSettings.value.yuv420p} onUpdateValue={saveSettings}>
             {t('tools.videoOptions.useYuv420p')}
           </CheckBox>
         </div>,

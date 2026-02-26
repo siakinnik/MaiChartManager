@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import RefreshAllButton from './RefreshAllButton';
 import VersionInfo from '@/components/VersionInfo';
 
-export type SidebarItem = 'charts' | 'mods' | 'batch' | 'genres' | 'tools';
+export type SidebarItem = 'charts' | 'mods' | 'batch' | 'genres' | 'tools' | 'settings';
 
 const items: { key: SidebarItem; icon: string; labelKey: string }[] = [
   { key: 'charts', icon: 'i-mdi-music-note', labelKey: 'sidebar.charts' },
@@ -52,6 +52,24 @@ export default defineComponent({
             </div>
           ))}
           <div class="mt-auto" />
+          <div
+            class={[
+              'w-15 h-15 flex flex-col items-center justify-center rounded-md cursor-pointer',
+              'transition-all duration-200 border-none bg-transparent relative group',
+              active.value === 'settings'
+                ? 'bg-[var(--link-color)]/12 text-[var(--link-color)]'
+                : 'text-gray-500 bg-avatarMenuButton hover:text-gray-700',
+            ]}
+            onClick={() => (active.value = 'settings')}
+          >
+            {active.value === 'settings' && (
+              <div class="absolute left-0 top-1.5 bottom-1.5 w-0.75 rounded-r-full bg-[var(--link-color)]" />
+            )}
+            <span class={['i-mdi-cog', 'text-6']} />
+            <span class="absolute left-full ml-2 px-3 py-1.5 rounded-lg bg-[oklch(0.7_0.13_var(--hue))] text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-100">
+              {t('sidebar.settings')}
+            </span>
+          </div>
           <RefreshAllButton />
           <VersionInfo />
         </div>
@@ -78,6 +96,19 @@ export default defineComponent({
               <span class="text-2.5 leading-tight">{t(item.labelKey)}</span>
             </button>
           ))}
+          <button
+            class={[
+              'flex-1 flex flex-col items-center justify-center gap-0.5 h-full',
+              'border-none bg-transparent cursor-pointer transition-colors duration-200',
+              active.value === 'settings'
+                ? 'text-[var(--link-color)]'
+                : 'text-gray-400',
+            ]}
+            onClick={() => (active.value = 'settings')}
+          >
+            <span class={['i-mdi-cog', 'text-xl']} />
+            <span class="text-2.5 leading-tight">{t('sidebar.settings')}</span>
+          </button>
         </div>
       </>
     );

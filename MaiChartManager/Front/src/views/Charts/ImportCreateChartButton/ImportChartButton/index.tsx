@@ -1,16 +1,17 @@
 import { defineComponent, ref } from "vue";
 import { Button } from "@munet/ui";
 import SelectFileTypeTip from "./SelectFileTypeTip";
-import { LicenseStatus, MessageLevel, ShiftMethod } from "@/client/apiGen";
+import { LicenseStatus, MessageLevel, MovieCodec, ShiftMethod } from "@/client/apiGen";
 import CheckingModal from "./CheckingModal";
 import api, { getUrl } from "@/client/api";
 import { aquaMaiConfig, globalCapture, musicList, selectedADir, selectMusicId, updateMusicList, version as appVersion } from "@/store/refs";
+import { appSettings } from "@/store/settings";
 import ErrorDisplayIdInput from "./ErrorDisplayIdInput";
 import ImportStepDisplay from "./ImportStepDisplay";
 import { useStorage } from "@vueuse/core";
 import { captureException } from "@sentry/vue";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { defaultSavedOptions, defaultTempOptions, dummyMeta, IMPORT_STEP, ImportChartMessageEx, ImportMeta, MOVIE_CODEC, STEP } from "./types";
+import { defaultSavedOptions, defaultTempOptions, dummyMeta, IMPORT_STEP, ImportChartMessageEx, ImportMeta, STEP } from "./types";
 import getNextUnusedMusicId from "@/utils/getNextUnusedMusicId";
 import { useI18n } from 'vue-i18n';
 
@@ -92,8 +93,8 @@ export default defineComponent({
     }
 
     const shouldUseH264 = () => {
-      if (savedOptions.value.movieCodec === MOVIE_CODEC.ForceH264) return true;
-      if (savedOptions.value.movieCodec === MOVIE_CODEC.ForceVP9) return false;
+      if (appSettings.value.movieCodec === MovieCodec.ForceH264) return true;
+      if (appSettings.value.movieCodec === MovieCodec.ForceVp9) return false;
       return aquaMaiConfig.value?.sectionStates?.['GameSystem.Assets.MovieLoader']?.enabled && aquaMaiConfig.value?.entryStates?.['GameSystem.Assets.MovieLoader.LoadMp4Movie']?.value;
     }
 
@@ -104,8 +105,8 @@ export default defineComponent({
       console.log('use h264', h264);
       body.append('h264', h264.toString());
       body.append('padding', offset.toString());
-      body.append('noScale', savedOptions.value.noScale.toString());
-      body.append('yuv420p', savedOptions.value.yuv420p.toString());
+      body.append('noScale', appSettings.value.noScale!.toString());
+      body.append('yuv420p', appSettings.value.yuv420p!.toString());
       body.append('file', movie);
       const controller = new AbortController();
       fetchEventSource(getUrl(`SetMovieApi/${selectedADir.value}/${id}`), {
@@ -154,7 +155,7 @@ export default defineComponent({
         const res = (await api.ImportChart({
           file: music.maidata,
           id: music.id,
-          ignoreLevelNum: savedOptions.value.ignoreLevel,
+          ignoreLevelNum: appSettings.value.ignoreLevel,
           genreId: savedOptions.value.genreId,
           addVersionId: savedOptions.value.addVersionId,
           version: savedOptions.value.version,
@@ -187,7 +188,7 @@ export default defineComponent({
 
         await api.SetAudio(music.id, selectedADir.value, { file: music.track, padding });
 
-        if (music.movie && !savedOptions.value.disableBga) {
+        if (music.movie && !appSettings.value.disableBga) {
           currentMovieProgress.value = 0;
           music.importStep = IMPORT_STEP.movie;
           try {

@@ -539,3 +539,16 @@ sidebar:
   batch: Batch
   genres: Genres
   tools: Tools
+  settings: Settings
+settings:
+  title: Settings
+  appearance: Appearance
+  themeHue: Theme Hue
+  resetDefault: Reset Default
+  importOptions: Import Options
+  ignoreLevel: Ignore level, exclude from B50
+  disableBga: Don't import BGA even if present
+  videoOptions: Video Options
+  movieCodec: PV Codec
+  yuv420p: Use YUV420P color space when converting USM
+  noScale: Don't scale video to 1080 width

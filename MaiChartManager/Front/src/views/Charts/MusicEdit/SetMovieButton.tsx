@@ -2,12 +2,11 @@ import { defineComponent, PropType, ref } from "vue";
 import { Button, CheckBox, Modal, NumberInput, Progress, Select, addToast, showTransactionalDialog } from "@munet/ui";
 import FileTypeIcon from "@/components/FileTypeIcon";
 import BottomOverlay from "@/components/BottomOverlay";
-import { LicenseStatus, MusicXmlWithABJacket } from "@/client/apiGen";
+import { LicenseStatus, MovieCodec, MusicXmlWithABJacket } from "@/client/apiGen";
 import api, { getUrl } from "@/client/api";
 import { aquaMaiConfig, globalCapture, selectedADir, showNeedPurchaseDialog, version } from "@/store/refs";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
-import { defaultSavedOptions, MOVIE_CODEC } from "@/views/Charts/ImportCreateChartButton/ImportChartButton/types";
-import { useStorage } from "@vueuse/core";
+import { appSettings, saveSettings } from "@/store/settings";
 import { t } from "@/locales";
 
 enum STEP {
@@ -35,11 +34,11 @@ export default defineComponent({
     const progress = ref(0)
 
     const noScale = ref(false)
-    const savedOptions = useStorage('importMusicOptions', defaultSavedOptions, undefined, { mergeDefaults: true });
+
 
     const shouldUseH264 = () => {
-      if (savedOptions.value.movieCodec === MOVIE_CODEC.ForceH264) return true;
-      if (savedOptions.value.movieCodec === MOVIE_CODEC.ForceVP9) return false;
+      if (appSettings.value.movieCodec === MovieCodec.ForceH264) return true;
+      if (appSettings.value.movieCodec === MovieCodec.ForceVP9) return false;
       return (aquaMaiConfig.value?.sectionStates?.['GameSystem.Assets.MovieLoader']?.enabled && aquaMaiConfig.value?.entryStates?.['GameSystem.Assets.MovieLoader.LoadMp4Movie']?.value) || false;
     }
 
@@ -51,7 +50,7 @@ export default defineComponent({
       body.append('h264', h264.toString());
       body.append('padding', offset.toString());
       body.append('noScale', noScale.value.toString());
-      body.append('yuv420p', savedOptions.value.yuv420p.toString());
+      body.append('yuv420p', appSettings.value.yuv420p!.toString());
       body.append('file', movie);
       const controller = new AbortController();
       fetchEventSource(getUrl(`SetMovieApi/${selectedADir.value}/${id}`), {
@@ -172,12 +171,12 @@ export default defineComponent({
             {t('chart.import.option.noScale')}
           </CheckBox>
           <div class="ml-1 text-sm">{t('chart.import.option.pvCodec')}</div>
-          <Select v-model:value={savedOptions.value.movieCodec} options={[
-            { label: t('chart.import.option.codecPreferH264'), value: MOVIE_CODEC.PreferH264 },
-            { label: t('chart.import.option.codecForceH264'), value: MOVIE_CODEC.ForceH264 },
-            { label: t('chart.import.option.codecForceVP9'), value: MOVIE_CODEC.ForceVP9 },
+          <Select v-model:value={appSettings.value.movieCodec} onUpdateValue={saveSettings} options={[
+            { label: t('chart.import.option.codecPreferH264'), value: MovieCodec.PreferH264 },
+            { label: t('chart.import.option.codecForceH264'), value: MovieCodec.ForceH264 },
+            { label: t('chart.import.option.codecForceVP9'), value: MovieCodec.ForceVP9 },
           ]}/>
-          <CheckBox v-model:value={savedOptions.value.yuv420p}>
+          <CheckBox v-model:value={appSettings.value.yuv420p} onUpdateValue={saveSettings}>
             {t('chart.import.option.yuv420p')}
           </CheckBox>
         </div>,

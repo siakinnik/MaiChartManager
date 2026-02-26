@@ -498,3 +498,16 @@ sidebar:
   batch: 批次操作
   genres: 流派/版本管理
   tools: 工具
+  settings: 設定
+settings:
+  title: 設定
+  appearance: 外觀
+  themeHue: 主題色相
+  resetDefault: 重置預設
+  importOptions: 匯入選項
+  ignoreLevel: 忽略定數，不參與 B50 計算
+  disableBga: 有 BGA 也不要匯入
+  videoOptions: 影片選項
+  movieCodec: PV 編碼
+  yuv420p: 轉換 USM 時使用 YUV420P 顏色空間
+  noScale: 不要縮放影片到 1080 寬度

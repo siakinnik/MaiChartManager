@@ -23,7 +23,7 @@ export default defineComponent({
 
     return () => <div class="grid cols-[40em_1fr] max-[1440px]:cols-1">
       <div class={[
-        'p-xy h-100dvh',
+        'h-100dvh',
         'max-[1440px]:absolute max-[1440px]:left-12 max-[1440px]:w-40em max-[1440px]:max-w-[calc(100dvw-48px)] z-10 transition-transform duration-300',
         'max-[1440px]:bg-white max-[1440px]:border-r-solid max-[1440px]:border-r-1 max-[1440px]:border-r-gray-200',
         'max-[767px]:left-0 max-[767px]:max-w-100dvw',
@@ -52,14 +52,14 @@ export default defineComponent({
         )}
       </TransitionOpacity>
       <div
-        class="flex flex-col gap-4 p-xy h-100dvh"
+        class="flex flex-col h-100dvh of-hidden"
         style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 16px, rgba(255, 255, 255, 0.1) calc(100% - 16px), transparent 100%)' }}
       >
         {rightPanel.value === 'memoEdit' ? (
           <MemoBox />
         ) : (
-          <>
-            <div class="flex items-center gap-2 shrink-0">
+          <div class="flex flex-col gap-4 p-y h-full">
+            <div class="flex items-center gap-2 shrink-0 px">
               <button onClick={() => (mobileShowMenu.value = true)} class="min-[1440px]:hidden">
                 <span class="i-ic-baseline-menu text-lg" />
               </button>
@@ -74,10 +74,10 @@ export default defineComponent({
                 </>
               )}
             </div>
-            <div class="of-y-auto cst grow-1">
+            <div class="of-y-auto cst grow-1 px">
               <MusicEdit />
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>;

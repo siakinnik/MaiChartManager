@@ -18,7 +18,7 @@ export default defineComponent({
     };
 
     return () => (
-      <div class="flex flex-col gap-3 h-full">
+      <div class="flex flex-col gap-3 h-full p-xy">
         <div class="flex items-center gap-2">
           <Button variant="secondary" onClick={() => props.toggleMenu()} class="min-[1440px]:hidden">
             <span class="i-ic-baseline-menu text-lg" />

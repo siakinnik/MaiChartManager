@@ -18,7 +18,7 @@ export default defineComponent({
     };
 
     return () => (
-      <div class="flex flex-col gap-3 h-full">
+      <div class="flex flex-col gap-3 h-full p-xy">
         <div class="flex items-center gap-2">
           <Button variant="secondary" onClick={() => leftPanel.value = 'musicList'}>
             <span class="i-ic-baseline-arrow-back text-lg" />

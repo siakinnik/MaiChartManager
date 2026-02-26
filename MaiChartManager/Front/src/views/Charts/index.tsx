@@ -1,4 +1,4 @@
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, Transition, watch } from 'vue';
 import MusicList from './MusicList';
 import MusicEdit from './MusicEdit';
 import MusicSelectedTopRightToolbar from './MusicSelectedTopRightToolbar';
@@ -10,11 +10,16 @@ import TransitionOpacity from '@/components/TransitionOpacity';
 import { useI18n } from 'vue-i18n';
 import { selectedADir, selectedMusic } from '@/store/refs';
 import { leftPanel, rightPanel } from './refs';
+import styles from './index.module.sass';
 
 export default defineComponent({
   setup() {
     const { t } = useI18n();
     const mobileShowMenu = ref(false);
+    const isForward = ref(true);
+    watch(leftPanel, (val) => {
+      isForward.value = val === 'assetDirs';
+    });
 
     return () => <div class="grid cols-[40em_1fr] max-[1440px]:cols-1">
       <div class={[
@@ -24,10 +29,19 @@ export default defineComponent({
         'max-[767px]:left-0 max-[767px]:max-w-100dvw',
         mobileShowMenu.value ? 'max-[1440px]:translate-x-0' : 'max-[1440px]:translate-x-[-100%]',
       ]}>
-        {leftPanel.value === 'musicList'
-          ? <MusicList toggleMenu={() => (mobileShowMenu.value = false)} />
-          : <AssetDirsManager />
-        }
+        <div class="relative h-full of-hidden">
+          <Transition
+            enterActiveClass={styles.enterActive}
+            leaveActiveClass={styles.leaveActive}
+            enterFromClass={isForward.value ? styles.forwardEnterFrom : styles.backwardEnterFrom}
+            leaveToClass={isForward.value ? styles.forwardLeaveTo : styles.backwardLeaveTo}
+          >
+            {leftPanel.value === 'musicList'
+              ? <MusicList toggleMenu={() => (mobileShowMenu.value = false)} key="musicList" />
+              : <AssetDirsManager key="assetDirs" />
+            }
+          </Transition>
+        </div>
       </div>
       <TransitionOpacity>
         {mobileShowMenu.value && (

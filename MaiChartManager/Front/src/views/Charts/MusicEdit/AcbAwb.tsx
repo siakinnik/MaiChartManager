@@ -102,7 +102,7 @@ export default defineComponent({
       }
     }
 
-    return () => <div class="flex items-center gap-2">
+    return () => <div class="flex items-center gap-2 mt-2">
       {props.song.isAcbAwbExist && <audio controls src={url.value} class="w-0 grow"/>}
       {selectedADir.value !== 'A000' &&
         <Popover trigger="hover">{{

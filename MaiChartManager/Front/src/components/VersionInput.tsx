@@ -1,5 +1,5 @@
-import { computed, defineComponent, PropType } from "vue";
-import { Button, NumberInput, Popover } from "@munet/ui";
+import { computed, defineComponent, PropType, ref } from "vue";
+import { DropMenu, NumberInput } from "@munet/ui";
 import { b15ver, gameVersion, selectedADir, version } from "@/store/refs";
 import { useI18n } from 'vue-i18n';
 
@@ -15,24 +15,23 @@ export default defineComponent({
       set: (v) => emit('update:value', v)
     })
 
-    return () => <div class="flex">
-      <NumberInput class="w-full" v-model:value={value.value} min={0}/>
-      {!!version.value?.gameVersion && <>
-        <Button class={value.value < b15ver.value ? "z-1" : ""} variant={value.value < b15ver.value ? 'primary' : 'ghost'}
-                 disabled={selectedADir.value === 'A000'} onClick={() => value.value = 20000}>{t('music.edit.includeB35')}</Button>
-        <Button class={value.value >= b15ver.value ? "z-1" : ""} variant={value.value >= b15ver.value ? 'primary' : 'ghost'}
-                 disabled={selectedADir.value === 'A000'} onClick={() => value.value = 20000 + version.value!.gameVersion! * 100}>{t('music.edit.includeB15')}</Button>
-      </>}
-      <Popover trigger="hover">
-        {{
-          trigger: () => <span class="flex items-center px-2 bg-neutral/10 rounded-r cursor-help">
-            ?
-          </span>,
-          default: () => <div>
-            {t('music.edit.versionHint', {gameVersion: gameVersion.value, b15ver: b15ver.value})}
-          </div>
-        }}
-      </Popover>
-    </div>;
+    const showMenu = computed(() => !!version.value?.gameVersion && selectedADir.value !== 'A000');
+
+    const options = computed(() => [
+      { label: t('music.edit.includeB35'), action: () => { value.value = 20000; } },
+      { label: t('music.edit.includeB15'), action: () => { value.value = 20000 + version.value!.gameVersion! * 100; } },
+    ]);
+
+    return () => <DropMenu options={options.value}>
+      {{
+        trigger: (toggle: (val?: boolean) => void) =>
+          <NumberInput
+            class="w-full"
+            v-model:value={value.value}
+            min={0}
+            onFocus={() => showMenu.value && toggle(true)}
+          />,
+      }}
+    </DropMenu>;
   }
 })

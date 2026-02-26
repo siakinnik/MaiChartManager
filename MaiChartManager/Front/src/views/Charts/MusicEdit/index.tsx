@@ -1,5 +1,5 @@
 import { computed, defineComponent, onMounted, PropType, ref, watch } from "vue";
-import { addVersionList, genreList, globalCapture, selectedADir, selectedMusic as info, selectMusicId, updateAddVersionList, updateGenreList, updateMusicList, selectedLevel, disableSync } from "@/store/refs";
+import { addVersionList, genreList, globalCapture, selectedADir, selectedMusic as info, selectMusicId, updateAddVersionList, updateGenreList, updateMusicList, selectedLevel, disableSync, gameVersion, b15ver } from "@/store/refs";
 import { Chart, MusicXmlWithABJacket } from "@/client/apiGen";
 import api from "@/client/api";
 
@@ -49,14 +49,14 @@ const Component = defineComponent({
     watch(() => info.value?.longMusic, sync('longMusic', api.EditMusicLong));
     watch(() => info.value?.sortName, sync('sortName', api.EditMusicSortName))
 
-    onMounted(()=>{
+    onMounted(() => {
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: info.value?.name || '',
           artist: info.value?.artist || '',
           album: genreList.value.find(genre => genre.id === info.value?.genreId)?.genreName || '',
           artwork: [
-            { src: info.value?.hasJacket ? getUrl(`GetJacketApi/${selectedADir.value}/${info.value?.id}?${(info.value as any).updateTime}`) : noJacket,  type: 'image/png' },
+            { src: info.value?.hasJacket ? getUrl(`GetJacketApi/${selectedADir.value}/${info.value?.id}?${(info.value as any).updateTime}`) : noJacket, type: 'image/png' },
           ]
         });
       }
@@ -65,79 +65,91 @@ const Component = defineComponent({
     // TODO: inject disable when A000
 
     return () => info.value && <div class="flex flex-col gap-2">
-        <div class="grid cols-[1fr_12em] gap-5">
-            <div class="flex flex-col gap-2 relative">
-                <div class="flex items-center gap-2 absolute right-0 top-0 mr-2 mt-2">
-                    <ProblemsDisplay problems={info.value.problems!}/>
-                </div>
-                <div class="flex items-center gap-2">
-                    <img src={info.value.id! >= 1e4 ? dxIcon : stdIcon} class="h-6"/>
-                    <div class="c-gray-5">
-                        <span class="op-70">ID: </span>
-                        <span class="select-text">{info.value.id}</span>
-                    </div>
-                </div>
+      <div class="grid cols-[1fr_12em] gap-5">
+        <div class="flex flex-col gap-2 relative">
+          <div class="flex items-center gap-2 absolute right-0 top-0 mr-2 mt-2">
+            <ProblemsDisplay problems={info.value.problems!}/>
+          </div>
+          <div class="flex items-center gap-2">
+            <img src={info.value.id! >= 1e4 ? dxIcon : stdIcon} class="h-6"/>
+            <div class="c-gray-5">
+              <span class="op-70">ID: </span>
+              <span class="select-text">{info.value.id}</span>
+            </div>
+          </div>
 
-                <div class="ml-1 text-sm">{t('music.edit.name')}</div>
-                <div class="flex items-center gap-4 w-full">
-                    <TextInput v-model:value={info.value.name} class="w-0 grow"/>
-                    <CheckBox v-model:value={info.value.longMusic}>{t('common.longMusic')}</CheckBox>
-                </div>
-                <div class="ml-1 text-sm">{t('music.edit.artist')}</div>
-                <TextInput v-model:value={info.value.artist}/>
-            </div>
-            <JacketBox info={info.value} class="h-12em w-12em"/>
+          <div class="ml-1 text-sm">{t('music.edit.name')}</div>
+          <div class="flex items-center gap-4 w-full">
+            <TextInput v-model:value={info.value.name} class="w-0 grow"/>
+            <CheckBox v-model:value={info.value.longMusic}>{t('common.longMusic')}</CheckBox>
+          </div>
+          <div class="ml-1 text-sm">{t('music.edit.artist')}</div>
+          <TextInput v-model:value={info.value.artist}/>
         </div>
-        <div class="flex flex-col gap-2">
-            <Popover trigger="hover">
+        <JacketBox info={info.value} class="h-12em w-12em"/>
+      </div>
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-1">
+          <div class="ml-1 text-sm">{t('music.edit.sortName')}</div>
+          <Popover trigger="hover">
+            {{
+              trigger: () => <div class="i-material-symbols:info-outline-rounded op-50"/>,
+              default: () => <div>{t('music.edit.sortNameTips')}</div>
+            }}
+          </Popover>
+        </div>
+        <TextInput v-model:value={info.value!.sortName} class="w-full"/>
+        <div class="flex gap-4">
+          <div class="flex flex-col gap-2 w-0 grow">
+            <div class="ml-1 text-sm">{t('music.edit.genre')}</div>
+            <GenreInput options={genreList.value} v-model:value={info.value.genreId}/>
+          </div>
+          <div class="flex flex-col gap-2 w-0 grow">
+            <div class="ml-1 text-sm">{t('music.edit.versionCategory')}</div>
+            <GenreInput options={addVersionList.value} v-model:value={info.value.addVersionId}/>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="flex flex-col gap-2 w-0 grow">
+            <div class="ml-1 text-sm">{t('music.edit.bpm')}</div>
+            <NumberInput min={0} v-model:value={info.value.bpm}/>
+          </div>
+          <div class="flex flex-col gap-2 w-0 grow">
+            <div class="flex items-center gap-1">
+              <div class="ml-1 text-sm">{t('music.edit.version')}</div>
+              <Popover trigger="hover">
+                {{
+                  trigger: () => <div class="i-material-symbols:info-outline-rounded op-50"/>,
+                  default: () => <div>{t('music.edit.versionHint', { gameVersion: gameVersion.value, b15ver: b15ver.value })}</div>
+                }}
+              </Popover>
+            </div>
+
+            <VersionInput v-model:value={info.value.version}/>
+          </div>
+        </div>
+        <AcbAwb song={info.value}/>
+        <NTabs type="line" animated barWidth={0} v-model:value={selectedLevel.value} class="levelTabs"
+               style={{ '--n-tab-padding': 0, '--n-pane-padding-top': 0, '--n-tab-text-color-hover': '' }}>
+          {new Array(5).fill(0).map((_, index) =>
+            <NTabPane key={index} name={index} tab={DIFFICULTY[index]}>
               {{
-                trigger: () => <div class="ml-1 text-sm">{t('music.edit.sortName')}</div>,
-                default: () => <div>{t('music.edit.sortNameTips')}</div>
+                tab: () => <Tab index={index} chart={info.value?.charts![index]!} selected={selectedLevel.value === index}/>,
+                default: () => <ChartPanel chart={info.value?.charts![index]!} songId={info.value?.id!} chartIndex={index}
+                                           class="pxy pt-2 rounded-[0_0_.5em_.5em]" style={{ backgroundColor: `color-mix(in srgb, ${LEVEL_COLOR[index]}, transparent 90%)`, '--hue': LEVEL_HUE[index] }}/>
               }}
-            </Popover>
-            <TextInput v-model:value={info.value!.sortName} class="w-full"/>
-            <div class="flex gap-4">
-                <div class="flex flex-col gap-2 w-0 grow">
-                    <div class="ml-1 text-sm">{t('music.edit.genre')}</div>
-                    <GenreInput options={genreList.value} v-model:value={info.value.genreId}/>
-                </div>
-                <div class="flex flex-col gap-2 w-0 grow">
-                    <div class="ml-1 text-sm">{t('music.edit.versionCategory')}</div>
-                    <GenreInput options={addVersionList.value} v-model:value={info.value.addVersionId}/>
-                </div>
-            </div>
-            <div class="flex gap-4">
-                <div class="flex flex-col gap-2 w-0 grow">
-                    <div class="ml-1 text-sm">{t('music.edit.bpm')}</div>
-                    <NumberInput min={0} v-model:value={info.value.bpm}/>
-                </div>
-                <div class="flex flex-col gap-2 w-0 grow">
-                    <div class="ml-1 text-sm">{t('music.edit.version')}</div>
-                    <VersionInput v-model:value={info.value.version}/>
-                </div>
-            </div>
-            <AcbAwb song={info.value}/>
-            <NTabs type="line" animated barWidth={0} v-model:value={selectedLevel.value} class="levelTabs"
-                   style={{'--n-tab-padding': 0, '--n-pane-padding-top': 0, '--n-tab-text-color-hover': ''}}>
-              {new Array(5).fill(0).map((_, index) =>
-                <NTabPane key={index} name={index} tab={DIFFICULTY[index]}>
-                  {{
-                    tab: () => <Tab index={index} chart={info.value?.charts![index]!} selected={selectedLevel.value === index}/>,
-                    default: () => <ChartPanel chart={info.value?.charts![index]!} songId={info.value?.id!} chartIndex={index}
-                                               class="pxy pt-2 rounded-[0_0_.5em_.5em]" style={{backgroundColor: `color-mix(in srgb, ${LEVEL_COLOR[index]}, transparent 90%)`, '--hue': LEVEL_HUE[index]}}/>
-                  }}
-                </NTabPane>
-              )}
-            </NTabs>
-        </div>
+            </NTabPane>
+          )}
+        </NTabs>
+      </div>
     </div>;
   },
 })
 
 const Tab = defineComponent({
   props: {
-    index: {type: Number, required: true},
-    chart: {type: Object as PropType<Chart>, required: true},
+    index: { type: Number, required: true },
+    chart: { type: Object as PropType<Chart>, required: true },
     selected: Boolean,
   },
   setup(props) {
@@ -148,11 +160,11 @@ const Tab = defineComponent({
                       }}>
       {
         !props.chart.enable &&
-          <div class="pos-absolute top-0 bottom-0 left-0 right-0" style={{
-            backgroundPosition: '0 0',
-            background: `repeating-linear-gradient(-45deg,
+        <div class="pos-absolute top-0 bottom-0 left-0 right-0" style={{
+          backgroundPosition: '0 0',
+          background: `repeating-linear-gradient(-45deg,
                         rgba(255, 255, 255, .3) 0, rgba(255, 255, 255, .3) 5%, rgba(255, 255, 255, .05) 5%, rgba(255, 255, 255, .05) 10%)`
-          }}/>
+        }}/>
       }
       <span class="z-1">{DIFFICULTY[props.index]}</span>
     </div>

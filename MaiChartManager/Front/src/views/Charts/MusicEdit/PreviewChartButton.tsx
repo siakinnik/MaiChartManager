@@ -1,16 +1,6 @@
-import { defineComponent, PropType, ref, watch } from "vue";
-import UnityWebgl from "unity-webgl";
-// 神奇，ASP.NET 放一个 .data 的文件在 wwwroot 里，就会 404。其他后缀就没有问题
-import dataUrl from './majdata-wasm/Build.bin?url';
-import frameworkUrl from './majdata-wasm/Build.framework.js?url';
-import codeUrl from './majdata-wasm/Build.wasm?url';
-import loaderUrl from './majdata-wasm/Build.loader.js?url';
-
-import UnityVue from 'unity-webgl/vue'
+import { defineComponent } from "vue";
 import { selectedADir } from "@/store/refs";
-import { getUrl } from "@/client/api";
 import { t } from "@/locales";
-import { Modal } from "@munet/ui";
 
 export default defineComponent({
   props: {
@@ -18,41 +8,24 @@ export default defineComponent({
     level: {type: Number, required: true},
   },
   setup(props) {
-    const unityContext = new UnityWebgl({
-      dataUrl,
-      frameworkUrl,
-      loaderUrl,
-      codeUrl,
-    })
-    const show = ref(false)
+    const openPreview = () => {
+      const params = new URLSearchParams({
+        assetDir: selectedADir.value!,
+        songId: String(props.songId),
+        level: String(props.level),
+      });
+      const width = 960;
+      const height = 640;
+      const left = (screen.width - width) / 2;
+      const top = (screen.height - height) / 2;
+      const url = `/#/chart-preview?${params}`;
+      window.open(url, '_blank', `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no`);
+    };
 
-    unityContext.on("mounted", () => {
-      console.log("Unity mounted")
-      setTimeout(() => {
-        unityContext.send("HandleJSMessages", "ReceiveMessage", [
-          getUrl(`ChartPreviewApi/${selectedADir.value}/${props.songId}/${props.level}`),
-          getUrl(`GetMusicWavApi/${selectedADir.value}/${props.songId}`),
-          getUrl(`GetJacketApi/${selectedADir.value}/${props.songId}`),
-          '',
-          'lv0'
-        ].join('\n'))
-      }, 500)
-    })
-
-    return () => <>
-      <button onClick={() => show.value = true}>
+    return () => (
+      <button onClick={openPreview}>
         {t('music.edit.previewChart')}
       </button>
-      <Modal
-        width="60vw"
-        title={t('chart.preview.title')}
-        v-model:show={show.value}
-      >{{
-        default: () => <div class="flex flex-col gap-2">
-          {t('music.edit.previewChartWarning')}
-          <UnityVue unity={unityContext} height="32vw"/>
-        </div>,
-      }}</Modal>
-    </>
+    );
   },
-})
+});

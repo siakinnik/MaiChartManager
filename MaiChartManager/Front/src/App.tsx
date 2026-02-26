@@ -1,8 +1,8 @@
 import { computed, defineComponent } from 'vue';
 import FeedbackErrorDialog from "@/components/FeedbackErrorDialog";
 import NeedPurchaseDialog from "@/components/NeedPurchaseDialog";
-import Index from "@/views/Index";
 import StartupErrorDialog from "@/components/StartupErrorDialog";
+import { RouterView } from 'vue-router';
 
 import { modalShowing, selectedThemeHue, GlobalElementsContainer as UIGlobalElementsContainer } from '@munet/ui';
 import styles from './App.module.sass';
@@ -19,7 +19,7 @@ export default defineComponent({
         class={[styles.contentRoot, modalShowing.value && styles.modalOpen]} style={{ '--screen-width': `${width.value}`, '--screen-height': `${height.value}` }}
       >
         <UIGlobalElementsContainer />
-        <Index />
+        <RouterView />
         <FeedbackErrorDialog />
         <NeedPurchaseDialog />
         <StartupErrorDialog />

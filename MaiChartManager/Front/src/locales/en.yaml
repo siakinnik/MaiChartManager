@@ -351,14 +351,14 @@ mod:
     disableIO4Tip: Toggle on to disable corresponding input. After disabling IO4 input, your compatible IO4 board or segatools IO4 simulation will be ignored.
     disableIO4System: System Buttons (Test, Service)
   soundChannel:
-    P1SpeakerLeft: 1P Speaker Left
-    P1SpeakerRight: 1P Speaker Right
-    P1HeadphoneLeft: 1P Headphone Left
-    P1HeadphoneRight: 1P Headphone Right
-    P2SpeakerLeft: 2P Speaker Left
-    P2SpeakerRight: 2P Speaker Right
-    P2HeadphoneLeft: 2P Headphone Left
-    P2HeadphoneRight: 2P Headphone Right
+    P1SpeakerLeft: Front Left
+    P1SpeakerRight: Front Right
+    P1HeadphoneLeft: Center/Sub Left
+    P1HeadphoneRight: Center/Sub Right
+    P2SpeakerLeft: Rear Left
+    P2SpeakerRight: Rear Right
+    P2HeadphoneLeft: Side Left
+    P2HeadphoneRight: Side Right
     None: Disabled
   judgeAccuracyInfo:
     author: 'Author: '

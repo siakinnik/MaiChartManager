@@ -321,14 +321,14 @@ mod:
     disableIO4Tip: 开关打开为禁用对应输入。在禁用 IO4 输入后，你的兼容 IO4 板或 segatools IO4 模拟将被忽略。
     disableIO4System: 系统按键（测试、服务）
   soundChannel:
-    P1SpeakerLeft: 1P 外放左
-    P1SpeakerRight: 1P 外放右
-    P1HeadphoneLeft: 1P 耳机左
-    P1HeadphoneRight: 1P 耳机右
-    P2SpeakerLeft: 2P 外放左
-    P2SpeakerRight: 2P 外放右
-    P2HeadphoneLeft: 2P 耳机左
-    P2HeadphoneRight: 2P 耳机右
+    P1SpeakerLeft: 前喇叭 左
+    P1SpeakerRight: 前喇叭 右
+    P1HeadphoneLeft: 中置重低音 左
+    P1HeadphoneRight: 中置重低音 右
+    P2SpeakerLeft: 后喇叭 左
+    P2SpeakerRight: 后喇叭 右
+    P2HeadphoneLeft: 侧喇叭 左
+    P2HeadphoneRight: 侧喇叭 右
     None: 禁用
   judgeAccuracyInfo:
     author: 作者：

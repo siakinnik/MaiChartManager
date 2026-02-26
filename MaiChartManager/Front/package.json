@@ -41,6 +41,7 @@
     "posthog-js": "^1.354.4",
     "sass": "^1.97.3",
     "swagger-typescript-api": "^13.2.18",
+    "tinyglobby": "^0.2.15",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "unity-webgl": "^4.4.3",

@@ -130,8 +130,6 @@ try {
     Pop-Location
 }
 
-Copy-Item "$ProjectRoot\MaiChartManager\wwwroot" "$PSScriptRoot\Pack\wwwroot" -Recurse -Force
-
 # ==========================================
 # 6. 准备打包目录
 # ==========================================

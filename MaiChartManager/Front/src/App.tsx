@@ -12,7 +12,7 @@ export default defineComponent({
   setup() {
     const { width, height } = useWindowSize();
 
-    selectedThemeHue.value = 353;
+    if (localStorage.getItem('theme-hue') === null) selectedThemeHue.value = 353;
 
     return () => (
       <div

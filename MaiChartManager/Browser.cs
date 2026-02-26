@@ -29,6 +29,35 @@ public sealed partial class Browser : Form
             UI.SetBlurStyle(this, blurType: UI.BlurType.Mica, UI.Mode.LightMode);
         }
         IapManager.BindToForm(this);
+        PositionOnScreen();
+    }
+
+    private void PositionOnScreen()
+    {
+        StartPosition = FormStartPosition.Manual;
+
+        // 优先选择横屏显示器
+        var landscape = Screen.AllScreens.FirstOrDefault(s => s.WorkingArea.Width >= s.WorkingArea.Height);
+        if (landscape != null)
+        {
+            // 在横屏显示器中间显示
+            var area = landscape.WorkingArea;
+            Location = new Point(
+                area.X + (area.Width - Width) / 2,
+                area.Y + (area.Height - Height) / 2
+            );
+            return;
+        }
+
+        // 只有竖屏显示器，在底部正方形区域中间显示
+        var portrait = Screen.PrimaryScreen ?? Screen.AllScreens[0];
+        var pArea = portrait.WorkingArea;
+        var squareSize = pArea.Width; // 正方形边长 = 屏幕宽度
+        var squareTop = pArea.Bottom - squareSize; // 正方形区域的顶部 Y 坐标
+        Location = new Point(
+            pArea.X + (squareSize - Width) / 2,
+            squareTop + (squareSize - Height) / 2
+        );
     }
 
     private void webView21_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)

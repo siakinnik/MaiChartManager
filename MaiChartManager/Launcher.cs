@@ -26,6 +26,7 @@ public partial class Launcher : Form
         textBoxLanAuthPass.Text = StaticSettings.Config.AuthPassword;
         textBox1.Items.AddRange(StaticSettings.Config.HistoryPath.ToArray());
         CheckStartupStatus();
+        PositionOnScreen();
 # if DEBUG
         checkBox1.Checked = true;
         StaticSettings.Config.Export = true;
@@ -54,6 +55,29 @@ public partial class Launcher : Form
         checkBox1.Checked = true;
         StaticSettings.Config.Export = true;
         StartClicked(null, null);
+    }
+
+    private void PositionOnScreen()
+    {
+        StartPosition = FormStartPosition.Manual;
+        var landscape = Screen.AllScreens.FirstOrDefault(s => s.WorkingArea.Width >= s.WorkingArea.Height);
+        if (landscape != null)
+        {
+            var area = landscape.WorkingArea;
+            Location = new Point(
+                area.X + (area.Width - Width) / 2,
+                area.Y + (area.Height - Height) / 2
+            );
+            return;
+        }
+        var portrait = Screen.PrimaryScreen ?? Screen.AllScreens[0];
+        var pArea = portrait.WorkingArea;
+        var squareSize = pArea.Width;
+        var squareTop = pArea.Bottom - squareSize;
+        Location = new Point(
+            pArea.X + (squareSize - Width) / 2,
+            squareTop + (squareSize - Height) / 2
+        );
     }
 
     private async Task CheckStartupStatus()

@@ -78,6 +78,7 @@ export default defineComponent({
     const search = ref('');
     const searchRef = ref();
     const activeTab = ref<string | null>(null);
+    const scrollContainerRef = ref<HTMLElement>();
     const configSort = computed(() => props.config?.configSort || configSortStub)
     const communityList = computed(() => configSort.value['社区功能'] || []);
     const { t } = useI18n();
@@ -133,6 +134,10 @@ export default defineComponent({
         activeTab.value = tabs[0].key;
       }
     }, { immediate: true });
+
+    watch(activeTab, () => {
+      scrollContainerRef.value?.scrollTo(0, 0);
+    });
 
     // 当前要显示的 sections：搜索时显示所有匹配结果，否则只显示当前 tab
     const currentSections = computed(() => {
@@ -193,7 +198,7 @@ export default defineComponent({
           {/* @ts-ignore */}
           <TextInput v-model:value={search.value} placeholder={t('mod.searchPlaceholder')} ref={searchRef} class="flex-1"/>
         </div>
-        <div class="of-y-auto cst flex-1 p-2 pt-0 text-14px">
+        <div ref={scrollContainerRef} class="of-y-auto cst flex-1 p-2 pt-0 text-14px">
           <div class="flex flex-col gap-1">
             {currentSections.value.map((section) =>
               <ConfigSection key={section.path!} section={section}

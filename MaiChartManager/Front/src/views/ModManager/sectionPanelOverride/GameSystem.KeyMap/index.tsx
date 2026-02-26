@@ -57,7 +57,7 @@ export default defineComponent({
       <div class="flex flex-col gap-2 p-l-15">
         {props.section.entries?.some(it=>it.path === 'GameSystem.KeyMap.DisableIO4_1P') &&
           <div class="flex gap-2 items-start">
-            <div class="ml-1 text-sm w-9em shrink-0">{t('mod.keyMap.disableIO4')}</div>
+            <div class="ml-1 w-9em shrink-0 h-42px flex items-center justify-end">{t('mod.keyMap.disableIO4')}</div>
             <div class="flex flex-col gap-2 w-full ws-pre-line">
               <div class='flex gap-4 h-34px items-center'>
                 <div class="flex items-center gap-2">

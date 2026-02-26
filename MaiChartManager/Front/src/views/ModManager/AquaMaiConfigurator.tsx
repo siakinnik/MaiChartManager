@@ -1,7 +1,6 @@
-import { defineComponent, PropType, ref, computed } from 'vue';
+import { defineComponent, PropType, ref, computed, watch } from 'vue';
 import { ConfigDto, IEntryState, ISectionState, Section } from "@/client/apiGen";
-import { NAnchor, NAnchorLink } from "naive-ui";
-import { CheckBox, Popover, TextInput, Button } from '@munet/ui';
+import { CheckBox, Popover, TextInput, Button, theme } from '@munet/ui';
 import _ from "lodash";
 import ProblemsDisplay from "@/components/ProblemsDisplay";
 import configSortStub from './configSort.yaml'
@@ -35,12 +34,12 @@ const ConfigSection = defineComponent({
       return props.section.attribute?.comment?.commentEn;
     })
 
-    return () => <div class="flex flex-col gap-2 p-1 border-transparent border-solid border-1px rd hover:border-yellow-5">
+    return () => <div class="flex flex-col gap-2 p-1 border-transparent border-solid border-1px rd hover:border-[oklch(0.68_0.17_var(--hue))]">
       {!props.section.attribute!.alwaysEnabled && <div class="flex gap-2 items-start"
         // @ts-ignore
                                                        title={props.section.path!}
       >
-        <div class="ml-1 text-sm w-9em shrink-0">{getNameForPath(props.section.path!, props.section.path!.split('.').pop()!, props.section.attribute?.comment?.nameZh)}</div>
+        <div class="ml-1 text-lg w-9em shrink-0">{getNameForPath(props.section.path!, props.section.path!.split('.').pop()!, props.section.attribute?.comment?.nameZh)}</div>
         <div class="flex flex-col gap-2 w-full ws-pre-line">
           <div class="flex gap-2 h-34px items-center">
             <CheckBox v-model:value={props.sectionState.enabled}>{props.sectionState.enabled ? '开' : '关'}</CheckBox>
@@ -78,6 +77,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const search = ref('');
     const searchRef = ref();
+    const activeTab = ref<string | null>(null);
     const configSort = computed(() => props.config?.configSort || configSortStub)
     const communityList = computed(() => configSort.value['社区功能'] || []);
     const { t } = useI18n();
@@ -118,64 +118,90 @@ export default defineComponent({
       return filteredSections.value?.filter(it => !knownSections.includes(it.path!) && !it.attribute!.exampleHidden) || [];
     });
 
+    // 所有可选 tab，包括 "其他"
+    const allTabs = computed(() => {
+      const tabs = bigSections.value.map(key => ({ key: key!, label: getBigSectionName(key!) }));
+      if (otherSection.value.length > 0) {
+        tabs.push({ key: '__other__', label: t('mod.other') });
+      }
+      return tabs;
+    });
+
+    // 默认选中第一个 tab
+    watch(() => allTabs.value, (tabs) => {
+      if (tabs.length > 0 && (!activeTab.value || !tabs.some(t => t.key === activeTab.value))) {
+        activeTab.value = tabs[0].key;
+      }
+    }, { immediate: true });
+
+    // 当前要显示的 sections：搜索时显示所有匹配结果，否则只显示当前 tab
+    const currentSections = computed(() => {
+      if (search.value) {
+        // 搜索模式：显示所有匹配的 sections（不限 tab）
+        return filteredSections.value?.filter(it => !it.attribute?.exampleHidden) || [];
+      }
+      if (!activeTab.value) return [];
+      if (activeTab.value === '__other__') return otherSection.value;
+      return filteredSections.value?.filter(it => {
+        if (props.useNewSort) {
+          return configSort.value[activeTab.value!]?.includes(it.path!);
+        }
+        return it.path!.split('.')[0] === activeTab.value && !it.attribute!.exampleHidden;
+      }).sort((a, b) => {
+        if (!props.useNewSort) return 0;
+        return configSort.value[activeTab.value!].indexOf(a.path!) - configSort.value[activeTab.value!].indexOf(b.path!);
+      }) || [];
+    });
+
     return () => <div class="grid cols-[15em_auto] max-[900px]:cols-1">
-      <NAnchor type="block" offsetTarget="#scroll" class={["max-[900px]:hidden"]}>
-        {bigSections.value.map((key) => <NAnchorLink key={key} title={getBigSectionName(key!)} href={`#${key}`}/>)}
-        {otherSection.value.length > 0 && <NAnchorLink key={t('mod.other')} title={t('mod.other')} href={`#${t('mod.other')}`}/>}
-      </NAnchor>
-      <div class="of-y-auto cst h-[calc(100dvh-160px)] p-2 relative text-14px"
-        // @ts-ignore
-                  id="scroll"
-      >
-        <div class={'absolute top-1 left-4 max-[900px]:left-0 right-4 z-200 flex gap-2'}>
+      {/* 左侧导航 */}
+      <div class="flex flex-col gap-0.5 max-[900px]:hidden of-y-auto h-[calc(100dvh-80px)]">
+        {allTabs.value.map(tab =>
+          <div
+            key={tab.key}
+            class={[
+              'px-3 py-1.5 rd cursor-pointer text-sm transition-colors',
+              activeTab.value === tab.key && theme.value.listItemSelect, theme.value.listItemHover,
+            ]}
+            onClick={() => activeTab.value = tab.key}
+          >
+            {tab.label}
+          </div>
+        )}
+      </div>
+      <div class="flex flex-col h-[calc(100dvh-80px)]">
+        <div class="flex gap-2 p-2 shrink-0">
           <div class={["min-[900px]:hidden"]}>
             <Popover trigger="click">{{
               trigger: () => <Button variant="secondary" size="small"><span class="i-ic-baseline-menu text-lg"/></Button>,
-              default: () => <NAnchor type="block" offsetTarget="#scroll">
-                {bigSections.value.map((key) => <NAnchorLink key={key} title={getBigSectionName(key!)} href={`#${key}`}/>)}
-                {otherSection.value.length > 0 && <NAnchorLink key={t('mod.other')} title={t('mod.other')} href={`#${t('mod.other')}`}/>}
-              </NAnchor>
+              default: () => <div class="flex flex-col gap-0.5">
+                {allTabs.value.map(tab =>
+                  <div
+                    key={tab.key}
+                    class={[
+                      'px-3 py-1.5 rd cursor-pointer text-sm',
+                      activeTab.value === tab.key && theme.value.listItemSelect, theme.value.listItemHover,
+                    ]}
+                    onClick={() => activeTab.value = tab.key}
+                  >
+                    {tab.label}
+                  </div>
+                )}
+              </div>
             }}</Popover>
           </div>
           {/* @ts-ignore */}
-          <TextInput v-model:value={search.value} placeholder={t('mod.searchPlaceholder')} ref={searchRef}/>
+          <TextInput v-model:value={search.value} placeholder={t('mod.searchPlaceholder')} ref={searchRef} class="flex-1"/>
         </div>
-        {bigSections.value.map((big) => <div id={big} key={big}>
-          <div class={["mt-0! pt-8 sticky top-0! z-1 bg-modal flex items-center gap-2 cursor-pointer"]}
-            onClick={() => location.href = `#${big}`}
-          >
-            <hr class="border-white/10 flex-1"/>
-            <span>{getBigSectionName(big!)}</span>
-            <hr class="border-white/10 flex-1"/>
-          </div>
-          {filteredSections.value?.filter(it => {
-            if (props.useNewSort) {
-              return configSort.value[big!].includes(it.path!);
-            }
-            return it.path!.split('.')[0] === big && !it.attribute!.exampleHidden;
-          }).sort((a, b) => {
-            if (!props.useNewSort) return 0;
-            return configSort.value[big!].indexOf(a.path!) - configSort.value[big!].indexOf(b.path!);
-          }).map((section) => {
-            return <ConfigSection key={section.path!} section={section}
-                                  entryStates={props.config.entryStates!}
-                                  isCommunity={communityList.value.includes(section.path!)}
-                                  sectionState={props.config.sectionStates![section.path!]}/>;
-          })}
-        </div>)}
-        {otherSection.value.length > 0 &&
-          <div id={t('mod.other')}>
-            <div class="mt-2! flex items-center gap-2">
-              <hr class="border-white/10 flex-1"/>
-              <span>{t('mod.other')}</span>
-              <hr class="border-white/10 flex-1"/>
-            </div>
-            {otherSection.value.map((section) =>
+        <div class="of-y-auto cst flex-1 p-2 pt-0 text-14px">
+          <div class="flex flex-col gap-1">
+            {currentSections.value.map((section) =>
               <ConfigSection key={section.path!} section={section}
                              entryStates={props.config.entryStates!}
                              isCommunity={communityList.value.includes(section.path!)}
                              sectionState={props.config.sectionStates![section.path!]}/>)}
-          </div>}
+          </div>
+        </div>
       </div>
     </div>;
   },

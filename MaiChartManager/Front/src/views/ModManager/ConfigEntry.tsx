@@ -44,9 +44,9 @@ export default defineComponent({
       // @ts-ignore
                       title={props.entry.path!}
     >
-      <div class="ml-1 text-sm w-9em shrink-0">{getNameForPath(props.entry.path!, props.entry.name!, props.entry.attribute?.comment?.nameZh)}</div>
+      <div class="ml-1 w-9em shrink-0 h-42px flex items-center justify-end">{getNameForPath(props.entry.path!, props.entry.name!, props.entry.attribute?.comment?.nameZh)}</div>
       <div class="flex flex-col gap-2 w-full ws-pre-line">
-        <div class="flex gap-2 h-34px items-center">
+        <div class="flex gap-2 h-42px items-center">
           {(() => {
             const choices = comments.options[props.entry.path!]
             if (choices) {
@@ -56,7 +56,7 @@ export default defineComponent({
               case 'System.Boolean':
                 return <CheckBox v-model:value={props.entryState.value}>{props.entryState.value ? '开' : '关'}</CheckBox>;
               case 'System.String':
-                return <TextInput v-model:value={props.entryState.value} placeholder=""/>;
+                return <TextInput class="w-full" v-model:value={props.entryState.value} placeholder=""/>;
               case 'System.Int32':
               case 'System.Int64':
                 return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1}/>;

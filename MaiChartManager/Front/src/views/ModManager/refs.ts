@@ -52,7 +52,7 @@ const { state: aquaMaiConfig, execute: executeGetConfig, isLoading: configLoadin
     forceDefaultRef.value = false;
     skipSignatureCheckRef.value = false;
   }
-}, undefined as ConfigDto | undefined, { immediate: true });
+}, undefined as ConfigDto | undefined, { immediate: false, shallow: false });
 
 export { aquaMaiConfig, configLoading };
 

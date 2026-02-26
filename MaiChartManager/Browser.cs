@@ -1,7 +1,5 @@
 using System.Diagnostics;
 using Microsoft.Web.WebView2.Core;
-using OSVersionExtension;
-using WinBlur;
 
 namespace MaiChartManager;
 
@@ -23,11 +21,6 @@ public sealed partial class Browser : Form
         Text += $" ({StaticSettings.GamePath})";
         webView21.Source = new Uri("https://mcm.invalid/index.html");
         webView21.DefaultBackgroundColor = Color.Transparent;
-        var info = OSVersion.GetOSVersion().Version;
-        if (info.Build > 22000)
-        {
-            UI.SetBlurStyle(this, blurType: UI.BlurType.Mica, UI.Mode.LightMode);
-        }
         IapManager.BindToForm(this);
         PositionOnScreen();
     }

@@ -7,6 +7,7 @@ import { useStorage, useWindowFocus, whenever } from "@vueuse/core";
 import { locale } from "@/locales";
 import { updateAquaMaiConfig } from "@/views/ModManager/refs";
 import { updateSettings } from "@/store/settings";
+import { GetGetConfigTypeEnum } from "@/client/aquaMaiVersionConfigApiGen";
 
 export const error = ref();
 export const errorId = ref<string>();
@@ -63,7 +64,7 @@ export const disableSync = ref(false);
 
 export { aquaMaiConfig } from "@/views/ModManager/refs";
 export const modUpdateInfo = ref<Awaited<ReturnType<typeof aquaMaiVersionConfig.getGetConfig>>['data']>([{
-  type: 'builtin',
+  type: GetGetConfigTypeEnum.Builtin,
 }])
 
 export const saveMusicIfNeeded = async (id: number) => {

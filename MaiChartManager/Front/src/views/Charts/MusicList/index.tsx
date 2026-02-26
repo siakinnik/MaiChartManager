@@ -30,7 +30,7 @@ export default defineComponent({
             <span class="truncate">{selectedDirLabel()}</span>
           </div>
         </div>
-        <VList class="flex-1" data={musicList.value}>
+        <VList class="flex-1 cst" data={musicList.value}>
           {({item}: {item: MusicXmlWithABJacket}) => (
             <MusicEntry music={item} selected={selectMusicId.value === item.id} onClick={() => selectMusicId.value = item.id!} key={item.id} />
           )}

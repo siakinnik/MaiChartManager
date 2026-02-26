@@ -1,10 +1,10 @@
 import { defineComponent, ref } from "vue";
 import { Button } from "@munet/ui";
 import SelectFileTypeTip from "./SelectFileTypeTip";
-import { LicenseStatus, MessageLevel, MovieCodec, ShiftMethod } from "@/client/apiGen";
+import { LicenseStatus, MessageLevel, ShiftMethod } from "@/client/apiGen";
 import CheckingModal from "./CheckingModal";
 import api, { getUrl } from "@/client/api";
-import { aquaMaiConfig, globalCapture, musicList, selectedADir, selectMusicId, updateMusicList, version as appVersion } from "@/store/refs";
+import { globalCapture, musicList, selectedADir, selectMusicId, updateMusicList, version as appVersion } from "@/store/refs";
 import { appSettings } from "@/store/settings";
 import ErrorDisplayIdInput from "./ErrorDisplayIdInput";
 import ImportStepDisplay from "./ImportStepDisplay";
@@ -92,21 +92,11 @@ export default defineComponent({
       return !reject;
     }
 
-    const shouldUseH264 = () => {
-      if (appSettings.value.movieCodec === MovieCodec.ForceH264) return true;
-      if (appSettings.value.movieCodec === MovieCodec.ForceVp9) return false;
-      return aquaMaiConfig.value?.sectionStates?.['GameSystem.Assets.MovieLoader']?.enabled && aquaMaiConfig.value?.entryStates?.['GameSystem.Assets.MovieLoader.LoadMp4Movie']?.value;
-    }
-
     const uploadMovie = (id: number, movie: File, offset: number) => new Promise<void>((resolve, reject) => {
       currentMovieProgress.value = 0;
       const body = new FormData();
-      const h264 = shouldUseH264();
-      console.log('use h264', h264);
-      body.append('h264', h264.toString());
       body.append('padding', offset.toString());
-      body.append('noScale', appSettings.value.noScale!.toString());
-      body.append('yuv420p', appSettings.value.yuv420p!.toString());
+      body.append('file', movie);
       body.append('file', movie);
       const controller = new AbortController();
       fetchEventSource(getUrl(`SetMovieApi/${selectedADir.value}/${id}`), {

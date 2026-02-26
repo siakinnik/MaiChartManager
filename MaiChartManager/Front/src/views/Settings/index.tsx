@@ -6,15 +6,15 @@ import { appSettings, saveSettings } from "@/store/settings";
 import { MovieCodec } from "@/client/apiGen";
 import styles from "./ThemeSlider.module.scss";
 
-const movieCodecOptions = [
-  { label: "Prefer H.264", value: MovieCodec.PreferH264 },
-  { label: "Force H.264", value: MovieCodec.ForceH264 },
-  { label: "Force VP9", value: MovieCodec.ForceVP9 },
-];
 
 export default defineComponent({
   setup() {
     const { t } = useI18n();
+
+    const movieCodecOptions = [
+      { label: t('chart.import.option.codecForceH264'), value: MovieCodec.ForceH264 },
+      { label: t('chart.import.option.codecForceVP9'), value: MovieCodec.ForceVP9 },
+    ];
 
     const onSettingChange = () => {
       saveSettings();
@@ -27,15 +27,6 @@ export default defineComponent({
           <div class="text-lg font-semibold mb-3 text-[var(--link-color)]">{t('settings.appearance')}</div>
           <div class="rounded-xl bg-white/60 p-4 flex flex-col gap-4 border border-gray-200 border-solid">
             <div class="flex flex-col gap-2">
-              <div class="flex items-center justify-between">
-                <span>{t('settings.themeHue')}</span>
-                <button
-                  class="px-3 py-1 rounded-md border border-gray-300 border-solid bg-transparent cursor-pointer text-sm hover:bg-gray-100 transition-colors"
-                  onClick={() => { selectedThemeHue.value = 353; }}
-                >
-                  {t('settings.resetDefault')}
-                </button>
-              </div>
               <input
                 type="range"
                 min={0}
@@ -45,6 +36,13 @@ export default defineComponent({
                 onInput={(e) => { selectedThemeHue.value = Number((e.target as HTMLInputElement).value); }}
                 class={[styles['chromatic-hue-slider'], 'w-full']}
               />
+              <div class="flex items-center justify-end">
+                <button
+                  onClick={() => { selectedThemeHue.value = 353; }}
+                >
+                  {t('settings.resetDefault')}
+                </button>
+              </div>
             </div>
           </div>
         </div>

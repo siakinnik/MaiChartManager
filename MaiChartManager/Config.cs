@@ -4,9 +4,8 @@ namespace MaiChartManager;
 
 public enum MovieCodec
 {
-    PreferH264 = 0,
-    ForceH264 = 1,
-    ForceVP9 = 2
+    ForceH264 = 0,
+    ForceVP9 = 1
 }
 
 public class Config

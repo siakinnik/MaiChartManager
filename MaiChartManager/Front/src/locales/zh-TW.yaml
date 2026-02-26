@@ -228,14 +228,8 @@ chart:
       shiftNoMoveDesc: |-
         完全不修改譜面，從音訊中刪除 &first 的長度（如果有）
         可能會導致第一個音符出現的時機比較奇怪，比如說剛開始就有音符
-      ignoreLevel: 忽略定數，不參與 B50 計算
-      disableBga: 有 BGA 也不要匯入
-      noScale: 不要縮放 BGA 到 1080 寬度，此選項會記住
-      pvCodec: PV 編碼
-      yuv420p: 轉換 USM 時使用 YUV420P 色彩空間
-      codecPreferH264: 優先 H264
-      codecForceH264: 強制 H264
-      codecForceVP9: 強制 VP9 USM
+      codecForceH264: H264
+      codecForceVP9: VP9 USM
     assignId: 為新匯入的歌曲指定 ID
     currentProcessing: 目前正在處理的項目
     folderHint: 包含以下檔案的資料夾，或者，一個包含一些這樣的資料夾的資料夾
@@ -403,10 +397,6 @@ tools:
   convertFailed: 轉換失敗
   videoConvertError: 影片轉換出錯
   videoOptions:
-    title: 影片轉換選項
-    onlyForUsm: 以下選項僅對通用格式轉換為 USM 生效
-    noScale: 不要縮放影片到 1080 寬度
-    useYuv420p: 使用 YUV420P 色彩空間
     processing: 還在處理，別急…
 error:
   title: 錯誤

@@ -38,7 +38,6 @@ export enum PubKeyId {
 }
 
 export enum MovieCodec {
-  PreferH264 = "PreferH264",
   ForceH264 = "ForceH264",
   ForceVP9 = "ForceVP9",
 }

@@ -246,14 +246,8 @@ chart:
         present)
 
         May cause first note to appear at odd timing, e.g. immediately at start
-      ignoreLevel: Ignore constant, exclude from B50 calculation
-      disableBga: Don't import BGA even if present
-      noScale: Don't scale BGA to 1080 width, this option will be remembered
-      pvCodec: PV Codec
-      yuv420p: Use YUV420P color space when converting USM
-      codecPreferH264: Prefer H264
-      codecForceH264: Force H264
-      codecForceVP9: Force VP9 USM
+      codecForceH264: H264
+      codecForceVP9: VP9 USM
     assignId: Assign ID for new imported songs
     currentProcessing: Currently processing
     folderHint: >-
@@ -442,10 +436,6 @@ tools:
   convertFailed: Conversion failed
   videoConvertError: Video conversion error
   videoOptions:
-    title: Video Conversion Options
-    onlyForUsm: The following options only apply to converting to USM from common formats
-    noScale: Don't scale video to 1080 width
-    useYuv420p: Use YUV420P color space
     processing: Still processing, please wait...
 error:
   title: Error

@@ -198,7 +198,7 @@ public static class ServerManager
         if (export)
             app.UseFileServer(new FileServerOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(StaticSettings.exeDir, "wwwroot")),
+                FileProvider = new PhysicalFileProvider(StaticSettings.wwwroot),
             });
         app.MapControllers();
         Task.Run(app.Run);

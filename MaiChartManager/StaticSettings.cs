@@ -11,6 +11,13 @@ public partial class StaticSettings
     public static readonly string tempPath = Path.Combine(Path.GetTempPath(), "MaiChartManager");
     public static readonly string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MaiChartManager");
     public static readonly string exeDir = Path.GetDirectoryName(Application.ExecutablePath);
+#if DEBUG
+    public static readonly string wwwroot = Path.Combine(ProjectDir, "wwwroot");
+    private static string ProjectDir => Path.GetDirectoryName(GetThisFilePath())!;
+    private static string GetThisFilePath([System.Runtime.CompilerServices.CallerFilePath] string? path = null) => path!;
+#else
+    public static readonly string wwwroot = Path.Combine(exeDir, "wwwroot");
+#endif
 
     private static string _imageAssetsDir = "LocalAssets";
     private static string _movieAssetsDir = "LocalAssets";

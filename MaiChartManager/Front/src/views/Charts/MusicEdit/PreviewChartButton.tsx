@@ -18,7 +18,8 @@ export default defineComponent({
       const height = 640;
       const left = (screen.width - width) / 2;
       const top = (screen.height - height) / 2;
-      const url = `/#/chart-preview?${params}`;
+      const url = new URL(location.href);
+      url.hash = `/chart-preview?${params}`;
       window.open(url, '_blank', `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no`);
     };
 

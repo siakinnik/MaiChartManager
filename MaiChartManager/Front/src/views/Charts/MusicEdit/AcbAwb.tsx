@@ -104,24 +104,27 @@ export default defineComponent({
 
     return () => <div class="flex items-center gap-2 mt-2">
       {props.song.isAcbAwbExist && <audio controls src={url.value} class="w-0 grow"/>}
-      {selectedADir.value !== 'A000' &&
-        <Popover trigger="hover">{{
-          trigger: () => <Button variant="secondary" class={`${!props.song.isAcbAwbExist && "w-full"}`} onClick={() => uploadFlow()} ing={load.value} disabled={cueIdNotMatch.value}>{props.song.isAcbAwbExist ? t('music.edit.replaceAudio') : t('music.edit.setAudio')}</Button>,
+      {selectedADir.value !== 'A000' && (cueIdNotMatch.value
+        ? <Popover trigger="hover">{{
+          trigger: () => <Button variant="secondary" class={`${!props.song.isAcbAwbExist && "w-full"}`} onClick={() => uploadFlow()} ing={load.value} disabled>{props.song.isAcbAwbExist ? t('music.edit.replaceAudio') : t('music.edit.setAudio')}</Button>,
           default: () => t('music.edit.cueIdNotMatch')
         }}</Popover>
-      }
-      {selectedADir.value !== 'A000' && props.song.isAcbAwbExist &&
-        <Popover trigger="hover">{{
-          trigger: () => <AudioPreviewEditorButton disabled={cueIdNotMatch.value}/>,
+        : <Button variant="secondary" class={`${!props.song.isAcbAwbExist && "w-full"}`} onClick={() => uploadFlow()} ing={load.value}>{props.song.isAcbAwbExist ? t('music.edit.replaceAudio') : t('music.edit.setAudio')}</Button>
+      )}
+      {selectedADir.value !== 'A000' && props.song.isAcbAwbExist && (cueIdNotMatch.value
+        ? <Popover trigger="hover">{{
+          trigger: () => <AudioPreviewEditorButton disabled/>,
           default: () => t('music.edit.cueIdNotMatchPreview')
         }}</Popover>
-      }
-      {selectedADir.value !== 'A000' && props.song.isAcbAwbExist &&
-        <Popover trigger="hover">{{
-          trigger: () => <SetMovieButton song={props.song} disabled={movieIdNotMatch.value}/>,
+        : <AudioPreviewEditorButton/>
+      )}
+      {selectedADir.value !== 'A000' && props.song.isAcbAwbExist && (movieIdNotMatch.value
+        ? <Popover trigger="hover">{{
+          trigger: () => <SetMovieButton song={props.song} disabled/>,
           default: () => t('music.edit.movieIdNotMatch')
         }}</Popover>
-      }
+        : <SetMovieButton song={props.song}/>
+      )}
 
       {/* 打开文件对话框一般在左上角，所以在下边显示一个 Drawer */}
       <BottomOverlay title={t('music.edit.selectFileTypes')} show={tipShow.value}>

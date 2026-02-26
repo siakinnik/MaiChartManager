@@ -6,7 +6,6 @@ import AssetDirsManager from './AssetDirsManager';
 import ImportCreateChartButton from './ImportCreateChartButton';
 import CopyToButton from './CopyToButton';
 import TransitionOpacity from '@/components/TransitionOpacity';
-import Tools from '@/components/Tools';
 import { useI18n } from 'vue-i18n';
 import { selectedADir, selectedMusic } from '@/store/refs';
 
@@ -54,7 +53,6 @@ export default defineComponent({
               <ImportCreateChartButton />
             </>
           )}
-          <Tools />
         </div>
         <div class="of-y-auto cst grow-1">
           <MusicEdit />

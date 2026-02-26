@@ -4,13 +4,14 @@ import { useI18n } from 'vue-i18n';
 import RefreshAllButton from './RefreshAllButton';
 import VersionInfo from '@/components/VersionInfo';
 
-export type SidebarItem = 'charts' | 'mods' | 'batch' | 'genres';
+export type SidebarItem = 'charts' | 'mods' | 'batch' | 'genres' | 'tools';
 
 const items: { key: SidebarItem; icon: string; labelKey: string }[] = [
   { key: 'charts', icon: 'i-mdi-music-note', labelKey: 'sidebar.charts' },
   { key: 'mods', icon: 'i-mdi:puzzle', labelKey: 'sidebar.mods' },
   { key: 'batch', icon: 'i-mdi-playlist-edit', labelKey: 'sidebar.batch' },
   { key: 'genres', icon: 'i-mdi-tag-multiple', labelKey: 'sidebar.genres' },
+  { key: 'tools', icon: 'i-ri:tools-fill', labelKey: 'sidebar.tools' },
 ];
 
 export default defineComponent({

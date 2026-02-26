@@ -10,6 +10,7 @@ import DragDropDispatcher, { mainDivRef } from '@/components/DragDropDispatcher'
 import Sidebar, { SidebarItem } from '@/components/Sidebar';
 import BatchActionButton from '@/views/BatchAction';
 import Charts from './Charts';
+import Tools from './Tools';
 
 export default defineComponent({
   setup() {
@@ -62,6 +63,7 @@ export default defineComponent({
           {sidebarActive.value === 'mods' && <ModManager />}
           {sidebarActive.value === 'genres' && <GenreVersionManager />}
           {sidebarActive.value === 'batch' && <BatchActionButton />}
+          {sidebarActive.value === 'tools' && <Tools />}
         </div>
       </div>
     );

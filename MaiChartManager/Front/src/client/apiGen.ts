@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -9,6 +10,62 @@
  * ---------------------------------------------------------------
  */
 
+export enum VerifyStatus {
+  NotFound = "NotFound",
+  InvalidKeyId = "InvalidKeyId",
+  InvalidSignature = "InvalidSignature",
+  Valid = "Valid",
+}
+
+export enum StorePurchaseStatus {
+  Succeeded = "Succeeded",
+  AlreadyPurchased = "AlreadyPurchased",
+  NotPurchased = "NotPurchased",
+  NetworkError = "NetworkError",
+  ServerError = "ServerError",
+}
+
+export enum ShiftMethod {
+  Legacy = "Legacy",
+  Bar = "Bar",
+  NoShift = "NoShift",
+}
+
+export enum PubKeyId {
+  None = "None",
+  Local = "Local",
+  CI = "CI",
+}
+
+export enum MovieCodec {
+  PreferH264 = "PreferH264",
+  ForceH264 = "ForceH264",
+  ForceVP9 = "ForceVP9",
+}
+
+export enum MessageLevel {
+  Info = "Info",
+  Warning = "Warning",
+  Fatal = "Fatal",
+}
+
+export enum LicenseStatus {
+  Pending = "Pending",
+  Active = "Active",
+  Inactive = "Inactive",
+}
+
+export enum HardwareAccelerationStatus {
+  Pending = "Pending",
+  Enabled = "Enabled",
+  Disabled = "Disabled",
+}
+
+export enum AssetType {
+  Music = "Music",
+  Movie = "Movie",
+}
+
 export interface AppVersionResult {
   version?: string | null;
   /** @format int32 */
@@ -17,11 +74,6 @@ export interface AppVersionResult {
   hardwareAcceleration?: HardwareAccelerationStatus;
   h264Encoder?: string | null;
   locale?: string | null;
-}
-
-export enum AssetType {
-  Music = "Music",
-  Movie = "Movie",
 }
 
 export interface AudioPreviewTime {
@@ -160,12 +212,6 @@ export interface GetAssetsDirsResult {
   version?: string | null;
 }
 
-export enum HardwareAccelerationStatus {
-  Pending = "Pending",
-  Enabled = "Enabled",
-  Disabled = "Disabled",
-}
-
 export interface IConfigComment {
   commentEn?: string | null;
   commentZh?: string | null;
@@ -225,18 +271,6 @@ export interface InstallAquaMaiOnlineDto {
   sign?: string | null;
 }
 
-export enum LicenseStatus {
-  Pending = "Pending",
-  Active = "Active",
-  Inactive = "Inactive",
-}
-
-export enum MessageLevel {
-  Info = "Info",
-  Warning = "Warning",
-  Fatal = "Fatal",
-}
-
 export interface MusicIdAndAssetDirPair {
   /** @format int32 */
   id?: number;
@@ -281,12 +315,6 @@ export interface MusicXmlWithABJacket {
   problems?: string[] | null;
 }
 
-export enum PubKeyId {
-  None = "None",
-  Local = "Local",
-  CI = "CI",
-}
-
 export interface PutAssetDirTxtValueRequest {
   dirName?: string | null;
   fileName?: string | null;
@@ -323,18 +351,12 @@ export interface SetAudioPreviewRequest {
   endTime?: number;
 }
 
-export enum ShiftMethod {
-  Legacy = "Legacy",
-  Bar = "Bar",
-  NoShift = "NoShift",
-}
-
-export enum StorePurchaseStatus {
-  Succeeded = "Succeeded",
-  AlreadyPurchased = "AlreadyPurchased",
-  NotPurchased = "NotPurchased",
-  NetworkError = "NetworkError",
-  ServerError = "ServerError",
+export interface SettingsDto {
+  movieCodec?: MovieCodec;
+  yuv420p?: boolean;
+  noScale?: boolean;
+  ignoreLevel?: boolean;
+  disableBga?: boolean;
 }
 
 export interface UploadAssetDirResult {
@@ -344,13 +366,6 @@ export interface UploadAssetDirResult {
 export interface VerifyResult {
   status?: VerifyStatus;
   keyId?: PubKeyId;
-}
-
-export enum VerifyStatus {
-  NotFound = "NotFound",
-  InvalidKeyId = "InvalidKeyId",
-  InvalidSignature = "InvalidSignature",
-  Valid = "Valid",
 }
 
 export interface VersionXml {
@@ -393,16 +408,22 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   cancelToken?: CancelToken;
 }
 
-export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
+export type RequestParams = Omit<
+  FullRequestParams,
+  "body" | "method" | "query" | "path"
+>;
 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown>
+  extends Response {
   data: D;
   error: E;
 }
@@ -411,6 +432,7 @@ type CancelToken = Symbol | string | number;
 
 export enum ContentType {
   Json = "application/json",
+  JsonApi = "application/vnd.api+json",
   FormData = "multipart/form-data",
   UrlEncoded = "application/x-www-form-urlencoded",
   Text = "text/plain",
@@ -421,7 +443,8 @@ export class HttpClient<SecurityDataType = unknown> {
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
+    fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: "same-origin",
@@ -454,9 +477,15 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected toQueryString(rawQuery?: QueryParamsType): string {
     const query = rawQuery || {};
-    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
+    const keys = Object.keys(query).filter(
+      (key) => "undefined" !== typeof query[key],
+    );
     return keys
-      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
+      .map((key) =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key),
+      )
       .join("&");
   }
 
@@ -467,10 +496,23 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== "string" ? JSON.stringify(input) : input),
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((formData, key) => {
+      input !== null && (typeof input === "object" || typeof input === "string")
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.JsonApi]: (input: any) =>
+      input !== null && (typeof input === "object" || typeof input === "string")
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== "string"
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.FormData]: (input: any) => {
+      if (input instanceof FormData) {
+        return input;
+      }
+
+      return Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
         formData.append(
           key,
@@ -481,11 +523,15 @@ export class HttpClient<SecurityDataType = unknown> {
               : `${property}`,
         );
         return formData;
-      }, new FormData()),
+      }, new FormData());
+    },
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams,
+  ): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -498,7 +544,9 @@ export class HttpClient<SecurityDataType = unknown> {
     };
   }
 
-  protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
+  protected createAbortSignal = (
+    cancelToken: CancelToken,
+  ): AbortSignal | undefined => {
     if (this.abortControllers.has(cancelToken)) {
       const abortController = this.abortControllers.get(cancelToken);
       if (abortController) {
@@ -542,22 +590,34 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData
+            ? { "Content-Type": type }
+            : {}),
+        },
+        signal:
+          (cancelToken
+            ? this.createAbortSignal(cancelToken)
+            : requestParams.signal) || null,
+        body:
+          typeof body === "undefined" || body === null
+            ? null
+            : payloadFormatter(body),
       },
-      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
-      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
-      const r = response.clone() as HttpResponse<T, E>;
+    ).then(async (response) => {
+      const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
 
+      const responseToParse = responseFormat ? response.clone() : response;
       const data = !responseFormat
         ? r
-        : await response[responseFormat]()
+        : await responseToParse[responseFormat]()
             .then((data) => {
               if (r.ok) {
                 r.data = data;
@@ -585,7 +645,9 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title MaiChartManager
  * @version 1.0
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+export class Api<
+  SecurityDataType extends unknown,
+> extends HttpClient<SecurityDataType> {
   maiChartManagerServlet = {
     /**
      * No description
@@ -609,7 +671,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditVersion
      * @request POST:/MaiChartManagerServlet/EditVersionApi/{id}
      */
-    EditVersion: (id: number, data: GenreEditRequest, params: RequestParams = {}) =>
+    EditVersion: (
+      id: number,
+      data: GenreEditRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditVersionApi/${id}`,
         method: "POST",
@@ -772,7 +838,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetAssetDirTxtValue
      * @request POST:/MaiChartManagerServlet/GetAssetDirTxtValueApi
      */
-    GetAssetDirTxtValue: (data: GetAssetDirTxtValueRequest, params: RequestParams = {}) =>
+    GetAssetDirTxtValue: (
+      data: GetAssetDirTxtValueRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<string, any>({
         path: `/MaiChartManagerServlet/GetAssetDirTxtValueApi`,
         method: "POST",
@@ -789,7 +858,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name DeleteAssetDirTxt
      * @request DELETE:/MaiChartManagerServlet/DeleteAssetDirTxtApi
      */
-    DeleteAssetDirTxt: (data: GetAssetDirTxtValueRequest, params: RequestParams = {}) =>
+    DeleteAssetDirTxt: (
+      data: GetAssetDirTxtValueRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/DeleteAssetDirTxtApi`,
         method: "DELETE",
@@ -805,7 +877,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name PutAssetDirTxtValue
      * @request PUT:/MaiChartManagerServlet/PutAssetDirTxtValueApi
      */
-    PutAssetDirTxtValue: (data: PutAssetDirTxtValueRequest, params: RequestParams = {}) =>
+    PutAssetDirTxtValue: (
+      data: PutAssetDirTxtValueRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/PutAssetDirTxtValueApi`,
         method: "PUT",
@@ -864,7 +939,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditChartLevel
      * @request POST:/MaiChartManagerServlet/EditChartLevelApi/{assetDir}/{id}/{level}
      */
-    EditChartLevel: (id: number, level: number, assetDir: string, data: number, params: RequestParams = {}) =>
+    EditChartLevel: (
+      id: number,
+      level: number,
+      assetDir: string,
+      data: number,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditChartLevelApi/${assetDir}/${id}/${level}`,
         method: "POST",
@@ -880,7 +961,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditChartLevelDisplay
      * @request POST:/MaiChartManagerServlet/EditChartLevelDisplayApi/{assetDir}/{id}/{level}
      */
-    EditChartLevelDisplay: (id: number, level: number, assetDir: string, data: number, params: RequestParams = {}) =>
+    EditChartLevelDisplay: (
+      id: number,
+      level: number,
+      assetDir: string,
+      data: number,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditChartLevelDisplayApi/${assetDir}/${id}/${level}`,
         method: "POST",
@@ -896,7 +983,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditChartLevelDecimal
      * @request POST:/MaiChartManagerServlet/EditChartLevelDecimalApi/{assetDir}/{id}/{level}
      */
-    EditChartLevelDecimal: (id: number, level: number, assetDir: string, data: number, params: RequestParams = {}) =>
+    EditChartLevelDecimal: (
+      id: number,
+      level: number,
+      assetDir: string,
+      data: number,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditChartLevelDecimalApi/${assetDir}/${id}/${level}`,
         method: "POST",
@@ -912,7 +1005,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditChartDesigner
      * @request POST:/MaiChartManagerServlet/EditChartDesignerApi/{assetDir}/{id}/{level}
      */
-    EditChartDesigner: (id: number, level: number, assetDir: string, data: string, params: RequestParams = {}) =>
+    EditChartDesigner: (
+      id: number,
+      level: number,
+      assetDir: string,
+      data: string,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditChartDesignerApi/${assetDir}/${id}/${level}`,
         method: "POST",
@@ -928,7 +1027,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditChartNoteCount
      * @request POST:/MaiChartManagerServlet/EditChartNoteCountApi/{assetDir}/{id}/{level}
      */
-    EditChartNoteCount: (id: number, level: number, assetDir: string, data: number, params: RequestParams = {}) =>
+    EditChartNoteCount: (
+      id: number,
+      level: number,
+      assetDir: string,
+      data: number,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditChartNoteCountApi/${assetDir}/${id}/${level}`,
         method: "POST",
@@ -944,7 +1049,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditChartEnable
      * @request POST:/MaiChartManagerServlet/EditChartEnableApi/{assetDir}/{id}/{level}
      */
-    EditChartEnable: (id: number, level: number, assetDir: string, data: boolean, params: RequestParams = {}) =>
+    EditChartEnable: (
+      id: number,
+      level: number,
+      assetDir: string,
+      data: boolean,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditChartEnableApi/${assetDir}/${id}/${level}`,
         method: "POST",
@@ -987,7 +1098,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name ChartPreview
      * @request GET:/MaiChartManagerServlet/ChartPreviewApi/{assetDir}/{id}/{level}
      */
-    ChartPreview: (id: number, level: number, assetDir: string, params: RequestParams = {}) =>
+    ChartPreview: (
+      id: number,
+      level: number,
+      assetDir: string,
+      params: RequestParams = {},
+    ) =>
       this.request<string, any>({
         path: `/MaiChartManagerServlet/ChartPreviewApi/${assetDir}/${id}/${level}`,
         method: "GET",
@@ -1119,7 +1235,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name SetAudioPreview
      * @request POST:/MaiChartManagerServlet/SetAudioPreviewApi/{assetDir}/{id}
      */
-    SetAudioPreview: (id: number, assetDir: string, data: SetAudioPreviewRequest, params: RequestParams = {}) =>
+    SetAudioPreview: (
+      id: number,
+      assetDir: string,
+      data: SetAudioPreviewRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/SetAudioPreviewApi/${assetDir}/${id}`,
         method: "POST",
@@ -1135,7 +1256,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetAudioPreviewTime
      * @request GET:/MaiChartManagerServlet/GetAudioPreviewTimeApi/{assetDir}/{id}
      */
-    GetAudioPreviewTime: (id: number, assetDir: string, params: RequestParams = {}) =>
+    GetAudioPreviewTime: (
+      id: number,
+      assetDir: string,
+      params: RequestParams = {},
+    ) =>
       this.request<AudioPreviewTime, any>({
         path: `/MaiChartManagerServlet/GetAudioPreviewTimeApi/${assetDir}/${id}`,
         method: "GET",
@@ -1165,7 +1290,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditGenre
      * @request POST:/MaiChartManagerServlet/EditGenreApi/{id}
      */
-    EditGenre: (id: number, data: GenreEditRequest, params: RequestParams = {}) =>
+    EditGenre: (
+      id: number,
+      data: GenreEditRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditGenreApi/${id}`,
         method: "POST",
@@ -1426,7 +1555,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name InstallAquaMaiOnline
      * @request POST:/MaiChartManagerServlet/InstallAquaMaiOnlineApi
      */
-    InstallAquaMaiOnline: (data: InstallAquaMaiOnlineDto, params: RequestParams = {}) =>
+    InstallAquaMaiOnline: (
+      data: InstallAquaMaiOnlineDto,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/InstallAquaMaiOnlineApi`,
         method: "POST",
@@ -1575,7 +1707,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name GetMusicDetail
      * @request GET:/MaiChartManagerServlet/GetMusicDetailApi/{assetDir}/{id}
      */
-    GetMusicDetail: (id: number, assetDir: string, params: RequestParams = {}) =>
+    GetMusicDetail: (
+      id: number,
+      assetDir: string,
+      params: RequestParams = {},
+    ) =>
       this.request<MusicXmlWithABJacket, any>({
         path: `/MaiChartManagerServlet/GetMusicDetailApi/${assetDir}/${id}`,
         method: "GET",
@@ -1590,7 +1726,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditMusicName
      * @request POST:/MaiChartManagerServlet/EditMusicNameApi/{assetDir}/{id}
      */
-    EditMusicName: (id: number, assetDir: string, data: string, params: RequestParams = {}) =>
+    EditMusicName: (
+      id: number,
+      assetDir: string,
+      data: string,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditMusicNameApi/${assetDir}/${id}`,
         method: "POST",
@@ -1606,7 +1747,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditMusicSortName
      * @request POST:/MaiChartManagerServlet/EditMusicSortNameApi/{assetDir}/{id}
      */
-    EditMusicSortName: (id: number, assetDir: string, data: string, params: RequestParams = {}) =>
+    EditMusicSortName: (
+      id: number,
+      assetDir: string,
+      data: string,
+      params: RequestParams = {},
+    ) =>
       this.request<string, any>({
         path: `/MaiChartManagerServlet/EditMusicSortNameApi/${assetDir}/${id}`,
         method: "POST",
@@ -1623,7 +1769,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditMusicArtist
      * @request POST:/MaiChartManagerServlet/EditMusicArtistApi/{assetDir}/{id}
      */
-    EditMusicArtist: (id: number, assetDir: string, data: string, params: RequestParams = {}) =>
+    EditMusicArtist: (
+      id: number,
+      assetDir: string,
+      data: string,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditMusicArtistApi/${assetDir}/${id}`,
         method: "POST",
@@ -1639,7 +1790,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditMusicUtageKanji
      * @request POST:/MaiChartManagerServlet/EditMusicUtageKanjiApi/{assetDir}/{id}
      */
-    EditMusicUtageKanji: (id: number, assetDir: string, data: string, params: RequestParams = {}) =>
+    EditMusicUtageKanji: (
+      id: number,
+      assetDir: string,
+      data: string,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditMusicUtageKanjiApi/${assetDir}/${id}`,
         method: "POST",
@@ -1655,7 +1811,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditMusicComment
      * @request POST:/MaiChartManagerServlet/EditMusicCommentApi/{assetDir}/{id}
      */
-    EditMusicComment: (id: number, assetDir: string, data: string, params: RequestParams = {}) =>
+    EditMusicComment: (
+      id: number,
+      assetDir: string,
+      data: string,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditMusicCommentApi/${assetDir}/${id}`,
         method: "POST",
@@ -1671,7 +1832,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditMusicBpm
      * @request POST:/MaiChartManagerServlet/EditMusicBpmApi/{assetDir}/{id}
      */
-    EditMusicBpm: (id: number, assetDir: string, data: number, params: RequestParams = {}) =>
+    EditMusicBpm: (
+      id: number,
+      assetDir: string,
+      data: number,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditMusicBpmApi/${assetDir}/${id}`,
         method: "POST",
@@ -1687,7 +1853,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditMusicVersion
      * @request POST:/MaiChartManagerServlet/EditMusicVersionApi/{assetDir}/{id}
      */
-    EditMusicVersion: (id: number, assetDir: string, data: number, params: RequestParams = {}) =>
+    EditMusicVersion: (
+      id: number,
+      assetDir: string,
+      data: number,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditMusicVersionApi/${assetDir}/${id}`,
         method: "POST",
@@ -1703,7 +1874,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditMusicGenre
      * @request POST:/MaiChartManagerServlet/EditMusicGenreApi/{assetDir}/{id}
      */
-    EditMusicGenre: (id: number, assetDir: string, data: number, params: RequestParams = {}) =>
+    EditMusicGenre: (
+      id: number,
+      assetDir: string,
+      data: number,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditMusicGenreApi/${assetDir}/${id}`,
         method: "POST",
@@ -1719,7 +1895,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditMusicAddVersion
      * @request POST:/MaiChartManagerServlet/EditMusicAddVersionApi/{assetDir}/{id}
      */
-    EditMusicAddVersion: (id: number, assetDir: string, data: number, params: RequestParams = {}) =>
+    EditMusicAddVersion: (
+      id: number,
+      assetDir: string,
+      data: number,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditMusicAddVersionApi/${assetDir}/${id}`,
         method: "POST",
@@ -1735,7 +1916,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name EditMusicLong
      * @request POST:/MaiChartManagerServlet/EditMusicLongApi/{assetDir}/{id}
      */
-    EditMusicLong: (id: number, assetDir: string, data: boolean, params: RequestParams = {}) =>
+    EditMusicLong: (
+      id: number,
+      assetDir: string,
+      data: boolean,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/EditMusicLongApi/${assetDir}/${id}`,
         method: "POST",
@@ -1833,7 +2019,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name RequestOpenExplorer
      * @request POST:/MaiChartManagerServlet/RequestOpenExplorerApi/{assetDir}/{id}
      */
-    RequestOpenExplorer: (id: number, assetDir: string, params: RequestParams = {}) =>
+    RequestOpenExplorer: (
+      id: number,
+      assetDir: string,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/RequestOpenExplorerApi/${assetDir}/${id}`,
         method: "POST",
@@ -1847,7 +2037,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name RequestOpenXml
      * @request POST:/MaiChartManagerServlet/RequestOpenXmlApi/{assetDir}/{id}
      */
-    RequestOpenXml: (id: number, assetDir: string, params: RequestParams = {}) =>
+    RequestOpenXml: (
+      id: number,
+      assetDir: string,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/RequestOpenXmlApi/${assetDir}/${id}`,
         method: "POST",
@@ -1877,7 +2071,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name BatchDeleteMusic
      * @request DELETE:/MaiChartManagerServlet/BatchDeleteMusicApi
      */
-    BatchDeleteMusic: (data: MusicIdAndAssetDirPair[], params: RequestParams = {}) =>
+    BatchDeleteMusic: (
+      data: MusicIdAndAssetDirPair[],
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/BatchDeleteMusicApi`,
         method: "DELETE",
@@ -1963,7 +2160,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name ModifyId
      * @request POST:/MaiChartManagerServlet/ModifyIdApi/{assetDir}/{id}
      */
-    ModifyId: (id: number, assetDir: string, data: number, params: RequestParams = {}) =>
+    ModifyId: (
+      id: number,
+      assetDir: string,
+      data: number,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/ModifyIdApi/${assetDir}/${id}`,
         method: "POST",
@@ -1992,6 +2194,37 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/MaiChartManagerServlet/ExportAsMaidataApi/${assetDir}/${id}`,
         method: "GET",
         query: query,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Settings
+     * @name GetSettings
+     * @request GET:/MaiChartManagerServlet/GetSettingsApi
+     */
+    GetSettings: (params: RequestParams = {}) =>
+      this.request<SettingsDto, any>({
+        path: `/MaiChartManagerServlet/GetSettingsApi`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Settings
+     * @name SetSettings
+     * @request PUT:/MaiChartManagerServlet/SetSettingsApi
+     */
+    SetSettings: (data: SettingsDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/SetSettingsApi`,
+        method: "PUT",
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 

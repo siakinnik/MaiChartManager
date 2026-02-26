@@ -6,6 +6,7 @@ import posthog from "posthog-js";
 import { useStorage, useWindowFocus, whenever } from "@vueuse/core";
 import { locale } from "@/locales";
 import { updateAquaMaiConfig } from "@/views/ModManager/refs";
+import { updateSettings } from "@/store/settings";
 
 export const error = ref();
 export const errorId = ref<string>();
@@ -149,6 +150,7 @@ export const updateAll = async () => Promise.all([
   updateModInfo(),
   updateModUpdateInfo(),
   updateAquaMaiConfig(),
+  updateSettings(),
 ])
 
 export const gameVersion = computed(() => version.value?.gameVersion || 45)

@@ -65,9 +65,9 @@ export default defineComponent({
           </div>
         </div>
       </div>,
-      footer: () => <div class="flex gap-2 justify-end">
-        <Button onClick={save} disabled={id.value === selectMusicId.value} ing={loading.value}>{t('common.confirm')}</Button>
-      </div>
+        actions: () => <>
+          <Button class="w-0 grow" onClick={save} disabled={id.value === selectMusicId.value} ing={loading.value}>{t('common.confirm')}</Button>
+        </>
     }}</Modal>;
   }
 })

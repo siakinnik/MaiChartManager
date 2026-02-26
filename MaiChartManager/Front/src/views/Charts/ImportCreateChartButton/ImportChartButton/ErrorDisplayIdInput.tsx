@@ -94,10 +94,10 @@ export default defineComponent({
             </details>
         </>}
       </div>,
-      footer: () => <div class="flex gap-2 justify-end">
-        <Button onClick={() => show.value = false}>{props.meta.length ? t('common.cancel') : t('common.close')}</Button>
-        {!!props.meta.length && <Button onClick={props.proceed}>{t('purchase.continue')}</Button>}
-      </div>
+        actions: () => <>
+          <Button class="w-0 grow" onClick={() => show.value = false}>{props.meta.length ? t('common.cancel') : t('common.close')}</Button>
+          {!!props.meta.length && <Button class="w-0 grow" onClick={props.proceed}>{t('purchase.continue')}</Button>}
+        </>
     }}</Modal>;
   }
 })

@@ -77,10 +77,10 @@ export default defineComponent({
           <div>{t('mod.manualInstall.version')}: v{checkResult.value?.version}</div>
           <div>{t('mod.manualInstall.buildDate')}: {checkResult.value?.buildDate ? <DateFormat value={new Date(checkResult.value.buildDate)} /> : 'N/A'}</div>
         </div>,
-        footer: () => <div class="flex gap-2 justify-end">
-          <Button onClick={() => currentFile.value = undefined}>{t('common.cancel')}</Button>
-          <Button onClick={installAquaMai} variant={checkResult.value?.signature?.status === VerifyStatus.Valid ? "primary" : "secondary"}>{t('common.confirm')}</Button>
-        </div>
+        actions: () => <>
+          <Button class="w-0 grow" onClick={() => currentFile.value = undefined}>{t('common.cancel')}</Button>
+          <Button class="w-0 grow" onClick={installAquaMai} variant={checkResult.value?.signature?.status === VerifyStatus.Valid ? "primary" : "secondary"}>{t('common.confirm')}</Button>
+        </>
       }}</Modal>
     </>;
   },

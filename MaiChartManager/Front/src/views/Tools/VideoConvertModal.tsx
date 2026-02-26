@@ -109,10 +109,10 @@ export default defineComponent({
             {t('tools.videoOptions.useYuv420p')}
           </CheckBox>
         </div>,
-        footer: () => <div class="flex gap-2 justify-end">
-          <Button onClick={() => step.value = STEP.None}>{t('common.cancel')}</Button>
-          <Button variant="primary" onClick={handleVideoConvert}>{t('common.confirm')}</Button>
-        </div>
+        actions: () => <>
+          <Button class="w-0 grow" onClick={() => step.value = STEP.None}>{t('common.cancel')}</Button>
+          <Button class="w-0 grow" variant="primary" onClick={handleVideoConvert}>{t('common.confirm')}</Button>
+        </>
       }}</Modal>
 
       <Modal

@@ -60,9 +60,9 @@ export default defineComponent({
             </div>
           </div>
         </div>,
-        footer: () => <div class="flex gap-2 justify-end">
-          <Button onClick={save}>{t('common.confirm')}</Button>
-        </div>
+        actions: () => <>
+          <Button class="w-0 grow" onClick={save}>{t('common.confirm')}</Button>
+        </>
       }}</Modal>
     );
   }

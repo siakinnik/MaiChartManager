@@ -41,7 +41,7 @@ export default defineComponent({
     watch(() => props.chart.levelId, sync('levelId', api.EditChartLevelDisplay));
 
     return () => <div class="flex flex-col gap-2">
-        <div class="absolute right-0 top-0 m-xy mt-2 z-2">
+        <div class="absolute right-0 top-0 m-xy mt-2 z-2 flex gap-2">
           <PreviewChartButton songId={props.songId} level={props.chartIndex}/>
           <Button onClick={() => prepareReplaceChart()}>
             {t('music.edit.replaceChart')}

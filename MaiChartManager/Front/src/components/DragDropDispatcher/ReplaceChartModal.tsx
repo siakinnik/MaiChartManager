@@ -11,7 +11,6 @@ import { Chart, ImportChartCheckResult, ImportChartResult, ShiftMethod } from "@
 import ImportAlert from "@/views/Charts/ImportCreateChartButton/ImportChartButton/ImportAlert";
 import { defaultTempOptions, ImportChartMessageEx, TempOptions } from "@/views/Charts/ImportCreateChartButton/ImportChartButton/types";
 import ShiftModeSelector from "@/views/Charts/ImportCreateChartButton/ImportChartButton/ShiftModeSelector";
-import { NModal } from 'naive-ui';
 
 // noinspection JSUnusedLocalSymbols
 export let prepareReplaceChart = async (fileHandle?: FileSystemFileHandle) => {
@@ -109,9 +108,8 @@ export default defineComponent({
     })
 
     return () => <div>
-      <NModal
-        preset="card"
-        class="w-[min(90vw,50em)]"
+      <Modal
+        width="min(90vw,50em)"
         title={show.value !== "failed" ? t('music.edit.replaceChart') : t('music.edit.replaceChartFailed')}
         v-model:show={showModal.value}
       >{{
@@ -135,11 +133,11 @@ export default defineComponent({
             <div>{t('music.edit.replaceChartShiftModeHint')}</div>
           </div>}
         </div>,
-        footer: () => <div class="flex gap-2 justify-end">
-          <Button onClick={() => show.value = ""}>{show.value !== "failed" ? t('common.cancel') : t('common.close')}</Button>
-          {show.value !== "failed" && <Button onClick={replaceChart} variant="primary">{t('common.confirm')}</Button>}
-        </div>
-      }}</NModal>
+        actions: () => <>
+          <Button class="w-0 grow" onClick={() => show.value = ""}>{show.value !== "failed" ? t('common.cancel') : t('common.close')}</Button>
+          {show.value !== "failed" && <Button class="w-0 grow" onClick={replaceChart} variant="primary">{t('common.confirm')}</Button>}
+        </>
+      }}</Modal>
       <CheckingModal title={t('chart.import.checkingTitle')} show={checking.value} closeModal={()=>checking.value=false} />
     </div>;
   },

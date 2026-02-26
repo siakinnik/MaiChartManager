@@ -6,11 +6,6 @@ public static class WannaCRI
 {
     private const string DefaultKey = "0x7F4551499DF55E68";
 
-    public static void CreateUsm(string src, string key = DefaultKey)
-    {
-        CreateUsm(src, output: null, key);
-    }
-
     public static void CreateUsm(string src, string? output, string key = DefaultKey)
     {
         if (string.IsNullOrWhiteSpace(src))

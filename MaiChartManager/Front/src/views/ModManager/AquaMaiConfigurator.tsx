@@ -92,7 +92,7 @@ export default defineComponent({
     whenever(ctrl_f, () => searchRef.value?.select());
 
     const filteredSections = computed(() => {
-      if (!search.value) return props.config.sections;
+      if (!search.value) return props.config?.sections;
       const s = search.value.toLowerCase();
       return props.config.sections?.filter(it =>
         it.path?.toLowerCase().includes(s) ||

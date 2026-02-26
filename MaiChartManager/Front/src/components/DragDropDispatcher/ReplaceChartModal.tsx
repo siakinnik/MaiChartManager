@@ -11,6 +11,7 @@ import { Chart, ImportChartCheckResult, ImportChartResult, ShiftMethod } from "@
 import ImportAlert from "@/views/Charts/ImportCreateChartButton/ImportChartButton/ImportAlert";
 import { defaultTempOptions, ImportChartMessageEx, TempOptions } from "@/views/Charts/ImportCreateChartButton/ImportChartButton/types";
 import ShiftModeSelector from "@/views/Charts/ImportCreateChartButton/ImportChartButton/ShiftModeSelector";
+import { NModal } from 'naive-ui';
 
 // noinspection JSUnusedLocalSymbols
 export let prepareReplaceChart = async (fileHandle?: FileSystemFileHandle) => {
@@ -108,7 +109,7 @@ export default defineComponent({
     })
 
     return () => <div>
-        <NModal
+      <NModal
         preset="card"
         class="w-[min(90vw,50em)]"
         title={show.value !== "failed" ? t('music.edit.replaceChart') : t('music.edit.replaceChartFailed')}

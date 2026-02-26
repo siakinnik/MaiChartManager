@@ -24,6 +24,7 @@ export default defineComponent({
     const errTitle = ref('');
 
     updateAquaMaiConfig = async (forceDefault = false, skipSignatureCheck = false) => {
+      console.log('updateAquaMaiConfig')
       try {
         configReadErr.value = ''
         configReadErrTitle.value = ''

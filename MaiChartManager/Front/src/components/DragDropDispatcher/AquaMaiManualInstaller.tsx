@@ -4,7 +4,7 @@ import { t } from '@/locales';
 import { globalCapture, updateModInfo } from '@/store/refs';
 import { Button, Modal, DateFormat, addToast } from '@munet/ui';
 import { defineComponent, PropType, ref, computed, watch } from 'vue';
-import { updateAquaMaiConfig } from '../../views/ModManager/ConfigEditor';
+import { updateAquaMaiConfig } from '@/views/ModManager/refs';
 
 const currentFile = ref<File>();
 const checkResult = ref<CheckAquaMaiFileResult>();
@@ -75,7 +75,7 @@ export default defineComponent({
               <div class="text-red-6">{t('mod.signature.invalid')}</div>}
           </div>
           <div>{t('mod.manualInstall.version')}: v{checkResult.value?.version}</div>
-          <div>{t('mod.manualInstall.buildDate')}: {checkResult.value?.buildDate ? <DateFormat time={new Date(checkResult.value.buildDate)} /> : 'N/A'}</div>
+          <div>{t('mod.manualInstall.buildDate')}: {checkResult.value?.buildDate ? <DateFormat value={new Date(checkResult.value.buildDate)} /> : 'N/A'}</div>
         </div>,
         footer: () => <div class="flex gap-2 justify-end">
           <Button onClick={() => currentFile.value = undefined}>{t('common.cancel')}</Button>

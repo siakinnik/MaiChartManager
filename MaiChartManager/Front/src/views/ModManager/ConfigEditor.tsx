@@ -1,80 +1,30 @@
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, ref, watch } from "vue";
 
 import api from "@/client/api";
-import { globalCapture, modInfo, updateModInfo, updateMusicList, aquaMaiConfig as config, modUpdateInfo } from "@/store/refs";
+import { globalCapture, modInfo, updateModInfo, updateMusicList, modUpdateInfo } from "@/store/refs";
 import AquaMaiConfigurator from "./AquaMaiConfigurator";
-import { compareVersions, latestVersion, shouldShowUpdate } from "./shouldShowUpdateController";
+import { latestVersion, shouldShowUpdate } from "./shouldShowUpdateController";
 import ModInstallDropdown from "@/views/ModManager/ModInstallDropdown";
 import { useI18n } from 'vue-i18n';
 import { Button, addToast } from '@munet/ui';
 import { debounce } from 'perfect-debounce';
 import AquaMaiSignatureStatusDisplay from "./AquaMaiSignatureStatusDisplay";
-
-export let updateAquaMaiConfig = async (forceDefault = false, skipSignatureCheck = false)=>void 0;
+import { useAsyncState } from '@vueuse/core';
+import { aquaMaiConfig as config, configReadErr, configReadErrTitle, updateAquaMaiConfig } from "./refs";
 
 export default defineComponent({
   setup() {
 
-    const configReadErr = ref('')
-    const configReadErrTitle = ref('')
-
-    const installingMelonLoader = ref(false)
-
     const { t } = useI18n();
-    const errTitle = ref('');
 
-    updateAquaMaiConfig = async (forceDefault = false, skipSignatureCheck = false) => {
-      console.log('updateAquaMaiConfig')
-      try {
-        configReadErr.value = ''
-        configReadErrTitle.value = ''
-        config.value = (await api.GetAquaMaiConfig({forceDefault, skipSignatureCheck})).data;
-      } catch (err: any) {
-        errTitle.value = t('mod.needInstallOrUpdate');
-        if (err instanceof Response && !err.bodyUsed) {
-            const text = await err.text();
-            try {
-              const json = JSON.parse(text);
-              if (json.detail) {
-                configReadErr.value = json.detail;
-              }
-              if (json.title) {
-                configReadErrTitle.value = json.title;
-              }
-              if(configReadErrTitle.value === 'System.Reflection.TargetInvocationException' && compareVersions(modInfo.value?.aquaMaiVersion || '0.0.0', '1.6.0') < 0) {
-                configReadErr.value = t('mod.versionTooLow');
-              }
-              if(configReadErr.value.includes('Could not migrate the config')) {
-                errTitle.value = t('mod.configVersionHigher');
-              }
-              return
-            } catch {
-            }
-            configReadErr.value = text.split('\n')[0];
-        }
-        if (err.error instanceof Error) {
-          configReadErr.value = err.error.message.split('\n')[0];
-        }
-        else if (err.error) {
-          configReadErr.value = err.error.toString().split('\n')[0];
-        }
-        configReadErr.value = err.toString().split('\n')[0];
-      }
-    }
+    const { isLoading: installingMelonLoader, execute: installMelonLoader } = useAsyncState(async () => {
+      await api.InstallMelonLoader()
+      await updateModInfo()
+    }, undefined, {
+      immediate: false,
+      onError: (e: any) => globalCapture(e, t('mod.installMelonLoaderFailed')),
+    })
 
-    onMounted(updateAquaMaiConfig)
-
-    const installMelonLoader = async () => {
-      try {
-        installingMelonLoader.value = true
-        await api.InstallMelonLoader()
-        await updateModInfo()
-      } catch (e: any) {
-        globalCapture(e, t('mod.installMelonLoaderFailed'))
-      } finally {
-        installingMelonLoader.value = false
-      }
-    }
 
     const saveImpl = async () => {
       if (!config.value) return;
@@ -131,9 +81,11 @@ export default defineComponent({
         </div>
       }
       else if (configReadErr.value) {
+        const errTitle = t(configReadErrTitle.value === 'mod.configVersionHigher' ? 'mod.configVersionHigher' : 'mod.needInstallOrUpdate');
+        const errMsg = configReadErr.value.startsWith('mod.') ? t(configReadErr.value) : configReadErr.value;
         editorPart = <div class="flex flex-col gap-2 justify-center items-center min-h-100">
-          <div class="text-8">{errTitle.value}</div>
-          <div class="c-gray-5 text-lg">{configReadErr.value}</div>
+          <div class="text-8">{errTitle}</div>
+          <div class="c-gray-5 text-lg">{errMsg}</div>
           <div class="c-gray-4 text-sm">{configReadErrTitle.value}</div>
         </div>
       }
@@ -146,13 +98,13 @@ export default defineComponent({
           <div class="flex gap-2 items-center flex-wrap">
             <span class="max-[1060px]:hidden">MelonLoader:</span>
             {modInfo.value.melonLoaderInstalled ? <span class="c-green-6 max-[1060px]:hidden">{t('mod.installed')}</span> : <span class="c-red-6">{t('mod.notInstalled')}</span>}
-            {!modInfo.value.melonLoaderInstalled && <Button ing={installingMelonLoader.value} onClick={installMelonLoader}>{t('mod.install')}</Button>}
+            {!modInfo.value.melonLoaderInstalled && <Button ing={installingMelonLoader.value} onClick={() => installMelonLoader()}>{t('mod.install')}</Button>}
             <div class={["w-8", "max-[1060px]:hidden"]}/>
             <span class="max-[1060px]:hidden">AquaMai:</span>
             {modInfo.value.aquaMaiInstalled ?
               !shouldShowUpdate.value ? <span class="c-green-6 max-[1060px]:hidden">{t('mod.installed')}</span> : <span class="c-orange">{t('mod.updateAvailable')}</span> :
               <span class="c-red-6">{t('mod.notInstalled')}</span>}
-            <ModInstallDropdown updateAquaMaiConfig={updateAquaMaiConfig}/>
+            <ModInstallDropdown/>
             <span class="max-[1060px]:hidden">{t('mod.installedVersion')}:</span>
             <span class="max-[450px]:hidden">{modInfo.value.aquaMaiVersion !=='N/A' && 'v'}{modInfo.value.aquaMaiVersion}</span>
             <AquaMaiSignatureStatusDisplay/>

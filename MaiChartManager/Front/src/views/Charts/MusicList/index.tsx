@@ -14,7 +14,7 @@ export default defineComponent({
     const selectedDirLabel = () => {
       const dir = assetDirs.value.find(d => d.dirName === selectedADir.value);
       if (!dir) return selectedADir.value;
-      return dir.dirName! + (dir.version ? ` (Ver.${dir.version})` : '');
+      return <>{dir.dirName}<span class="op-70">{dir.version ? ` (Ver.${dir.version})` : ''}</span></>;
     };
 
     return () => (

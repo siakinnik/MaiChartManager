@@ -1,6 +1,6 @@
 import { computed, defineComponent, PropType, ref } from "vue";
 import { GetAssetsDirsResult } from "@/client/apiGen";
-import { Button, DropMenu, Modal, addToast, showTransactionalDialog } from '@munet/ui';
+import { Button, DropMenu, Modal, addToast, showTransactionalDialog, theme } from '@munet/ui';
 import api from "@/client/api";
 import { selectedADir, selectMusicId, updateAssetDirs, updateMusicList } from "@/store/refs";
 import MemosDisplay from "@/views/Charts/AssetDirsManager/MemosDisplay";
@@ -76,8 +76,8 @@ export default defineComponent({
     return () => (
       <div
         class={[
-          "flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors",
-          props.selected ? "bg-primary/10" : "hover:bg-neutral/10",
+          "flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer",
+          props.selected && theme.value.listItem, theme.value.listItemHover,
         ]}
         onClick={() => emit('select')}
       >

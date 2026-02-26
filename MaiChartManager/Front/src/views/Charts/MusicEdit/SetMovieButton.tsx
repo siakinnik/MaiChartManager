@@ -151,7 +151,7 @@ export default defineComponent({
 
       <BottomOverlay title={t('music.edit.selectFileTypes')} show={step.value === STEP.Select}>
         <div class="flex flex-col gap-2 items-center">
-          <div class="text-white op-70">{t('music.edit.pvFileHint')}</div>
+          <div>{t('music.edit.pvFileHint')}</div>
           <div class="grid cols-4 justify-items-center text-8em gap-10">
             <FileTypeIcon type="MP4"/>
             <FileTypeIcon type="JPG"/>

@@ -14,20 +14,20 @@ export default defineComponent({
 
     return () => <BottomOverlay show={props.show} title={t('music.edit.selectFileTypes')}>
       <div class="flex flex-col gap-3 items-center">
-        <div class="text-white op-70">{t('chart.import.folderHint')}</div>
+        <div>{t('chart.import.folderHint')}</div>
         <div class="grid cols-[2fr_1fr] justify-items-center h-50 gap-5 w-50%">
           <div class="flex flex-col gap-1 items-center w-full">
             <FileContentIcon type="maidata"/>
-            <span class="text-white op-70">maidata.txt</span>
+            <span>maidata.txt</span>
           </div>
           <div class="grid rows-2">
             <div class="flex flex-col gap-1 items-center justify-center w-full">
               <FileTypeIcon type="mp3" class="text-16"/>
-              <span class="text-white op-70">track.mp3</span>
+              <span>track.mp3</span>
             </div>
             <div class="flex flex-col gap-1 items-center justify-center w-full">
               <FileTypeIcon type="jpg" class="text-16"/>
-              <span class="text-white op-70">bg.jpg / bg.png</span>
+              <span>bg.jpg / bg.png</span>
             </div>
           </div>
         </div>

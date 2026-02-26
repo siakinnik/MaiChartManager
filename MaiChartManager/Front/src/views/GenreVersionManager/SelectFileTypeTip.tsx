@@ -13,7 +13,7 @@ export default defineComponent({
     
     return () => <BottomOverlay show={props.show} title={t('music.edit.selectFileTypes')}>
       <div class="flex flex-col gap-3 items-center">
-        <div class="text-white op-70">{t('genre.imageHint')}</div>
+        <div>{t('genre.imageHint')}</div>
         <div class="grid cols-4 justify-items-center text-8em gap-10">
           <FileTypeIcon type="JPG"/>
           <FileTypeIcon type="PNG"/>

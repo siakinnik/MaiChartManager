@@ -520,3 +520,30 @@ settings:
   updateChannelSlow: 稳定
   updateChannelCi: 快速
   updateChannelDesc: 稳定通道会延迟数天推送，适合不想踩坑的用户
+  gameDirectory: 游戏目录
+  currentPath: 当前路径
+  changeDirectory: 更换目录
+  changingDirectory: 正在切换...
+  changeDirectoryFailed: 切换目录失败
+oobe:
+  welcome: 欢迎
+  welcomeMessage: 欢迎使用 MaiChartManager
+  selectGameDir: 选择游戏目录
+  selectGameDirDesc: 请选择 maimai DX 的游戏目录
+  browse: 浏览...
+  selectedPath: 已选择
+  pathNotValid: 路径无效
+  selectMode: 选择模式
+  localMode: 本机模式
+  localModeDesc: 在本机上管理谱面
+  remoteMode: 远程模式
+  remoteModeDesc: 通过局域网访问
+  username: 用户名
+  password: 密码
+  enableAuth: 启用认证
+  complete: 完成
+  completing: 正在完成设置...
+  remoteReady: 远程访问已就绪
+  lanAddresses: 局域网地址
+  openMainUI: 打开主界面
+  initializingData: 正在初始化游戏数据...

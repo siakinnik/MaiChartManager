@@ -555,3 +555,30 @@ settings:
   updateChannelSlow: Stable
   updateChannelCi: Fast
   updateChannelDesc: Stable channel delays updates by a few days, suitable for users who prefer stability
+  gameDirectory: Game Directory
+  currentPath: Current Path
+  changeDirectory: Change Directory
+  changingDirectory: Switching...
+  changeDirectoryFailed: Failed to switch directory
+oobe:
+  welcome: Welcome
+  welcomeMessage: Welcome to MaiChartManager
+  selectGameDir: Select Game Directory
+  selectGameDirDesc: Please select the maimai DX game directory
+  browse: Browse...
+  selectedPath: Selected
+  pathNotValid: Invalid path
+  selectMode: Select Mode
+  localMode: Local Mode
+  localModeDesc: Manage charts on this computer
+  remoteMode: Remote Mode
+  remoteModeDesc: Access via LAN
+  username: Username
+  password: Password
+  enableAuth: Enable Authentication
+  complete: Complete
+  completing: Completing setup...
+  remoteReady: Remote access is ready
+  lanAddresses: LAN Addresses
+  openMainUI: Open Main UI
+  initializingData: Initializing game data...

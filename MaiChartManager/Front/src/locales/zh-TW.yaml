@@ -514,3 +514,30 @@ settings:
   updateChannelSlow: 穩定
   updateChannelCi: 快速
   updateChannelDesc: 穩定通道會延遲數天推送，適合不想踩坑的使用者
+  gameDirectory: 遊戲目錄
+  currentPath: 目前路徑
+  changeDirectory: 更換目錄
+  changingDirectory: 正在切換...
+  changeDirectoryFailed: 切換目錄失敗
+oobe:
+  welcome: 歡迎
+  welcomeMessage: 歡迎使用 MaiChartManager
+  selectGameDir: 選擇遊戲目錄
+  selectGameDirDesc: 請選擇 maimai DX 的遊戲目錄
+  browse: 瀏覽...
+  selectedPath: 已選擇
+  pathNotValid: 路徑無效
+  selectMode: 選擇模式
+  localMode: 本機模式
+  localModeDesc: 在本機上管理譜面
+  remoteMode: 遠端模式
+  remoteModeDesc: 透過區域網路存取
+  username: 使用者名稱
+  password: 密碼
+  enableAuth: 啟用認證
+  complete: 完成
+  completing: 正在完成設定...
+  remoteReady: 遠端存取已就緒
+  lanAddresses: 區域網路位址
+  openMainUI: 開啟主介面
+  initializingData: 正在初始化遊戲資料...

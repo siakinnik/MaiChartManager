@@ -1,9 +1,11 @@
-import { defineComponent, computed } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { CheckBox, Radio, Select } from "@munet/ui";
 import { selectedThemeHue } from "@munet/ui";
 import { useI18n } from "vue-i18n";
 import { appSettings, saveSettings } from "@/store/settings";
 import { MovieCodec } from "@/client/apiGen";
+import api from "@/client/api";
+import { updateAll } from "@/store/refs";
 import styles from "./ThemeSlider.module.scss";
 import { selectedChannel } from "@/views/ModManager/shouldShowUpdateController";
 
@@ -21,9 +23,57 @@ export default defineComponent({
       saveSettings();
     };
 
+    const gamePath = ref('');
+    const switching = ref(false);
+    const error = ref('');
+
+    onMounted(async () => {
+      try {
+        const res = await api.GetGamePath();
+        gamePath.value = res.data || '';
+      } catch {}
+    });
+
+    const handleChangeDirectory = async () => {
+      error.value = '';
+      try {
+        const res = await api.OpenFolderDialog();
+        if (!res.data) return;
+        switching.value = true;
+        await api.SetGamePath(res.data);
+        await api.InitializeGameData();
+        await updateAll();
+        gamePath.value = res.data;
+      } catch (e: any) {
+        error.value = t('settings.changeDirectoryFailed');
+      } finally {
+        switching.value = false;
+      }
+    };
+
     return () => (
       <div class="p-xy h-100dvh of-y-auto">
         {/* Appearance */}
+        {/* Game Directory */}
+        <div class="mb-6">
+          <div class="text-lg font-semibold mb-3 text-[var(--link-color)]">{t('settings.gameDirectory')}</div>
+          <div class="rounded-xl bg-white/60 p-4 flex flex-col gap-4 border border-gray-200 border-solid">
+            <div class="flex items-center gap-3">
+              <span class="shrink-0 op-60">{t('settings.currentPath')}</span>
+              <span class="text-sm break-all">{gamePath.value || '—'}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                disabled={switching.value}
+                onClick={handleChangeDirectory}
+              >
+                {switching.value ? t('settings.changingDirectory') : t('settings.changeDirectory')}
+              </button>
+              {error.value && <span class="text-red-500 text-sm">{error.value}</span>}
+            </div>
+          </div>
+        </div>
+
         <div class="mb-6">
           <div class="text-lg font-semibold mb-3 text-[var(--link-color)]">{t('settings.appearance')}</div>
           <div class="rounded-xl bg-white/60 p-4 flex flex-col gap-4 border border-gray-200 border-solid">

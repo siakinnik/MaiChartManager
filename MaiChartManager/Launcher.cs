@@ -172,7 +172,7 @@ public partial class Launcher : Form
         StaticSettings.Config.UseAuth = checkBoxLanAuth.Checked;
         StaticSettings.Config.AuthUsername = textBoxLanAuthUser.Text;
         StaticSettings.Config.AuthPassword = textBoxLanAuthPass.Text;
-        File.WriteAllText(Path.Combine(StaticSettings.appData, "config.json"), JsonSerializer.Serialize(StaticSettings.Config));
+        StaticSettings.Config.Save();
 # endif
 
         textBox1.Enabled = false;
@@ -262,7 +262,7 @@ public partial class Launcher : Form
 
     private static async Task SaveConfigFileAsync()
     {
-        await File.WriteAllTextAsync(Path.Combine(StaticSettings.appData, "config.json"), JsonSerializer.Serialize(StaticSettings.Config));
+        StaticSettings.Config.Save();
     }
 
     private async void label3_Click(object sender, EventArgs e)

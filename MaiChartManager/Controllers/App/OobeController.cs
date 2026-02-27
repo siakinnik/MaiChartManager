@@ -39,7 +39,7 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
 
         StaticSettings.Config.GamePath = StaticSettings.GamePath;
         StaticSettings.Config.HistoryPath.Add(path);
-        System.IO.File.WriteAllText(Path.Combine(StaticSettings.appData, "config.json"), JsonSerializer.Serialize(StaticSettings.Config));
+        StaticSettings.Config.Save();
 
         return Ok();
     }
@@ -85,7 +85,7 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
         StaticSettings.Config.UseAuth = request.UseAuth;
         StaticSettings.Config.AuthUsername = request.AuthUsername;
         StaticSettings.Config.AuthPassword = request.AuthPassword;
-        System.IO.File.WriteAllText(Path.Combine(StaticSettings.appData, "config.json"), JsonSerializer.Serialize(StaticSettings.Config));
+        StaticSettings.Config.Save();
 
         if (exportChanged)
         {

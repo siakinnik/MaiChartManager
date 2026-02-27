@@ -38,8 +38,6 @@ public class SettingsController : ControllerBase
         StaticSettings.Config.IgnoreLevel = dto.IgnoreLevel;
         StaticSettings.Config.DisableBga = dto.DisableBga;
 
-        var cfgFilePath = Path.Combine(StaticSettings.appData, "config.json");
-        var json = JsonSerializer.Serialize(StaticSettings.Config, new JsonSerializerOptions { WriteIndented = true });
-        System.IO.File.WriteAllText(cfgFilePath, json);
+        StaticSettings.Config.Save();
     }
 }

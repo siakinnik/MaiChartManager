@@ -220,10 +220,7 @@ public partial class AppMain : ISingleInstance
         CultureInfo.CurrentCulture = culture;
         CultureInfo.CurrentUICulture = culture;
 
-        // 保存配置文件
-        var cfgFilePath = Path.Combine(StaticSettings.appData, "config.json");
-        var json = JsonSerializer.Serialize(StaticSettings.Config, new JsonSerializerOptions { WriteIndented = true });
-        System.IO.File.WriteAllText(cfgFilePath, json);
+        StaticSettings.Config.Save();
     }
 }
 

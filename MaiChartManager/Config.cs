@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace MaiChartManager;
 
@@ -25,4 +26,10 @@ public class Config
     public bool NoScale { get; set; } = false;
     public bool IgnoreLevel { get; set; } = false;
     public bool DisableBga { get; set; } = false;
+
+    public void Save()
+    {
+        var json = JsonSerializer.Serialize(this);
+        File.WriteAllText(Path.Combine(StaticSettings.appData, "config.json"), json);
+    }
 }

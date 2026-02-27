@@ -136,6 +136,18 @@ public partial class AppMain : ISingleInstance
 
             IapManager.Init();
 
+            // Validate saved GamePath — if invalid, clear it to trigger OOBE
+            if (!string.IsNullOrEmpty(StaticSettings.Config.GamePath))
+            {
+                StaticSettings.GamePath = StaticSettings.Config.GamePath;
+                if (!Directory.Exists(StaticSettings.StreamingAssets))
+                {
+                    StaticSettings.Config.GamePath = "";
+                    StaticSettings.GamePath = "";
+                    StaticSettings.Config.Save();
+                }
+            }
+
             if (string.IsNullOrEmpty(StaticSettings.Config.GamePath) && availableVersion != null)
             {
                 // OOBE path: start server, then show OobeBrowser

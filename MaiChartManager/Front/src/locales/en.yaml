@@ -582,3 +582,4 @@ oobe:
   lanAddresses: LAN Addresses
   openMainUI: Open Main UI
   initializingData: Initializing game data...
+  startupOnBoot: Start on boot

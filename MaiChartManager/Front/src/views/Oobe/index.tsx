@@ -23,6 +23,8 @@ export default defineComponent({
     const authPassword = ref('');
     const completing = ref(false);
     const remoteReady = ref(false);
+    const startupEnabled = ref(false);
+    const startupCanChange = ref(true);
     const lanAddresses = ref<string[]>([]);
 
     const canGoNext = computed(() => {
@@ -61,6 +63,7 @@ export default defineComponent({
           await api.InitializeGameData();
           initializing.value = false;
           step.value = 2;
+          (api as any).GetStartupStatus().then((res: any) => { startupEnabled.value = res.data.enabled; startupCanChange.value = res.data.canChange; });
         } catch (e) {
           initializing.value = false;
         }
@@ -209,6 +212,10 @@ export default defineComponent({
                   />
                 </div>
               )}
+              <label class="flex items-center gap-2 cursor-pointer text-sm">
+                <input type="checkbox" checked={startupEnabled.value} disabled={!startupCanChange.value} onChange={(e: any) => { startupEnabled.value = e.target.checked; (api as any).SetStartupEnabled(e.target.checked); }} />
+                {t('oobe.startupOnBoot')}
+              </label>
             </div>
           )}
           <button

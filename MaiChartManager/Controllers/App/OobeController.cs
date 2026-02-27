@@ -98,4 +98,28 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
 
         return Ok();
     }
+
+    [HttpGet]
+    public async Task<object> GetStartupStatus()
+    {
+        var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("MaiChartManagerStartupId");
+        return new
+        {
+            enabled = startupTask.State == Windows.ApplicationModel.StartupTaskState.Enabled
+                      || startupTask.State == Windows.ApplicationModel.StartupTaskState.EnabledByPolicy,
+            canChange = startupTask.State != Windows.ApplicationModel.StartupTaskState.DisabledByUser
+                        && startupTask.State != Windows.ApplicationModel.StartupTaskState.DisabledByPolicy
+                        && startupTask.State != Windows.ApplicationModel.StartupTaskState.EnabledByPolicy,
+        };
+    }
+
+    [HttpPost]
+    public async Task SetStartupEnabled([FromBody] bool enabled)
+    {
+        var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("MaiChartManagerStartupId");
+        if (enabled)
+            await startupTask.RequestEnableAsync();
+        else
+            startupTask.Disable();
+    }
 }

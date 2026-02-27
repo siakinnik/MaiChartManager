@@ -541,3 +541,4 @@ oobe:
   lanAddresses: 區域網路位址
   openMainUI: 開啟主介面
   initializingData: 正在初始化遊戲資料...
+  startupOnBoot: 開機自動啟動

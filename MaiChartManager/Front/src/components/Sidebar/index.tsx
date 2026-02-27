@@ -2,6 +2,7 @@ import { defineComponent, PropType } from 'vue';
 import { useVModel } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 import RefreshAllButton from './RefreshAllButton';
+import LanguageSwitcher from './LanguageSwitcher';
 import VersionInfo from '@/components/VersionInfo';
 
 export type SidebarItem = 'charts' | 'mods' | 'batch' | 'genres' | 'tools' | 'settings';
@@ -63,6 +64,7 @@ export default defineComponent({
           <div class="mt-auto" />
           {renderItem('settings', 'i-mdi-cog', 'sidebar.settings', true)}
           <RefreshAllButton />
+          <LanguageSwitcher />
           <VersionInfo />
         </div>
 
@@ -76,6 +78,7 @@ export default defineComponent({
           {items.map((item) => renderItem(item.key, item.icon, item.labelKey, false))}
           {renderItem('settings', 'i-mdi-cog', 'sidebar.settings', false)}
           <RefreshAllButton />
+          <LanguageSwitcher />
           <VersionInfo />
         </div>
       </>

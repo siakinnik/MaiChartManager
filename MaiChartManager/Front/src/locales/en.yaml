@@ -538,6 +538,7 @@ sidebar:
   genres: Genres
   tools: Tools
   settings: Settings
+  language: Language
 settings:
   title: Settings
   appearance: Appearance

@@ -6,6 +6,8 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using MaiChartManager.Utils;
 using Microsoft.Web.WebView2.Core;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Xabe.FFmpeg;
 
 namespace MaiChartManager;
@@ -134,9 +136,30 @@ public partial class AppMain : ISingleInstance
 
             IapManager.Init();
 
-            _launcher = new Launcher();
-
-            Application.Run();
+            if (string.IsNullOrEmpty(StaticSettings.Config.GamePath) && availableVersion != null)
+            {
+                // OOBE path: start server, then show OobeBrowser
+                var syncCtx = new WindowsFormsSynchronizationContext();
+                SynchronizationContext.SetSynchronizationContext(syncCtx);
+                ServerManager.StartApp(false, () =>
+                {
+                    var server = ServerManager.app!.Services.GetRequiredService<IServer>();
+                    var addressFeature = server.Features.Get<IServerAddressesFeature>();
+                    if (addressFeature == null) return;
+                    var url = addressFeature.Addresses.First();
+                    syncCtx.Post(_ =>
+                    {
+                        var oobe = new OobeBrowser(url);
+                        oobe.Show();
+                    }, null);
+                });
+                Application.Run();
+            }
+            else
+            {
+                _launcher = new Launcher();
+                Application.Run();
+            }
         }
         catch (Exception e)
         {
@@ -173,7 +196,7 @@ public partial class AppMain : ISingleInstance
 
     public void OnInstanceInvoked(string[] args)
     {
-        _launcher.ShowWindow();
+        ActiveForm?.Show();
     }
 
     public static void SetLocale(string locale)

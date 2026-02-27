@@ -13,6 +13,7 @@ namespace MaiChartManager;
 public partial class AppMain : ISingleInstance
 {
     public static Browser? BrowserWin { get; set; }
+    public static Form? ActiveForm { get; set; }
 
     private Launcher _launcher;
 

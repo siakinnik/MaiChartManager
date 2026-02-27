@@ -550,3 +550,7 @@ settings:
   movieCodec: PV Codec
   yuv420p: Use YUV420P color space when converting USM
   noScale: Don't scale video to 1080 width
+  updateChannel: Update Channel
+  updateChannelSlow: Stable
+  updateChannelCi: Fast
+  updateChannelDesc: Stable channel delays updates by a few days, suitable for users who prefer stability

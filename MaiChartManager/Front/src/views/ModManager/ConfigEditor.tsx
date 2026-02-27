@@ -10,7 +10,7 @@ import { Button, addToast } from '@munet/ui';
 import { debounce } from 'perfect-debounce';
 import AquaMaiSignatureStatusDisplay from "./AquaMaiSignatureStatusDisplay";
 import { useAsyncState } from '@vueuse/core';
-import { aquaMaiConfig as config, configReadErr, configReadErrTitle, updateAquaMaiConfig } from "./refs";
+import { aquaMaiConfig as config, configReadErr, configReadErrTitle, updateAquaMaiConfig, configJustLoaded } from "./refs";
 
 export default defineComponent({
   setup() {
@@ -39,6 +39,11 @@ export default defineComponent({
     const save = debounce(saveImpl, 2000);
 
     watch(() => config.value, async (val) => {
+      if (configJustLoaded.value) {
+        configJustLoaded.value = false;
+        console.log('配置刚加载')
+        return;
+      }
       if (configReadErr.value) return
       if (val) {
         console.log('配置变动')

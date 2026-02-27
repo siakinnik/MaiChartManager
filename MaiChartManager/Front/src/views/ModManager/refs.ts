@@ -13,6 +13,9 @@ const skipSignatureCheckRef = ref(false);
 export const configReadErr = ref('');
 export const configReadErrTitle = ref('');
 
+// 标志位：配置刚从服务器加载，watcher 应忽略首次变更
+export const configJustLoaded = ref(false);
+
 const { state: aquaMaiConfig, execute: executeGetConfig, isLoading: configLoading } = useAsyncState(async () => {
   configReadErr.value = '';
   configReadErrTitle.value = '';
@@ -59,5 +62,6 @@ export { aquaMaiConfig, configLoading };
 export const updateAquaMaiConfig = async (forceDefault = false, skipSignatureCheck = false) => {
   forceDefaultRef.value = forceDefault;
   skipSignatureCheckRef.value = skipSignatureCheck;
+  configJustLoaded.value = true;
   await executeGetConfig();
 };

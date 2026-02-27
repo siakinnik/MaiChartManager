@@ -515,3 +515,7 @@ settings:
   movieCodec: PV 编码
   yuv420p: 转换 USM 时使用 YUV420P 颜色空间
   noScale: 不要缩放视频到 1080 宽度
+  updateChannel: 更新通道
+  updateChannelSlow: 稳定
+  updateChannelCi: 快速
+  updateChannelDesc: 稳定通道会延迟数天推送，适合不想踩坑的用户

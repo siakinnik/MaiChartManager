@@ -41,7 +41,7 @@ const ConfigSection = defineComponent({
       >
         <div class="ml-1 text-lg w-9em shrink-0">{getNameForPath(props.section.path!, props.section.path!.split('.').pop()!, props.section.attribute?.comment?.nameZh)}</div>
         <div class="flex flex-col gap-2 w-full ws-pre-line">
-          <div class="flex gap-2 h-34px items-center">
+          <div class="flex gap-2 h-28px items-center">
             <CheckBox v-model:value={props.sectionState.enabled}>{props.sectionState.enabled ? '开' : '关'}</CheckBox>
             {comments.shouldEnableOptions[props.section.path!] && !props.sectionState.enabled && <ProblemsDisplay problems={[t('mod.needEnableOption')]}/>}
             {props.isCommunity && <Popover trigger="hover">{{
@@ -108,9 +108,9 @@ export default defineComponent({
 
     const bigSections = computed(() => {
       if (props.useNewSort) {
-        return Object.keys(configSort.value).filter(it => it !== '社区功能').filter(it => filteredSections.value!.some(s => configSort.value[it].includes(s.path!)));
+        return Object.keys(configSort.value).filter(it => it !== '社区功能').filter(it => filteredSections.value?.some(s => configSort.value[it].includes(s.path!)) ?? false);
       }
-      return _.uniq(filteredSections.value!.filter(it => !it.attribute?.exampleHidden).map(s => s.path?.split('.')[0]));
+      return _.uniq((filteredSections.value ?? []).filter(it => !it.attribute?.exampleHidden).map(s => s.path?.split('.')[0]));
     });
 
     const otherSection = computed(() => {

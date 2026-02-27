@@ -1,4 +1,5 @@
 import { computed } from "vue";
+import { useStorage } from "@vueuse/core";
 import { modInfo, modUpdateInfo } from "@/store/refs";
 
 export function compareVersions(v1: string, v2: string) {
@@ -37,9 +38,11 @@ export function compareVersions(v1: string, v2: string) {
   return 0; // v1 等于 v2
 }
 
+export const selectedChannel = useStorage<'slow' | 'ci'>('aquamai-update-channel', 'slow');
+
 export const latestVersion = computed(() => {
   const defaultVersionInfo =
-    modUpdateInfo.value?.find(it => it.type === 'ci') ||
+    modUpdateInfo.value?.find(it => it.type === selectedChannel.value) ||
     modUpdateInfo.value?.find(it => it.default) ||
     modUpdateInfo.value?.[0] || { type: 'builtin' };
   if (defaultVersionInfo.type === "builtin") {

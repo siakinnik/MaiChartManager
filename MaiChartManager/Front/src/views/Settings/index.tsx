@@ -1,10 +1,11 @@
-import { defineComponent } from "vue";
-import { CheckBox, Select } from "@munet/ui";
+import { defineComponent, computed } from "vue";
+import { CheckBox, Radio, Select } from "@munet/ui";
 import { selectedThemeHue } from "@munet/ui";
 import { useI18n } from "vue-i18n";
 import { appSettings, saveSettings } from "@/store/settings";
 import { MovieCodec } from "@/client/apiGen";
 import styles from "./ThemeSlider.module.scss";
+import { selectedChannel } from "@/views/ModManager/shouldShowUpdateController";
 
 
 export default defineComponent({
@@ -66,6 +67,23 @@ export default defineComponent({
             </div>
             <CheckBox v-model:value={appSettings.value.yuv420p} onChange={onSettingChange}>{t('settings.yuv420p')}</CheckBox>
             <CheckBox v-model:value={appSettings.value.noScale} onChange={onSettingChange}>{t('settings.noScale')}</CheckBox>
+          </div>
+        </div>
+
+        {/* AquaMai */}
+        <div class="mb-6">
+          <div class="text-lg font-semibold mb-3 text-[var(--link-color)]">AquaMai</div>
+          <div class="rounded-xl bg-white/60 p-4 flex flex-col gap-4 border border-gray-200 border-solid">
+            <div class="flex gap-3">
+              <span class="shrink-0 flex justify-end">{t('settings.updateChannel')}</span>
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-3">
+                  <Radio k={'slow'} v-model:value={selectedChannel.value}>{t('settings.updateChannelSlow')}</Radio>
+                  <Radio k={'ci'} v-model:value={selectedChannel.value}>{t('settings.updateChannelCi')}</Radio>
+                </div>
+                <span class="text-sm op-60">{t('settings.updateChannelDesc')}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

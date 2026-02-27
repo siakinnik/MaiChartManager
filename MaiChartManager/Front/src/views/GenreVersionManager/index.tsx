@@ -1,5 +1,5 @@
 import { computed, defineComponent, ref } from "vue";
-import { CheckBox } from "@munet/ui";
+import { CheckBox, WhateverNaviBar } from "@munet/ui";
 import GenreDisplay from "./GenreDisplay";
 import { addVersionList, genreList } from "@/store/refs";
 import { useStorage } from "@vueuse/core";
@@ -20,6 +20,19 @@ export default defineComponent({
     const text = computed(() => activeTab.value === EDIT_TYPE.Genre ? t('genre.title') : t('version.title'));
     const editingId = ref(-1);
 
+    const naviItems = computed(() => [
+      {
+        name: t('genre.management'),
+        selected: activeTab.value === EDIT_TYPE.Genre,
+        onClick: () => { activeTab.value = EDIT_TYPE.Genre; editingId.value = -1; },
+      },
+      {
+        name: t('version.management'),
+        selected: activeTab.value === EDIT_TYPE.Version,
+        onClick: () => { activeTab.value = EDIT_TYPE.Version; editingId.value = -1; },
+      },
+    ]);
+
     const list = computed(() => {
       const data = activeTab.value === EDIT_TYPE.Genre ? genreList : addVersionList;
       return showBuiltIn.value ? data.value : data.value.filter(it => it.assetDir !== 'A000');
@@ -29,18 +42,7 @@ export default defineComponent({
     return () => (
       <div class="flex flex-col p-xy h-100dvh">
         <div class="flex gap-2 items-center mb-2">
-          <button
-            class={['px-3 py-1.5 rounded-md border-none cursor-pointer transition-colors', activeTab.value === EDIT_TYPE.Genre ? 'bg-[var(--link-color)]/12 text-[var(--link-color)]' : 'bg-transparent text-gray-500 hover:bg-gray-100']}
-            onClick={() => { activeTab.value = EDIT_TYPE.Genre; editingId.value = -1; }}
-          >
-            {t('genre.management')}
-          </button>
-          <button
-            class={['px-3 py-1.5 rounded-md border-none cursor-pointer transition-colors', activeTab.value === EDIT_TYPE.Version ? 'bg-[var(--link-color)]/12 text-[var(--link-color)]' : 'bg-transparent text-gray-500 hover:bg-gray-100']}
-            onClick={() => { activeTab.value = EDIT_TYPE.Version; editingId.value = -1; }}
-          >
-            {t('version.management')}
-          </button>
+          <WhateverNaviBar items={naviItems.value} />
           <div class="grow-1" />
           <CheckBox v-model:value={showBuiltIn.value}>{t('genre.showBuiltIn')}</CheckBox>
           <CreateButton setEditId={id => editingId.value = id} type={activeTab.value}/>

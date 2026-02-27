@@ -1,5 +1,5 @@
 import { computed, defineComponent, effect, PropType, watch } from "vue";
-import { Button, Modal, NumberInput } from "@munet/ui";
+import { Button, Modal, NumberInput, Section } from "@munet/ui";
 import { ImportChartMessage, MessageLevel, ShiftMethod } from "@/client/apiGen";
 import { ImportChartMessageEx, ImportMeta, SavedOptions, TempOptions } from "./types";
 import noJacket from '@/assets/noJacket.webp';
@@ -62,12 +62,9 @@ export default defineComponent({
               <div class="ml-1 text-sm">{t('music.edit.version')}</div>
               <VersionInput v-model:value={props.savedOptions.version}/>
             </div>
-            <details>
-                <summary class="cursor-pointer">{t('chart.import.option.advancedOptions')}</summary>
-                <div class="flex flex-col gap-2 mt-2">
-                    <ShiftModeSelector tempOptions={props.tempOptions}></ShiftModeSelector>
-                </div>
-            </details>
+            <Section title={t('chart.import.option.advancedOptions')}>
+                <ShiftModeSelector tempOptions={props.tempOptions}></ShiftModeSelector>
+            </Section>
         </>}
       </div>,
         actions: () => <>
@@ -91,7 +88,7 @@ const MusicIdInput = defineComponent({
     });
     const img = computed(() => props.meta.bg ? URL.createObjectURL(props.meta.bg) : noJacket);
 
-    return () => <div class="flex gap-3 items-center">
+    return () => <div class="flex gap-3 items-center px of-hidden">
       <img src={img.value} class="h-16 w-16 object-fill shrink-0"/>
       <div class="w-0 grow">{props.meta.name}</div>
       <MusicIdConflictNotifier id={props.meta.id}/>

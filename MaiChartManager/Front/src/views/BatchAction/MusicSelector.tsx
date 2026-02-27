@@ -8,6 +8,7 @@ import { GenreOption } from "@/components/GenreInput";
 import { LEVEL_COLOR, LEVELS } from "@/consts";
 import _ from "lodash";
 import { watchDebounced } from "@vueuse/core";
+import { scrollToMusic } from "@/views/Charts/MusicList";
 import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
@@ -110,6 +111,7 @@ export default defineComponent({
           selectMusicId.value = row.id!;
           sidebarActive.value = 'charts';
           props.cancel();
+          setTimeout(() => scrollToMusic(row.id!), 100);
         }}>
           <span class="i-tabler:external-link c-neutral-5"/>
         </Button>,

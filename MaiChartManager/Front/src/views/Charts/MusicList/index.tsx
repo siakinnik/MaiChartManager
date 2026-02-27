@@ -1,10 +1,18 @@
-import { defineComponent } from "vue";
+import { defineComponent, ref, watch, nextTick } from "vue";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
 import { Button, theme } from "@munet/ui";
 import { VList } from 'virtua/vue';
 import MusicEntry from "@/views/Charts/MusicList/MusicEntry";
 import { assetDirs, musicList, selectedADir, selectMusicId } from "@/store/refs";
 import { leftPanel } from "@/views/Charts/refs";
+
+export const musicListRef = ref<InstanceType<typeof VList> | null>(null);
+
+export const scrollToMusic = (musicId: number) => {
+  const idx = musicList.value.findIndex(m => m.id === musicId);
+  if (idx === -1 || !musicListRef.value) return;
+  musicListRef.value.scrollToIndex(idx, { align: 'center', smooth: true });
+};
 
 export default defineComponent({
   props: {
@@ -30,7 +38,7 @@ export default defineComponent({
             <span class="truncate">{selectedDirLabel()}</span>
           </div>
         </div>
-        <VList class="flex-1 cst" data={musicList.value}>
+        <VList ref={musicListRef} class="flex-1 cst" data={musicList.value}>
           {({item}: {item: MusicXmlWithABJacket}) => (
             <MusicEntry music={item} selected={selectMusicId.value === item.id} onClick={() => selectMusicId.value = item.id!} key={item.id} />
           )}

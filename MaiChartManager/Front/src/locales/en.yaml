@@ -350,6 +350,12 @@ mod:
     disableIO4: Disable IO4 Input
     disableIO4Tip: Toggle on to disable corresponding input. After disabling IO4 input, your compatible IO4 board or segatools IO4 simulation will be ignored.
     disableIO4System: System Buttons (Test, Service)
+    disable1P: Disable 1P
+    enable1P: Enable 1P
+    disable2P: Disable 2P
+    enable2P: Enable 2P
+    disableSystem: Disable System Buttons
+    enableSystem: Enable System Buttons
   soundChannel:
     P1SpeakerLeft: Front Left
     P1SpeakerRight: Front Right
@@ -427,6 +433,8 @@ mod:
     P1: Enable 1P
     P2: Enable 2P
     tip: If mixing Maimoller with other protocols, disable this for the non-Maimoller side
+  on: 'On'
+  off: 'Off'
 tools:
   title: Tools
   audioConvert: Audio Convert (ACB + AWB)

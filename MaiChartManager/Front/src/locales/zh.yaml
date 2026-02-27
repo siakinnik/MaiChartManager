@@ -320,6 +320,12 @@ mod:
     disableIO4: 禁用 IO4 输入
     disableIO4Tip: 开关打开为禁用对应输入。在禁用 IO4 输入后，你的兼容 IO4 板或 segatools IO4 模拟将被忽略。
     disableIO4System: 系统按键（测试、服务）
+    disable1P: 禁用 1P
+    enable1P: 启用 1P
+    disable2P: 禁用 2P
+    enable2P: 启用 2P
+    disableSystem: 禁用系统按键
+    enableSystem: 启用系统按键
   soundChannel:
     P1SpeakerLeft: 前喇叭 左
     P1SpeakerRight: 前喇叭 右
@@ -386,9 +392,16 @@ mod:
     Button2p: 2P 按键
     Led1p: 1P 灯光
     Led2p: 2P 灯光
+    Touch: 触屏
+    Button: 按键
+    Led: 灯光
     P1: 启用 1P
     P2: 启用 2P
     tip: 如果混用 Maimoller 与其他协议，请对不是 Maimoller 的一侧禁用
+  on: 开
+  off: 关
+  enable: 启用
+  disable: 禁用
 tools:
   title: 工具
   audioConvert: 音频转换（ACB + AWB）

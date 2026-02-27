@@ -319,6 +319,12 @@ mod:
     disableIO4: 停用 IO4 輸入
     disableIO4Tip: 開關打開為停用對應輸入。在停用 IO4 輸入後，你的兼容 IO4 板或 segatools IO4 模擬將被忽略。
     disableIO4System: 系統按鍵（測試、服務）
+    disable1P: 停用 1P
+    enable1P: 啟用 1P
+    disable2P: 停用 2P
+    enable2P: 啟用 2P
+    disableSystem: 停用系統按鍵
+    enableSystem: 啟用系統按鍵
   soundChannel:
     P1SpeakerLeft: 前喇叭 左
     P1SpeakerRight: 前喇叭 右
@@ -388,6 +394,8 @@ mod:
     P1: 啟用 1P
     P2: 啟用 2P
     tip: 如果混用 Maimoller 與其他協議，請對不是 Maimoller 的一侧停用
+  on: 開
+  off: 關
 tools:
   title: 工具
   audioConvert: 音訊轉換（ACB + AWB）

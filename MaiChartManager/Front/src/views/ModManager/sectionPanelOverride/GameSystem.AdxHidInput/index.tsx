@@ -16,6 +16,12 @@ export default defineComponent({
     const load = ref(false)
     const { t } = useI18n();
 
+    const knownPaths = [
+      'GameSystem.AdxHidInput.Button1',
+      'GameSystem.AdxHidInput.Button2',
+      'GameSystem.AdxHidInput.Button3',
+      'GameSystem.AdxHidInput.Button4',
+    ];
     const options = [
       { label: t('mod.ioKeyMap.disabled'), value: 'None' },
       { label: t('mod.ioKeyMap.select'), value: 'Select' },
@@ -44,14 +50,14 @@ export default defineComponent({
         <div>
           <div class="flex flex-col gap-2">
             <div class="flex gap-2 items-start">
-              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.adxHid.button1')}</div>
+              <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button1')}</div>
               <div class="flex flex-col gap-2 w-full ws-pre-line">
                 <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button1'].value} options={options}/>
                 {t('mod.adxHid.button1Desc')}
               </div>
             </div>
             <div class="flex gap-2 items-start">
-              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.adxHid.button2')}</div>
+              <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button2')}</div>
               <div class="flex flex-col gap-2 w-full ws-pre-line">
                 <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button2'].value} options={options}/>
                 {t('mod.adxHid.button2Desc')}
@@ -62,14 +68,14 @@ export default defineComponent({
         <div>
           <div class="flex flex-col gap-2">
             <div class="flex gap-2 items-start">
-              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.adxHid.button3')}</div>
+              <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button3')}</div>
               <div class="flex flex-col gap-2 w-full ws-pre-line">
                 <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button3'].value} options={options}/>
                 {t('mod.adxHid.button3Desc')}
               </div>
             </div>
             <div class="flex gap-2 items-start">
-              <div class="ml-1 text-sm w-10em shrink-0">{t('mod.adxHid.button4')}</div>
+              <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button4')}</div>
               <div class="flex flex-col gap-2 w-full ws-pre-line">
                 <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button4'].value} options={options}/>
                 {t('mod.adxHid.button4Desc')}
@@ -79,9 +85,7 @@ export default defineComponent({
         </div>
       </div>
       <div class="flex flex-col gap-2 p-l-3">
-        {props.section.entries?.filter(it=>
-          ['GameSystem.AdxHidInput.DisableButtons']
-          .includes(it.path!))
+        {props.section.entries?.filter(it => !knownPaths.includes(it.path!))
           .map((entry) => <ConfigEntry key={entry.path!} entry={entry} entryState={props.entryStates[entry.path!]}/>)}
       </div>
     </div>

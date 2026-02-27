@@ -49,18 +49,13 @@ export default defineComponent({
           title={t('assetDir.create')}
           v-model:show={show.value}
         >{{
-          default: () => <div class="flex flex-col gap-3">
-            <div>
-              <div class="ml-1 text-sm">ID</div>
-              <div class="flex">
-                <span class="flex items-center px-2 bg-neutral/10 rounded-l">A</span>
-                <NumberInput v-model:value={id.value} class="w-full" min={1} max={999}/>
-              </div>
-            </div>
-          </div>,
-          actions: () => <div class="flex gap-2 justify-end">
+          default: () =>
+            <div class="flex gap-2 items-center">
+              <span class="">A</span>
+              <NumberInput v-model:value={id.value} class="w-full" min={1} max={999}/>
+            </div>,
+          actions: () =>
             <Button onClick={save}>{t('common.confirm')}</Button>
-          </div>
         }}</Modal>
       </Button>
     )

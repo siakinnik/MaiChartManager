@@ -1,7 +1,7 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import { showTransactionalDialog } from '@munet/ui';
 import GenreVersionManager from './GenreVersionManager';
-import { globalCapture, updateAll, updateVersion, version, assetDirs, selectedADir } from '@/store/refs';
+import { globalCapture, updateAll, updateVersion, version, assetDirs, selectedADir, sidebarActive } from '@/store/refs';
 import ModManager from '@/views/ModManager';
 import { captureException } from '@sentry/vue';
 import { HardwareAccelerationStatus, LicenseStatus } from '@/client/apiGen';
@@ -17,7 +17,6 @@ import Splash from '@/components/Splash';
 export default defineComponent({
   setup() {
     const { t } = useI18n();
-    const sidebarActive = ref<SidebarItem>('charts');
     const loaded = ref(false);
 
     onMounted(async () => {

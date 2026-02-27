@@ -1,7 +1,7 @@
 import { computed, defineComponent, PropType, reactive, ref } from "vue";
 import { DataTableBaseColumn, DataTableColumns, NDataTable } from "naive-ui";
 import { Button, TextInput } from "@munet/ui";
-import { addVersionList, b15ver, genreList, musicList, musicListAll, selectedADir, selectMusicId, version } from "@/store/refs";
+import { addVersionList, b15ver, genreList, musicList, musicListAll, selectedADir, selectMusicId, sidebarActive, version } from "@/store/refs";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
 import JacketBox from "@/components/JacketBox";
 import { GenreOption } from "@/components/GenreInput";
@@ -108,6 +108,7 @@ export default defineComponent({
         render: (row) => <Button variant="ghost" class="p-2" onClick={() => {
           selectedADir.value = row.assetDir!;
           selectMusicId.value = row.id!;
+          sidebarActive.value = 'charts';
           props.cancel();
         }}>
           <span class="i-tabler:external-link c-neutral-5"/>
@@ -131,7 +132,7 @@ export default defineComponent({
       })),
     });
 
-    return () => <div class="flex flex-col gap-3">
+    return () => <div class="flex flex-col gap-3 h-full">
       {/*<NFlex>*/}
       {/*  <NButton onClick={() => {*/}
       {/*    emit('update:selectedMusicIds', musicListAll.value.filter(it => !props.selectedMusicIds!.includes(it)));*/}
@@ -142,8 +143,7 @@ export default defineComponent({
         columns={columns.value}
         data={musicListAll.value}
         virtualScroll
-        maxHeight="60vh"
-        class="min-h-60vh"
+        maxHeight="calc(100dvh - 12rem)"
         minRowHeight={104}
         rowKey={row => `${row.assetDir}:${row.id}`}
         v-model:checkedRowKeys={selectedMusicIds.value}

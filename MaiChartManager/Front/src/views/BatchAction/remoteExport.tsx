@@ -140,6 +140,11 @@ export default async (
               await writable.close();
             }
           } catch (e) {
+            if (e instanceof TypeError && String(e.message).includes('Name is not allowed')) {
+              // Chromium blocks certain file extensions (e.g. .manifest, .ini, .dll)
+              // via File System Access API. Skip silently.
+              continue;
+            }
             hasEntryError = true;
             console.error("Failed to export zip entry", {
               musicName,

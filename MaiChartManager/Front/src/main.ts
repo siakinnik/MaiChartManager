@@ -10,6 +10,12 @@ import sentry from "@/plugins/sentry";
 import i18n from '@/locales';
 import router from '@/router';
 import './global.sass';
+import { initThemeDefaults, selectedThemeName, UIThemes } from '@munet/ui';
+
+
+initThemeDefaults({ hue: 353 });
+selectedThemeName.value = UIThemes.DynamicLight;
+
 
 createApp(App)
   .use(router)

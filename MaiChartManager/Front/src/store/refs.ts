@@ -8,6 +8,9 @@ import { locale } from "@/locales";
 import { updateAquaMaiConfig } from "@/views/ModManager/refs";
 import { updateSettings } from "@/store/settings";
 import { GetGetConfigTypeEnum } from "@/client/aquaMaiVersionConfigApiGen";
+import { SidebarItem } from "@/components/Sidebar";
+
+export const sidebarActive = ref<SidebarItem>('charts');
 
 export const error = ref();
 export const errorId = ref<string>();

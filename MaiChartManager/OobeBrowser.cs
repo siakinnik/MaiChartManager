@@ -15,7 +15,7 @@ public sealed class OobeBrowser : Form
         Controls.Add(webView21);
 
         Text = "MaiChartManager";
-        ClientSize = new Size(900, 650);
+        ClientSize = new Size(1200, 1000);
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
 

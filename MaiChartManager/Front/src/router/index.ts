@@ -12,16 +12,16 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to) => {
-  if (to.path === '/chart-preview') return;
-  try {
-    const res = await api.GetGamePath();
-    const hasGamePath = !!res.data;
-    if (to.path === '/oobe' && hasGamePath) return '/';
-    if (to.path === '/' && !hasGamePath) return '/oobe';
-  } catch {
-    // If API fails, let navigation proceed
-  }
-});
+// router.beforeEach(async (to) => {
+//   if (to.path === '/chart-preview') return;
+//   try {
+//     const res = await api.GetGamePath();
+//     const hasGamePath = !!res.data;
+//     if (to.path === '/oobe' && hasGamePath) return '/';
+//     if (to.path === '/' && !hasGamePath) return '/oobe';
+//   } catch {
+//     // If API fails, let navigation proceed
+//   }
+// });
 
 export default router;

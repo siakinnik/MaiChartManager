@@ -2294,6 +2294,36 @@ export class Api<
     /**
      * No description
      *
+     * @tags Oobe
+     * @name GetStartupStatus
+     * @request GET:/MaiChartManagerServlet/GetStartupStatusApi
+     */
+    GetStartupStatus: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/GetStartupStatusApi`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Oobe
+     * @name SetStartupEnabled
+     * @request POST:/MaiChartManagerServlet/SetStartupEnabledApi
+     */
+    SetStartupEnabled: (data: boolean, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/SetStartupEnabledApi`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Settings
      * @name GetSettings
      * @request GET:/MaiChartManagerServlet/GetSettingsApi

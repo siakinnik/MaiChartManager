@@ -24,7 +24,7 @@ export default defineComponent({
         <img src={rei} alt="MaiChartManager" class="h-48" />
         <div class="text-2xl font-bold op-90">MaiChartManager</div>
         <div class="text-lg op-70">{t('oobe.welcomeMessage')}</div>
-        <div class="mt-4 flex items-center gap-2">
+        <div class="flex items-center gap-4">
           <div class="i-mdi-translate text-xl op-60" />
           <Select
             value={locale.value}

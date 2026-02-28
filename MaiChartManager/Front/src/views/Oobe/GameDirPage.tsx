@@ -1,6 +1,8 @@
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, Transition } from 'vue';
 import { useI18n } from 'vue-i18n';
 import api from '@/client/api';
+import TransitionOpacity from '@/components/TransitionOpacity';
+import { TransitionVertical } from '@munet/ui';
 
 export default defineComponent({
   props: {
@@ -28,26 +30,39 @@ export default defineComponent({
     };
 
     return () => (
-      <div class="flex flex-col items-center justify-center h-full gap-6 px-12">
+      <div class="flex flex-col items-center justify-center h-full gap-6 px-12 relative">
         <div class="i-mdi-folder-open text-5xl op-40" />
-        <div class="text-xl font-bold op-90">{t('oobe.selectGameDir')}</div>
+        <div class="text-5 font-bold op-90">{t('oobe.selectGameDir')}</div>
         <div class="text-sm op-60 text-center">{t('oobe.selectGameDirDesc')}</div>
         <button
-          class="px-6 py-3 rounded-lg bg-[oklch(0.85_0.05_var(--hue))] hover:bg-[oklch(0.8_0.07_var(--hue))] transition-colors cursor-pointer border-none text-base"
           onClick={browseFolder}
         >
           {t('oobe.browse')}
         </button>
-        {props.gamePath && (
-          <div class="flex flex-col items-center gap-2">
-            <div class={['text-sm px-4 py-2 rounded-lg', props.pathValid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800']}>
-              {props.pathValid ? t('oobe.selectedPath') : pathError.value}: {props.gamePath}
-            </div>
-          </div>
-        )}
-        {props.initializing && (
-          <div class="text-sm op-60 animate-pulse">{t('oobe.initializingData')}</div>
-        )}
+        <div>
+          <TransitionVertical>
+            {props.gamePath && (
+              <div class="flex flex-col items-center gap-2">
+                <div class={['text-sm px-4 py-2 rounded-lg', props.pathValid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800']}>
+                  {props.pathValid ? t('oobe.selectedPath') : pathError.value}: {props.gamePath}
+                </div>
+              </div>
+            )}
+          </TransitionVertical>
+        </div>
+        <Transition
+          duration={500}
+          leaveActiveClass="transition-opacity duration-500 transition-ease-in-out"
+          enterActiveClass="transition-opacity duration-500 transition-ease-in-out"
+          enterFromClass="opacity-0"
+          enterToClass="opacity-100"
+          leaveFromClass="opacity-100"
+          leaveToClass="opacity-0"
+        >
+          {props.initializing && <div class="absolute-full flex items-center justify-center bg-[oklch(0.97_0.01_var(--hue)/0.9)] backdrop-blur-sm">
+            <div class="flex items-center justify-center h-full text-sm op-60 animate-pulse">{t('oobe.initializingData')}</div>
+          </div>}
+        </Transition>
       </div>
     );
   },

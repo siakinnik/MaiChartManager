@@ -79,10 +79,9 @@ export default defineComponent({
     return () => (
       <div class="fixed inset-0 bg-[oklch(0.97_0.01_var(--hue))] flex flex-col">
         <div class="flex-1 overflow-hidden relative">
-          <Transition name={transitionName.value} mode="out-in">
-            {step.value === 0 ? (
-              <WelcomePage key="welcome" />
-            ) : step.value === 1 ? (
+          <Transition name={transitionName.value}>
+            {step.value === 0 && <WelcomePage key="welcome" />}
+            {step.value === 1 &&
               <GameDirPage
                 key="gamedir"
                 gamePath={gamePath.value}
@@ -92,7 +91,8 @@ export default defineComponent({
                 initializing={initializing.value}
                 onUpdate:initializing={(v: boolean) => initializing.value = v}
               />
-            ) : (
+            }
+            {step.value === 2 &&
               <ModeSelectPage
                 key="modeselect"
                 completing={completing.value}
@@ -100,7 +100,7 @@ export default defineComponent({
                 lanAddresses={lanAddresses.value}
                 onComplete={handleComplete}
               />
-            )}
+            }
           </Transition>
         </div>
         {!completing.value && !remoteReady.value && (

@@ -1,7 +1,7 @@
 import { defineComponent, ref, PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import api from '@/client/api';
-import { TransitionVertical, TextInput } from '@munet/ui';
+import { TransitionVertical, TextInput, CheckBox } from '@munet/ui';
 
 export default defineComponent({
   props: {
@@ -68,7 +68,7 @@ export default defineComponent({
 
     return () => (
       <div class="flex flex-col items-center justify-center h-full px-12">
-        <div class="text-xl font-bold op-90">{t('oobe.selectMode')}</div>
+        <div class="text-5 font-bold op-90">{t('oobe.selectMode')}</div>
         <div class="flex gap-4 w-full max-w-md mt-6 mb-3">
           <div
             class={['flex-1 p-5 rounded-xl cursor-pointer transition-all border-2 flex flex-col items-center gap-3',
@@ -92,32 +92,31 @@ export default defineComponent({
         <TransitionVertical>
           {isRemote.value && (
             <div class="flex flex-col gap-3 w-full max-w-sm my-3">
-              <label class="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="checkbox" checked={useAuth.value} onChange={(e: any) => useAuth.value = e.target.checked} />
+              <CheckBox v-model:value={useAuth.value}>
                 {t('oobe.enableAuth')}
-              </label>
-              {useAuth.value && (
-                <div class="flex flex-col gap-2">
-                  <TextInput
-                    placeholder={t('oobe.username')}
-                    v-model:value={authUsername.value}
-                  />
-                  <TextInput
-                    type="password"
-                    placeholder={t('oobe.password')}
-                    v-model:value={authPassword.value}
-                  />
-                </div>
-              )}
-              <label class="flex items-center gap-2 cursor-pointer text-sm">
-                <input type="checkbox" checked={startupEnabled.value} disabled={!startupCanChange.value} onChange={(e: any) => { startupEnabled.value = e.target.checked; (api as any).SetStartupEnabled(e.target.checked); }} />
+              </CheckBox>
+              <TransitionVertical>
+                {useAuth.value && (
+                  <div class="flex flex-col gap-2">
+                    <TextInput
+                      placeholder={t('oobe.username')}
+                      v-model:value={authUsername.value}
+                    />
+                    <TextInput
+                      type="password"
+                      placeholder={t('oobe.password')}
+                      v-model:value={authPassword.value}
+                    />
+                  </div>
+                )}
+              </TransitionVertical>
+              <CheckBox v-model:value={startupEnabled.value} onChange={() => (api as any).SetStartupEnabled(startupEnabled.value)}>
                 {t('oobe.startupOnBoot')}
-              </label>
+              </CheckBox>
             </div>
           )}
         </TransitionVertical>
         <button
-          class="mt-5 px-8 py-3 rounded-lg bg-[oklch(0.55_0.15_var(--hue))] hover:bg-[oklch(0.55_0.15_var(--hue)/0.8)] transition-colors cursor-pointer border-none text-base text-white font-bold"
           onClick={handleComplete}
         >
           {t('oobe.complete')}

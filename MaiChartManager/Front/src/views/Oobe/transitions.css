@@ -6,7 +6,7 @@
   inset: 0;
 }
 .oobe-slide-forward-enter-from {
-  transform: translateX(30%);
+  transform: translateX(50%);
   opacity: 0;
 }
 .oobe-slide-forward-enter-to {
@@ -18,7 +18,7 @@
   opacity: 1;
 }
 .oobe-slide-forward-leave-to {
-  transform: translateX(-30%);
+  transform: translateX(-50%);
   opacity: 0;
 }
 
@@ -30,7 +30,7 @@
   inset: 0;
 }
 .oobe-slide-backward-enter-from {
-  transform: translateX(-30%);
+  transform: translateX(-50%);
   opacity: 0;
 }
 .oobe-slide-backward-enter-to {
@@ -42,6 +42,6 @@
   opacity: 1;
 }
 .oobe-slide-backward-leave-to {
-  transform: translateX(30%);
+  transform: translateX(50%);
   opacity: 0;
 }

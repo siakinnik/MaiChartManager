@@ -153,16 +153,14 @@ public partial class AppMain : ISingleInstance
                 }
             }
 
-            // TODO: 似乎可以更早的创建窗口，来抵消启动 server 完成之前没有窗口的这段时间
+            // 提前创建 OOBE 窗口，server 就绪后注入 backendUrl
             if (string.IsNullOrEmpty(StaticSettings.Config.GamePath) && availableVersion != null)
             {
+                OobeBrowser = new OobeBrowser();
+                OobeBrowser.Show();
                 ServerManager.StartApp(false, (url) =>
                 {
-                    UiContext?.Post(_ =>
-                    {
-                        OobeBrowser = new OobeBrowser(url);
-                        OobeBrowser.Show();
-                    }, null);
+                    UiContext?.Post(_ => OobeBrowser?.InjectBackendUrl(url), null);
                 });
             }
             else if (availableVersion != null && !StaticSettings.Config.Export)
@@ -174,11 +172,21 @@ public partial class AppMain : ISingleInstance
                     UiContext?.Post(_ => BrowserWin?.InjectBackendUrl(url), null);
                 });
             }
-            else if (availableVersion != null)
+            else if (availableVersion != null && IsFromStartup)
             {
-                // export mode: show tray icon, no browser window
+                // export mode + startup: show tray icon, no browser window
                 ServerManager.StartApp(true);
                 AppLifecycleManager.ShowTrayIcon();
+            }
+            else if (availableVersion != null)
+            {
+                // export mode + manual launch: show OOBE at mode select page
+                OobeBrowser = new OobeBrowser(hash: "/oobe?step=2");
+                OobeBrowser.Show();
+                ServerManager.StartApp(false, (url) =>
+                {
+                    UiContext?.Post(_ => OobeBrowser?.InjectBackendUrl(url), null);
+                });
             }
             else
             {

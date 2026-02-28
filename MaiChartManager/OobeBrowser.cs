@@ -4,12 +4,12 @@ namespace MaiChartManager;
 
 public sealed class OobeBrowser : Form
 {
-    private readonly Uri loopbackUrl;
+    private Uri? loopbackUrl;
     private readonly Microsoft.Web.WebView2.WinForms.WebView2 webView21;
 
-    public OobeBrowser(string loopbackUrl)
+    public OobeBrowser(string? loopbackUrl = null, string hash = "/oobe")
     {
-        this.loopbackUrl = new Uri(loopbackUrl);
+        if (loopbackUrl != null) this.loopbackUrl = new Uri(loopbackUrl);
 
         webView21 = new Microsoft.Web.WebView2.WinForms.WebView2 { Dock = DockStyle.Fill };
         Controls.Add(webView21);
@@ -28,7 +28,7 @@ public sealed class OobeBrowser : Form
 
         AppMain.ActiveForm = this;
 
-        webView21.Source = new Uri("https://mcm.invalid/index.html#/oobe");
+        webView21.Source = new Uri($"https://mcm.invalid/index.html#{hash}");
         webView21.DefaultBackgroundColor = Color.Transparent;
 
         PositionOnScreen();
@@ -71,7 +71,7 @@ public sealed class OobeBrowser : Form
     private void SetupCoreWebView2(CoreWebView2 coreWebView2)
     {
         coreWebView2.SetVirtualHostNameToFolderMapping("mcm.invalid", StaticSettings.wwwroot, CoreWebView2HostResourceAccessKind.Deny);
-        coreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{loopbackUrl.ToString().TrimEnd('/')}`");
+        if (loopbackUrl != null) coreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{loopbackUrl.ToString().TrimEnd('/')}`");
     }
 
     private static void OnPermissionRequested(object? sender, CoreWebView2PermissionRequestedEventArgs e)
@@ -80,5 +80,12 @@ public sealed class OobeBrowser : Form
         {
             e.State = CoreWebView2PermissionState.Allow;
         }
+    }
+
+    public void InjectBackendUrl(string url)
+    {
+        loopbackUrl = new Uri(url);
+        webView21.CoreWebView2.PostWebMessageAsString(url);
+        webView21.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{url}`");
     }
 }

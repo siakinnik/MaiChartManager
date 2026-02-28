@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Microsoft.Web.WebView2.Core;
 
 namespace MaiChartManager;
@@ -18,6 +19,9 @@ public sealed class OobeBrowser : Form
         ClientSize = new Size(1200, 1000);
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
+
+        var rm = new ComponentResourceManager(typeof(Launcher));
+        Icon = (Icon?)rm.GetObject("notifyIcon1.Icon");
 
         webView21.CoreWebView2InitializationCompleted += OnCoreWebView2InitializationCompleted;
         FormClosed += (_, _) =>

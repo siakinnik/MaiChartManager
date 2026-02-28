@@ -1,4 +1,4 @@
-using System.Resources;
+using System.ComponentModel;
 
 namespace MaiChartManager;
 
@@ -21,8 +21,8 @@ public static class AppLifecycleManager
                 return;
 
             // Load icon from Launcher's embedded resources (avoids duplicating base64 data)
-            var rm = new ResourceManager("MaiChartManager.Launcher", typeof(Launcher).Assembly);
-            var icon = (Icon?)rm.GetObject("notifyIcon1.Icon");
+            var rm = new ComponentResourceManager(typeof(Launcher));
+var icon = (Icon?)rm.GetObject("notifyIcon1.Icon");
 
             var contextMenu = new ContextMenuStrip();
             var openItem = new ToolStripMenuItem("打开窗口");

@@ -18,12 +18,15 @@ export default defineComponent({
     const authUsername = ref('');
     const authPassword = ref('');
 
+    const startupEnabled = ref(false);
+
     const handleComplete = () => {
       emit('complete', {
         isRemote: isRemote.value,
         useAuth: useAuth.value,
         authUsername: authUsername.value,
         authPassword: authPassword.value,
+        startupEnabled: startupEnabled.value,
       });
     };
 
@@ -94,7 +97,9 @@ export default defineComponent({
                     </div>
                   )}
                 </TransitionVertical>
-                {/* TODO: 开机启动选项，需要 UI 库支持 disabled 状态后再加回来 */}
+                <CheckBox v-model:value={startupEnabled.value}>
+                  {t('oobe.startupOnBoot')}
+                </CheckBox>
               </div>
             )}
           </TransitionVertical>

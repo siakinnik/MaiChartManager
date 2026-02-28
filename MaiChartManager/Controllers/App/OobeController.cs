@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MaiChartManager.Controllers.App;
 
-public record CompleteSetupRequest(bool Export, bool UseAuth, string? AuthUsername, string? AuthPassword);
+public record CompleteSetupRequest(bool Export, bool UseAuth, string? AuthUsername, string? AuthPassword, bool StartupEnabled = false);
 
 [ApiController]
 [Route("MaiChartManagerServlet/[action]Api")]
@@ -94,16 +94,16 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
 
         if (exportChanged)
         {
-            // 切到非 export 时自动关闭开机启动
-            if (!request.Export)
+            // 管理开机启动
+            try
             {
-                try
-                {
-                    var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("MaiChartManagerStartupId");
+                var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("MaiChartManagerStartupId");
+                if (request.Export && request.StartupEnabled)
+                    await startupTask.RequestEnableAsync();
+                else
                     startupTask.Disable();
-                }
-                catch { }
             }
+            catch { }
             _ = Task.Run(async () =>
             {
                 await Task.Delay(100);
@@ -136,4 +136,4 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
         return Ok();
     }
 
-    }
+}

@@ -1,4 +1,5 @@
 import { defineComponent, ref, computed, Transition, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import api from '@/client/api';
 import WelcomePage from './WelcomePage';
@@ -9,7 +10,9 @@ import './transitions.css';
 export default defineComponent({
   setup() {
     const { t } = useI18n();
-    const step = ref(0);
+    const route = useRoute();
+    const initialStep = Number(route.query.step) || 0;
+    const step = ref(initialStep);
     const direction = ref<'forward' | 'backward'>('forward');
 
     // Step 1 state
@@ -52,7 +55,7 @@ export default defineComponent({
       }
     };
 
-    const handleComplete = async (opts: { isRemote: boolean; useAuth: boolean; authUsername: string; authPassword: string }) => {
+    const handleComplete = async (opts: { isRemote: boolean; useAuth: boolean; authUsername: string; authPassword: string; startupEnabled: boolean }) => {
       completing.value = true;
       try {
         await api.CompleteSetup({
@@ -60,6 +63,7 @@ export default defineComponent({
           useAuth: opts.useAuth,
           authUsername: opts.authUsername || null,
           authPassword: opts.authPassword || null,
+          startupEnabled: opts.startupEnabled,
         });
         if (opts.isRemote) {
           // Server restarts when export mode changes, need to wait for it to be ready

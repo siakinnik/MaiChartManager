@@ -2223,10 +2223,18 @@ export class Api<
      * @name SetGamePath
      * @request POST:/MaiChartManagerServlet/SetGamePathApi
      */
-    SetGamePath: (data: string, params: RequestParams = {}) =>
+    SetGamePath: (
+      data: string,
+      query?: {
+        /** @default false */
+        save?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/SetGamePathApi`,
         method: "POST",
+        query: query,
         body: data,
         type: ContentType.Json,
         ...params,

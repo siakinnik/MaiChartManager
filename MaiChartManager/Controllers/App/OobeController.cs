@@ -19,7 +19,7 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
     }
 
     [HttpPost]
-    public IActionResult SetGamePath([FromBody] string path)
+    public IActionResult SetGamePath([FromBody] string path, bool save = false)
     {
         if (!Path.Exists(path))
         {
@@ -39,7 +39,11 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
 
         StaticSettings.Config.GamePath = StaticSettings.GamePath;
         StaticSettings.Config.HistoryPath.Add(path);
-        // 这里不用持久化，最后保存的时候会持久化的
+        if (save)
+        {
+            // oobe 阶段不需要保存，下面会保存。但是在主界面设置里需要保存
+            StaticSettings.Config.Save();
+        }
 
         AppMain.UiContext?.Post(_ =>
         {

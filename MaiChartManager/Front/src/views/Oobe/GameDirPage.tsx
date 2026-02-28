@@ -22,7 +22,7 @@ export default defineComponent({
         const res = await api.OpenFolderDialog();
         if (!res.data) return;
         emit('update:gamePath', res.data);
-        await api.SetGamePath(res.data);
+        await api.SetGamePath(res.data, {save: false});
         emit('update:pathValid', true);
       } catch (e: any) {
         pathError.value = t('oobe.pathNotValid');

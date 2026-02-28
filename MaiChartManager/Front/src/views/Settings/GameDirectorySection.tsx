@@ -31,7 +31,7 @@ export default defineComponent({
         const res = await api.OpenFolderDialog();
         if (!res.data) return;
         switching.value = true;
-        await api.SetGamePath(res.data);
+        await api.SetGamePath(res.data, {save: true});
         await api.InitializeGameData();
         await updateAll();
         gamePath.value = res.data;
@@ -50,7 +50,7 @@ export default defineComponent({
       error.value = '';
       switching.value = true;
       try {
-        await api.SetGamePath(path);
+        await api.SetGamePath(path, {save: true});
         await api.InitializeGameData();
         await updateAll();
         gamePath.value = path;

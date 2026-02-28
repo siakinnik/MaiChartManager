@@ -137,4 +137,9 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
         return Ok();
     }
 
+    [HttpPost]
+    public void OpenMainUI()
+    {
+        AppLifecycleManager.ShowBrowser(ServerManager.GetLoopbackUrl() ?? throw new InvalidOperationException("Loopback URL is null"));
+    }
 }

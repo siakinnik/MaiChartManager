@@ -64,7 +64,7 @@ export default defineComponent({
     };
 
     return () => (
-      <div class="p-xy h-100dvh of-y-auto">
+      <div class="p-xy h-100dvh of-y-auto cst">
         {/* Appearance */}
         <div class="mb-6">
           <div class="text-lg font-semibold mb-3 text-[var(--link-color)]">{t('settings.appearance')}</div>

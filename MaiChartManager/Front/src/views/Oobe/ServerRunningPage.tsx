@@ -1,3 +1,4 @@
+import api from '@/client/api';
 import { defineComponent, PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -18,13 +19,9 @@ export default defineComponent({
             <div class="px-4 py-2 rounded-lg bg-[oklch(0.92_0.02_var(--hue))] text-sm font-mono">https://{addr}:5001</div>
           ))}
         </div>
-        {/* TODO: 应该是 API 调用 */}
-        <a
-          href="/"
-          target="_blank"
-        >
+        <button onClick={() => api.OpenMainUI()}>
           {t('oobe.openMainUI')}
-        </a>
+        </button>
       </div>
     );
   },

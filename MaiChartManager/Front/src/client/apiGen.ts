@@ -2295,6 +2295,20 @@ export class Api<
     /**
      * No description
      *
+     * @tags Oobe
+     * @name OpenMainUi
+     * @request POST:/MaiChartManagerServlet/OpenMainUIApi
+     */
+    OpenMainUI: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/OpenMainUIApi`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Settings
      * @name GetSettings
      * @request GET:/MaiChartManagerServlet/GetSettingsApi

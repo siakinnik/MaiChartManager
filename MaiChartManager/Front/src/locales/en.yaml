@@ -561,6 +561,9 @@ settings:
   changingDirectory: Switching...
   changeDirectoryFailed: Failed to switch directory
   switchMode: Switch Mode
+  historyPath: History
+  deleteHistory: Delete
+  noHistory: No history
 oobe:
   welcome: Welcome
   welcomeMessage: Welcome to MaiChartManager

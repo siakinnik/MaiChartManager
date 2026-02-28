@@ -39,7 +39,7 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
 
         StaticSettings.Config.GamePath = StaticSettings.GamePath;
         StaticSettings.Config.HistoryPath.Add(path);
-        StaticSettings.Config.Save();
+        // 这里不用持久化，最后保存的时候会持久化的
 
         AppMain.UiContext?.Post(_ =>
         {
@@ -47,6 +47,20 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
                 AppMain.BrowserWin.Text = $"MaiChartManager ({StaticSettings.GamePath})";
         }, null);
 
+        return Ok();
+    }
+
+    [HttpGet]
+    public HashSet<string> GetGamePathHistory()
+    {
+        return StaticSettings.Config.HistoryPath;
+    }
+
+    [HttpPost]
+    public IActionResult DeleteGamePathHistory([FromBody] string path)
+    {
+        StaticSettings.Config.HistoryPath.Remove(path);
+        StaticSettings.Config.Save();
         return Ok();
     }
 

@@ -2236,6 +2236,37 @@ export class Api<
      * No description
      *
      * @tags Oobe
+     * @name GetGamePathHistory
+     * @request GET:/MaiChartManagerServlet/GetGamePathHistoryApi
+     */
+    GetGamePathHistory: (params: RequestParams = {}) =>
+      this.request<string[], any>({
+        path: `/MaiChartManagerServlet/GetGamePathHistoryApi`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Oobe
+     * @name DeleteGamePathHistory
+     * @request POST:/MaiChartManagerServlet/DeleteGamePathHistoryApi
+     */
+    DeleteGamePathHistory: (data: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/DeleteGamePathHistoryApi`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Oobe
      * @name InitializeGameData
      * @request POST:/MaiChartManagerServlet/InitializeGameDataApi
      */

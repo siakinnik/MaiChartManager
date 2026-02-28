@@ -44,6 +44,7 @@ public sealed class OobeBrowser : Form
     private void OnCoreWebView2InitializationCompleted(object? sender, CoreWebView2InitializationCompletedEventArgs e)
     {
         WebViewHelper.SetupCoreWebView2(webView21.CoreWebView2, loopbackUrl);
+        webView21.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
         webView21.CoreWebView2.PermissionRequested += WebViewHelper.OnPermissionRequested;
     }
 

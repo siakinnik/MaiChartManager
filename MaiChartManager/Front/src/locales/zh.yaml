@@ -526,6 +526,9 @@ settings:
   changingDirectory: 正在切换...
   changeDirectoryFailed: 切换目录失败
   switchMode: 切换工作模式
+  historyPath: 历史记录
+  deleteHistory: 删除
+  noHistory: 暂无历史记录
 oobe:
   welcome: 欢迎
   welcomeMessage: 欢迎使用 MaiChartManager

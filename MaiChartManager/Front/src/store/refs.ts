@@ -60,7 +60,20 @@ export const modInfo = ref<GameModInfo>();
 export type MusicSortMode = 'id' | 'name' | 'version';
 export const musicSortMode = useStorage<MusicSortMode>('musicSortMode', 'id');
 
-export const musicList = computed(() => musicListAll.value.filter(m => m.assetDir === selectedADir.value).sort((a, b) => { switch (musicSortMode.value) { case 'name': return (a.sortName ?? '').localeCompare(b.sortName ?? ''); case 'version': return (a.version ?? 0) - (b.version ?? 0) || (a.id! % 10000) - (b.id! % 10000); case 'id': default: return (a.id! % 10000) - (b.id! % 10000); } }));
+const sortByNonDxId = (a: MusicXmlWithABJacket, b: MusicXmlWithABJacket) =>
+  (a.id! % 10000) - (b.id! % 10000);
+
+const musicSortComparators: Record<MusicSortMode, (a: MusicXmlWithABJacket, b: MusicXmlWithABJacket) => number> = {
+  id: sortByNonDxId,
+  name: (a, b) => (a.sortName ?? '').localeCompare(b.sortName ?? ''),
+  version: (a, b) => (a.version ?? 0) - (b.version ?? 0) || sortByNonDxId(a, b),
+};
+
+export const musicList = computed(() =>
+  musicListAll.value
+    .filter(m => m.assetDir === selectedADir.value)
+    .sort(musicSortComparators[musicSortMode.value] ?? sortByNonDxId)
+);
 export const selectedMusic = computed(() => musicList.value.find(m => m.id === selectMusicId.value));
 export const selectedLevel = ref(0);
 

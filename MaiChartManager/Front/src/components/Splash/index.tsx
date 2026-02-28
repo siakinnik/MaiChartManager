@@ -21,7 +21,7 @@ export default defineComponent({
       leaveToClass="opacity-0"
     >
       {show.value && <div class="fixed inset-0 bg-[oklch(0.95_0.01_var(--hue))] flex flex-col items-center justify-center gap-14 z-40">
-        <img src={rei} alt="Rei" class="w-65 h-65" />
+        <img src={rei} alt="Rei" class="h-65" />
         <div class="op-90">Loading Data...</div>
       </div>}
     </Transition>;

@@ -66,29 +66,17 @@ export default defineComponent({
     return () => (
       <div class="p-xy h-100dvh of-y-auto">
         {/* Appearance */}
-        {/* Game Directory */}
-        <div class="mb-6">
-          <div class="text-lg font-semibold mb-3 text-[var(--link-color)]">{t('settings.gameDirectory')}</div>
-          <div class="rounded-xl bg-white/60 p-4 flex flex-col gap-4 border border-gray-200 border-solid">
-            <div class="flex items-center gap-3">
-              <span class="shrink-0 op-60">{t('settings.currentPath')}</span>
-              <span class="text-sm break-all">{gamePath.value || '—'}</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <button
-                disabled={switching.value}
-                onClick={handleChangeDirectory}
-              >
-                {switching.value ? t('settings.changingDirectory') : t('settings.changeDirectory')}
-              </button>
-              {error.value && <span class="text-red-500 text-sm">{error.value}</span>}
-            </div>
-          </div>
-        </div>
-
         <div class="mb-6">
           <div class="text-lg font-semibold mb-3 text-[var(--link-color)]">{t('settings.appearance')}</div>
           <div class="rounded-xl bg-white/60 p-4 flex flex-col gap-4 border border-gray-200 border-solid">
+            <div class="flex items-center gap-3">
+              <div class="i-mdi-translate text-xl op-60" />
+              <Select
+                value={locale.value}
+                options={localeOptions}
+                onChange={(v: any) => setLocale(v as Locale)}
+              />
+            </div>
             <div class="flex flex-col gap-2">
               <input
                 type="range"
@@ -107,13 +95,25 @@ export default defineComponent({
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Game Directory */}
+        <div class="mb-6">
+          <div class="text-lg font-semibold mb-3 text-[var(--link-color)]">{t('settings.gameDirectory')}</div>
+          <div class="rounded-xl bg-white/60 p-4 flex flex-col gap-4 border border-gray-200 border-solid">
             <div class="flex items-center gap-3">
-              <div class="i-mdi-translate text-xl op-60" />
-              <Select
-                value={locale.value}
-                options={localeOptions}
-                onChange={(v: any) => setLocale(v as Locale)}
-              />
+              <span class="shrink-0 op-60">{t('settings.currentPath')}</span>
+              <span class="text-sm break-all">{gamePath.value || '—'}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                disabled={switching.value}
+                onClick={handleChangeDirectory}
+              >
+                {switching.value ? t('settings.changingDirectory') : t('settings.changeDirectory')}
+              </button>
+              {error.value && <span class="text-red-500 text-sm">{error.value}</span>}
             </div>
           </div>
         </div>

@@ -94,6 +94,7 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
 
         if (exportChanged)
         {
+            AppLifecycleManager.DisposeTrayIcon();
             // 管理开机启动
             try
             {

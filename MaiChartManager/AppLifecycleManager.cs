@@ -4,6 +4,11 @@ namespace MaiChartManager;
 
 public static class AppLifecycleManager
 {
+    /// <summary>
+    /// 托盘图标逻辑：
+    /// 只有 开机启动 并且是局域网模式的时候，才显示。别的时候都不显示
+    /// 其实不是局域网模式的时候不应该允许开机启动
+    /// </summary>
     private static NotifyIcon? _trayIcon;
 
     public static bool HasTrayIcon => _trayIcon?.Visible == true;

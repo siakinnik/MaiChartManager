@@ -166,11 +166,12 @@ public sealed partial class Browser : Form
         AppLifecycleManager.CheckShouldExit();
     }
 
-    public void InjectBackendUrl(string url)
+    public async void InjectBackendUrl(string url)
     {
         loopbackUrl = new Uri(url);
         Text = $"MaiChartManager ({StaticSettings.GamePath})";
+        await webView21.EnsureCoreWebView2Async();
         webView21.CoreWebView2.PostWebMessageAsString(url);
-        webView21.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{url}`");
+        await webView21.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{url}`");
     }
 }

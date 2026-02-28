@@ -94,11 +94,16 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
 
         if (exportChanged)
         {
-            if (request.Export)
-                AppLifecycleManager.ShowTrayIcon();
-            else
-                AppLifecycleManager.DisposeTrayIcon();
-
+            // 切到非 export 时自动关闭开机启动
+            if (!request.Export)
+            {
+                try
+                {
+                    var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("MaiChartManagerStartupId");
+                    startupTask.Disable();
+                }
+                catch { }
+            }
             _ = Task.Run(async () =>
             {
                 await Task.Delay(100);
@@ -131,27 +136,4 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
         return Ok();
     }
 
-    [HttpGet]
-    public async Task<object> GetStartupStatus()
-    {
-        var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("MaiChartManagerStartupId");
-        return new
-        {
-            enabled = startupTask.State == Windows.ApplicationModel.StartupTaskState.Enabled
-                      || startupTask.State == Windows.ApplicationModel.StartupTaskState.EnabledByPolicy,
-            canChange = startupTask.State != Windows.ApplicationModel.StartupTaskState.DisabledByUser
-                        && startupTask.State != Windows.ApplicationModel.StartupTaskState.DisabledByPolicy
-                        && startupTask.State != Windows.ApplicationModel.StartupTaskState.EnabledByPolicy,
-        };
     }
-
-    [HttpPost]
-    public async Task SetStartupEnabled([FromBody] bool enabled)
-    {
-        var startupTask = await Windows.ApplicationModel.StartupTask.GetAsync("MaiChartManagerStartupId");
-        if (enabled)
-            await startupTask.RequestEnableAsync();
-        else
-            startupTask.Disable();
-    }
-}

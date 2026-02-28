@@ -17,14 +17,6 @@ export default defineComponent({
     const useAuth = ref(false);
     const authUsername = ref('');
     const authPassword = ref('');
-    const startupEnabled = ref(false);
-    const startupCanChange = ref(true);
-
-    // Fetch startup status when component mounts
-    (api as any).GetStartupStatus?.().then((res: any) => {
-      startupEnabled.value = res.data.enabled;
-      startupCanChange.value = res.data.canChange;
-    }).catch(() => { });
 
     const handleComplete = () => {
       emit('complete', {
@@ -102,9 +94,7 @@ export default defineComponent({
                     </div>
                   )}
                 </TransitionVertical>
-                <CheckBox v-model:value={startupEnabled.value} onChange={() => (api as any).SetStartupEnabled(startupEnabled.value)}>
-                  {t('oobe.startupOnBoot')}
-                </CheckBox>
+                {/* TODO: 开机启动选项，需要 UI 库支持 disabled 状态后再加回来 */}
               </div>
             )}
           </TransitionVertical>

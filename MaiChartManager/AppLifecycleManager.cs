@@ -43,7 +43,6 @@ public static class AppLifecycleManager
 
             _trayIcon.MouseClick += (_, e) =>
             {
-                if (e.Button == MouseButtons.Left)
                 if (e.Button == MouseButtons.Left) { var url = ServerManager.GetLoopbackUrl(); if (url != null) ShowBrowser(url); }
             };
         }, null);

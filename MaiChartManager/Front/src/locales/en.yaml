@@ -74,6 +74,9 @@ music:
     filterExpert: Expert
     filterReMaster: Re:Master
     filterAdvanced: Advanced
+    sortById: ID
+    sortByName: Name
+    sortByVersion: Release
   edit:
     name: Song Title
     artist: Artist

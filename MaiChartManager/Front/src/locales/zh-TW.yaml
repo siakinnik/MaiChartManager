@@ -72,6 +72,9 @@ music:
     filterExpert: 紅
     filterReMaster: 白
     filterAdvanced: 黃
+    sortById: ID
+    sortByName: 名稱
+    sortByVersion: 更新時間
   edit:
     name: 歌曲名稱
     artist: 作者

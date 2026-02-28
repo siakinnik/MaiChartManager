@@ -57,7 +57,10 @@ export const assetDirs = ref<GetAssetsDirsResult[]>([]);
 export const version = ref<AppVersionResult>();
 export const modInfo = ref<GameModInfo>();
 
-export const musicList = computed(() => musicListAll.value.filter(m => m.assetDir === selectedADir.value).sort((a, b) => (a.id! % 10000) - (b.id! % 10000)));
+export type MusicSortMode = 'id' | 'name' | 'version';
+export const musicSortMode = useStorage<MusicSortMode>('musicSortMode', 'id');
+
+export const musicList = computed(() => musicListAll.value.filter(m => m.assetDir === selectedADir.value).sort((a, b) => { switch (musicSortMode.value) { case 'name': return (a.sortName ?? '').localeCompare(b.sortName ?? ''); case 'version': return (a.version ?? 0) - (b.version ?? 0) || (a.id! % 10000) - (b.id! % 10000); case 'id': default: return (a.id! % 10000) - (b.id! % 10000); } }));
 export const selectedMusic = computed(() => musicList.value.find(m => m.id === selectMusicId.value));
 export const selectedLevel = ref(0);
 

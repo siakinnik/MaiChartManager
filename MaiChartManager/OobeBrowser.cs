@@ -88,7 +88,8 @@ public sealed class OobeBrowser : Form
     {
         loopbackUrl = new Uri(url);
         await webView21.EnsureCoreWebView2Async();
-        webView21.CoreWebView2.PostWebMessageAsString(url);
         await webView21.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{url}`");
+        await webView21.CoreWebView2.ExecuteScriptAsync($"globalThis.backendUrl = `{url}`");
+        webView21.CoreWebView2.PostWebMessageAsString(url);
     }
 }

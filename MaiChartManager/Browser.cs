@@ -163,6 +163,7 @@ public sealed partial class Browser : Form
     private void Browser_FormClosed(object sender, FormClosedEventArgs e)
     {
         webView21.Dispose();
+        AppMain.BrowserWin = null;
         AppLifecycleManager.CheckShouldExit();
     }
 
@@ -171,7 +172,11 @@ public sealed partial class Browser : Form
         loopbackUrl = new Uri(url);
         Text = $"MaiChartManager ({StaticSettings.GamePath})";
         await webView21.EnsureCoreWebView2Async();
-        webView21.CoreWebView2.PostWebMessageAsString(url);
+        // 为后续文档创建注入 backendUrl（导航刷新时生效）
         await webView21.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{url}`");
+        // 直接在当前页面设置 backendUrl，防止 PostWebMessageAsString 在 listener 注册前发送导致丢失
+        await webView21.CoreWebView2.ExecuteScriptAsync($"globalThis.backendUrl = `{url}`");
+        // PostWebMessage 仍然发送，用于通知已挂载的 listener 更新 apiClient.baseUrl
+        webView21.CoreWebView2.PostWebMessageAsString(url);
     }
 }

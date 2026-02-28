@@ -69,18 +69,7 @@ public partial class AppMain : ISingleInstance
 
     public static void ShowBrowser(string loopbackUrl)
     {
-        UiContext?.Post(_ =>
-        {
-            if (BrowserWin is null || BrowserWin.IsDisposed)
-            {
-                BrowserWin = new Browser(loopbackUrl);
-                BrowserWin.Show();
-            }
-            else
-            {
-                BrowserWin.Activate();
-            }
-        }, null);
+        AppLifecycleManager.ShowBrowser(loopbackUrl);
     }
 
     public void Run()
@@ -181,9 +170,20 @@ public partial class AppMain : ISingleInstance
                     }, null);
                 });
             }
+            else if (availableVersion != null && !StaticSettings.Config.Export)
+            {
+                BrowserWin = new Browser();
+                BrowserWin.Show();
+                ServerManager.StartApp(false, (url) =>
+                {
+                    UiContext?.Post(_ => BrowserWin?.InjectBackendUrl(url), null);
+                });
+            }
             else if (availableVersion != null)
             {
-                ServerManager.StartApp(StaticSettings.Config.Export, ShowBrowser);
+                // export mode: show tray icon, no browser window
+                ServerManager.StartApp(true);
+                AppLifecycleManager.ShowTrayIcon();
             }
             else
             {
@@ -227,7 +227,8 @@ public partial class AppMain : ISingleInstance
 
     public void OnInstanceInvoked(string[] args)
     {
-        ActiveForm?.Show();
+        if (ServerManager.IsRunning)
+            AppLifecycleManager.ShowBrowser(ServerManager.GetLoopbackUrl() ?? "");
     }
 
     public static void SetLocale(string locale)

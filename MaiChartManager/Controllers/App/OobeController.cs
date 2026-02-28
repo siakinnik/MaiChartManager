@@ -88,6 +88,11 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
 
         if (exportChanged)
         {
+            if (request.Export)
+                AppLifecycleManager.ShowTrayIcon();
+            else
+                AppLifecycleManager.HideTrayIcon();
+
             _ = Task.Run(async () =>
             {
                 await Task.Delay(100);

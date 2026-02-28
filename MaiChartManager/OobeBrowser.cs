@@ -20,7 +20,11 @@ public sealed class OobeBrowser : Form
         MaximizeBox = false;
 
         webView21.CoreWebView2InitializationCompleted += OnCoreWebView2InitializationCompleted;
-        FormClosed += (_, _) => AppMain.ActiveForm = null;
+        FormClosed += (_, _) =>
+        {
+            AppMain.ActiveForm = null;
+            AppLifecycleManager.CheckShouldExit();
+        };
 
         AppMain.ActiveForm = this;
 

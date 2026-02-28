@@ -21,7 +21,7 @@ public static class AppLifecycleManager
 
             var contextMenu = new ContextMenuStrip();
             var openItem = new ToolStripMenuItem("打开窗口");
-            openItem.Click += (_, _) => ShowBrowser(ServerManager.GetLoopbackUrl() ?? "");
+            openItem.Click += (_, _) => { var url = ServerManager.GetLoopbackUrl(); if (url != null) ShowBrowser(url); };
             var exitItem = new ToolStripMenuItem("退出");
             exitItem.Click += (_, _) =>
             {
@@ -44,7 +44,7 @@ public static class AppLifecycleManager
             _trayIcon.MouseClick += (_, e) =>
             {
                 if (e.Button == MouseButtons.Left)
-                    ShowBrowser(ServerManager.GetLoopbackUrl() ?? "");
+                if (e.Button == MouseButtons.Left) { var url = ServerManager.GetLoopbackUrl(); if (url != null) ShowBrowser(url); }
             };
         }, null);
     }

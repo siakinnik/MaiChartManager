@@ -125,6 +125,14 @@ export interface CheckConflictEntry {
   musicName?: string | null;
 }
 
+export interface CompleteSetupRequest {
+  export?: boolean;
+  useAuth?: boolean;
+  authUsername?: string | null;
+  authPassword?: string | null;
+  startupEnabled?: boolean;
+}
+
 export interface ConfigDto {
   sections?: Section[] | null;
   sectionStates?: Record<string, ISectionState>;
@@ -1685,9 +1693,6 @@ export class Api<
         padding?: number;
         /** @format binary */
         file?: File;
-        noScale?: boolean;
-        h264?: boolean;
-        yuv420p?: boolean;
       },
       params: RequestParams = {},
     ) =>
@@ -2199,6 +2204,125 @@ export class Api<
     /**
      * No description
      *
+     * @tags Oobe
+     * @name GetGamePath
+     * @request GET:/MaiChartManagerServlet/GetGamePathApi
+     */
+    GetGamePath: (params: RequestParams = {}) =>
+      this.request<string, any>({
+        path: `/MaiChartManagerServlet/GetGamePathApi`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Oobe
+     * @name SetGamePath
+     * @request POST:/MaiChartManagerServlet/SetGamePathApi
+     */
+    SetGamePath: (data: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/SetGamePathApi`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Oobe
+     * @name InitializeGameData
+     * @request POST:/MaiChartManagerServlet/InitializeGameDataApi
+     */
+    InitializeGameData: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/InitializeGameDataApi`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Oobe
+     * @name OpenFolderDialog
+     * @request GET:/MaiChartManagerServlet/OpenFolderDialogApi
+     */
+    OpenFolderDialog: (params: RequestParams = {}) =>
+      this.request<string, any>({
+        path: `/MaiChartManagerServlet/OpenFolderDialogApi`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Oobe
+     * @name GetLanAddresses
+     * @request GET:/MaiChartManagerServlet/GetLanAddressesApi
+     */
+    GetLanAddresses: (params: RequestParams = {}) =>
+      this.request<string[], any>({
+        path: `/MaiChartManagerServlet/GetLanAddressesApi`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Oobe
+     * @name CompleteSetup
+     * @request POST:/MaiChartManagerServlet/CompleteSetupApi
+     */
+    CompleteSetup: (data: CompleteSetupRequest, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/CompleteSetupApi`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Oobe
+     * @name OpenMainUi
+     * @request POST:/MaiChartManagerServlet/OpenMainUIApi
+     */
+    OpenMainUI: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/OpenMainUIApi`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Oobe
+     * @name SwitchToSetMode
+     * @request POST:/MaiChartManagerServlet/SwitchToSetModeApi
+     */
+    SwitchToSetMode: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/SwitchToSetModeApi`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Settings
      * @name GetSettings
      * @request GET:/MaiChartManagerServlet/GetSettingsApi
@@ -2234,17 +2358,10 @@ export class Api<
      * @name VideoConvertTool
      * @request POST:/MaiChartManagerServlet/VideoConvertToolApi
      */
-    VideoConvertTool: (
-      query?: {
-        noScale?: boolean;
-        yuv420p?: boolean;
-      },
-      params: RequestParams = {},
-    ) =>
+    VideoConvertTool: (params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/VideoConvertToolApi`,
         method: "POST",
-        query: query,
         ...params,
       }),
 

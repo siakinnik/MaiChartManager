@@ -13,6 +13,15 @@ import './global.sass';
 import { initThemeDefaults, selectedThemeName, UIThemes } from '@munet/ui';
 
 
+// Listen for backendUrl injection from WebView2 host
+if ((window as any).chrome?.webview) {
+  (window as any).chrome.webview.addEventListener('message', (e: any) => {
+    (globalThis as any).backendUrl = e.data;
+    import('./client/api').then(m => {
+      m.apiClient.baseUrl = e.data;
+    });
+  });
+}
 initThemeDefaults({ hue: 353 });
 selectedThemeName.value = UIThemes.DynamicLight;
 

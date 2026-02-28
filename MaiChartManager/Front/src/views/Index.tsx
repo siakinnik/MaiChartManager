@@ -13,6 +13,7 @@ import Charts from './Charts';
 import Tools from './Tools';
 import Settings from './Settings';
 import Splash from '@/components/Splash';
+import { ensureBackendUrl } from '@/utils/ensureBackendUrl';
 
 export default defineComponent({
   setup() {
@@ -43,6 +44,7 @@ export default defineComponent({
         showError();
       }
 
+      await ensureBackendUrl();
       updateVersion().then(() => {
         if (version.value?.license === LicenseStatus.Pending || version.value?.hardwareAcceleration === HardwareAccelerationStatus.Pending) {
           setTimeout(updateVersion, 2000);

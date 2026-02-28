@@ -35,14 +35,25 @@ public partial class StaticSettings
     public StaticSettings(ILogger<StaticSettings> logger)
     {
         _logger = logger;
-
+        if (string.IsNullOrEmpty(GamePath)) return; // OOBE mode: skip scan
         try
         {
-            if (string.IsNullOrEmpty(GamePath))
-            {
-                throw new ArgumentException(Locale.GameDirNotSpecified);
-            }
+            GetGameVersion();
+            RescanAll();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "初始化数据目录时出错");
+            SentrySdk.CaptureException(e);
+            MessageBox.Show(e.Message, Locale.InitDataDirError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.Exit();
+        }
+    }
 
+    public void InitializeGameData()
+    {
+        try
+        {
             GetGameVersion();
             RescanAll();
         }
@@ -85,6 +96,7 @@ public partial class StaticSettings
 
     public void RescanAll()
     {
+        GetGameVersion();
         StartupErrorsList.Clear();
         UpdateAssetPathsFromAquaMaiConfig();
         ScanMusicList();
@@ -247,7 +259,7 @@ public partial class StaticSettings
         _logger.LogInformation($"Scan MovieData, found {MovieDataMap.Count} MovieData.");
     }
 
-    private void GetGameVersion()
+    public void GetGameVersion()
     {
         try
         {

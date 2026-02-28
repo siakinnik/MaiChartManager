@@ -2,13 +2,17 @@ import { defineComponent, PropType, ref, computed, watch } from 'vue';
 import { Modal } from '@munet/ui';
 import useAsync from "@/hooks/useAsync";
 import api from "@/client/api";
+import { ensureBackendUrl } from '@/utils/ensureBackendUrl';
 import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
   // props: {
   // },
   setup(props, { emit }) {
-    const errors = useAsync(() => api.GetAppStartupErrors())
+    const errors = useAsync(async () => {
+      await ensureBackendUrl();
+      return api.GetAppStartupErrors();
+    })
     const show = ref(false)
     const { t } = useI18n();
 

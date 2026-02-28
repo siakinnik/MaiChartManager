@@ -5,7 +5,7 @@ declare global {
   const backendUrl: string | undefined;
 }
 
-export default (new Api({
+export const apiClient = new Api({
   // @ts-ignore
   baseUrl: globalThis.backendUrl,
   baseApiParams: {
@@ -13,7 +13,9 @@ export default (new Api({
       accept: 'application/json',
     },
   },
-})).maiChartManagerServlet
+})
+
+export default apiClient.maiChartManagerServlet
 
 export const aquaMaiVersionConfig = new AquaMaiVersionConfigApi({
   baseUrl: 'https://aquamai-version-config.mumur.net',

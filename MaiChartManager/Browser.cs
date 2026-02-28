@@ -5,7 +5,7 @@ namespace MaiChartManager;
 
 public sealed partial class Browser : Form
 {
-    private readonly Uri loopbackUrl;
+    private Uri? loopbackUrl;
     private static ILogger logger = AppMain.GetLogger<Browser>();
 
     private static bool IsRunningAsUwp()
@@ -14,11 +14,14 @@ public sealed partial class Browser : Form
         return helpers.IsRunningAsUwp();
     }
 
-    public Browser(string loopbackUrl)
+    public Browser(string? loopbackUrl = null)
     {
         InitializeComponent();
-        this.loopbackUrl = new Uri(loopbackUrl);
-        Text += $" ({StaticSettings.GamePath})";
+        if (loopbackUrl != null)
+        {
+            this.loopbackUrl = new Uri(loopbackUrl);
+            Text += $" ({StaticSettings.GamePath})";
+        }
         webView21.Source = new Uri("https://mcm.invalid/index.html");
         webView21.DefaultBackgroundColor = Color.Transparent;
         IapManager.BindToForm(this);
@@ -121,7 +124,8 @@ public sealed partial class Browser : Form
         // 这里如果直接写 mcm 的话会让启动的时候白屏时间更久
         // 注意注意，这个东西访问的时候必须要自己手动加 index.html，这个坑已经踩两次了
         coreWebView2.SetVirtualHostNameToFolderMapping("mcm.invalid", StaticSettings.wwwroot, CoreWebView2HostResourceAccessKind.Deny);
-        coreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{loopbackUrl.ToString().TrimEnd('/')}`");
+        if (loopbackUrl != null)
+            coreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{loopbackUrl.ToString().TrimEnd('/')}`");
     }
 
     private async void OnWebResourceRequested(object? sender, CoreWebView2WebResourceRequestedEventArgs args)
@@ -159,7 +163,14 @@ public sealed partial class Browser : Form
     private void Browser_FormClosed(object sender, FormClosedEventArgs e)
     {
         webView21.Dispose();
-        if (!StaticSettings.Config.Export)
-            Application.Exit();
+        AppLifecycleManager.CheckShouldExit();
+    }
+
+    public void InjectBackendUrl(string url)
+    {
+        loopbackUrl = new Uri(url);
+        Text = $"MaiChartManager ({StaticSettings.GamePath})";
+        webView21.CoreWebView2.PostWebMessageAsString(url);
+        webView21.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{url}`");
     }
 }

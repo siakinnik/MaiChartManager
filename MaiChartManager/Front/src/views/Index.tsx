@@ -43,12 +43,26 @@ export default defineComponent({
         showError();
       }
 
+      const waitForBackendUrl = () => new Promise<void>(resolve => {
+        if ((globalThis as any).backendUrl) {
+          resolve();
+          return;
+        }
+        const interval = setInterval(() => {
+          if ((globalThis as any).backendUrl) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 50);
+      });
+
       updateVersion().then(() => {
         if (version.value?.license === LicenseStatus.Pending || version.value?.hardwareAcceleration === HardwareAccelerationStatus.Pending) {
           setTimeout(updateVersion, 2000);
         }
       });
       try {
+        await waitForBackendUrl();
         await updateAll();
         if (assetDirs.value.length > 0) {
           const exists = assetDirs.value.some(d => d.dirName === selectedADir.value)

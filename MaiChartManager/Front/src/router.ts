@@ -10,6 +10,7 @@ const router = createRouter({
     { path: '/chart-preview', component: ChartPreviewPage },
     { path: '/oobe', component: Oobe, name: 'oobe' },
     { path: '/server', component: Oobe, name: 'server' },
+    { path: '/set-mode', component: Oobe, name: 'set-mode' },
   ],
 });
 

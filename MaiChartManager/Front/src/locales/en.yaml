@@ -560,6 +560,7 @@ settings:
   changeDirectory: Change Directory
   changingDirectory: Switching...
   changeDirectoryFailed: Failed to switch directory
+  switchMode: Switch Mode
 oobe:
   welcome: Welcome
   welcomeMessage: Welcome to MaiChartManager

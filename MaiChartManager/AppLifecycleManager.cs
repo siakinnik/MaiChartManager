@@ -76,15 +76,39 @@ public static class AppLifecycleManager
     {
         AppMain.UiContext?.Post(_ =>
         {
-            if (AppMain.BrowserWin is null || AppMain.BrowserWin.IsDisposed)
+            if (AppMain.BrowserWin is { IsDisposed: false })
+            {
+                AppMain.BrowserWin.Activate();
+            }
+            else
             {
                 AppMain.BrowserWin = new Browser(loopbackUrl);
                 AppMain.BrowserWin.Show();
             }
-            else
+        }, null);
+    }
+
+    public static void GoToModeSwitch(string loopbackUrl, string hash = "/set-mode")
+    {
+        AppMain.UiContext?.Post(_ =>
+        {
+            // Close existing Browser window
+            if (AppMain.BrowserWin is { IsDisposed: false })
             {
-                AppMain.BrowserWin.Activate();
+                AppMain.BrowserWin.Dispose();
+                AppMain.BrowserWin = null;
             }
+
+            // Close existing OobeBrowser if any
+            if (AppMain.OobeBrowser is { IsDisposed: false })
+            {
+                AppMain.OobeBrowser.Dispose();
+                AppMain.OobeBrowser = null;
+            }
+
+            AppMain.OobeBrowser = new OobeBrowser(loopbackUrl, hash);
+            AppMain.OobeBrowser.Show();
+            AppMain.OobeBrowser.Activate();
         }, null);
     }
 }

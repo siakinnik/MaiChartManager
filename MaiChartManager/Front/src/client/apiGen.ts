@@ -2309,6 +2309,20 @@ export class Api<
     /**
      * No description
      *
+     * @tags Oobe
+     * @name SwitchToSetMode
+     * @request POST:/MaiChartManagerServlet/SwitchToSetModeApi
+     */
+    SwitchToSetMode: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/SwitchToSetModeApi`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Settings
      * @name GetSettings
      * @request GET:/MaiChartManagerServlet/GetSettingsApi

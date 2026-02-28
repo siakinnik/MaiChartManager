@@ -113,6 +113,11 @@ export default defineComponent({
               >
                 {switching.value ? t('settings.changingDirectory') : t('settings.changeDirectory')}
               </button>
+              <button
+                onClick={()=>api.SwitchToSetMode()}
+              >
+                {t('settings.switchMode')}
+              </button>
               {error.value && <span class="text-red-500 text-sm">{error.value}</span>}
             </div>
           </div>

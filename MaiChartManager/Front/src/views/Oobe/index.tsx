@@ -18,7 +18,13 @@ enum Step {
 export default defineComponent({
   setup() {
     const route = useRoute();
-    const step = ref(route.name === 'server' ? Step.ServerRunning : Step.Welcome);
+    let initStep = Step.Welcome;
+    if (route.name === 'server') {
+      initStep = Step.ServerRunning;
+    } else if (route.name === 'set-mode') {
+      initStep = Step.ModeSelect;
+    }
+    const step = ref<Step>(initStep);
     const direction = ref<'forward' | 'backward'>('forward');
 
     // Step 1 state

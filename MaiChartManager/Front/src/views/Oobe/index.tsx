@@ -52,6 +52,12 @@ export default defineComponent({
       if (step.value > 0) {
         direction.value = 'backward';
         step.value--;
+        // 启动完之后退回的情况，应该等动画完再改
+        // 就是要让它回到请选择模式（x
+        // 或者说其实不应该这么做，服务器运行中那一页应该算是第四页吧
+        setTimeout(() => {
+          lanAddresses.value = [];
+        }, 500);
       }
     };
 

@@ -8,7 +8,20 @@ export default defineComponent({
   // props: {
   // },
   setup(props, { emit }) {
-    const errors = useAsync(() => api.GetAppStartupErrors())
+    const errors = useAsync(async () => {
+      // WebView2 环境下等待 backendUrl 注入后再发请求
+      if (location.hostname === 'mcm.invalid' && !(globalThis as any).backendUrl) {
+        await new Promise<void>(resolve => {
+          const interval = setInterval(() => {
+            if ((globalThis as any).backendUrl) {
+              clearInterval(interval);
+              resolve();
+            }
+          }, 50);
+        });
+      }
+      return api.GetAppStartupErrors();
+    })
     const show = ref(false)
     const { t } = useI18n();
 

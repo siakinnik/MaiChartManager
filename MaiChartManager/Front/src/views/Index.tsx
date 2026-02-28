@@ -44,6 +44,11 @@ export default defineComponent({
       }
 
       const waitForBackendUrl = () => new Promise<void>(resolve => {
+        // 非 WebView2 环境（远程浏览器），baseUrl 已经是 ''（相对路径），无需等待
+        if (location.hostname !== 'mcm.invalid') {
+          resolve();
+          return;
+        }
         if ((globalThis as any).backendUrl) {
           resolve();
           return;
@@ -56,13 +61,13 @@ export default defineComponent({
         }, 50);
       });
 
+      await waitForBackendUrl();
       updateVersion().then(() => {
         if (version.value?.license === LicenseStatus.Pending || version.value?.hardwareAcceleration === HardwareAccelerationStatus.Pending) {
           setTimeout(updateVersion, 2000);
         }
       });
       try {
-        await waitForBackendUrl();
         await updateAll();
         if (assetDirs.value.length > 0) {
           const exists = assetDirs.value.some(d => d.dirName === selectedADir.value)

@@ -181,7 +181,7 @@ public partial class AppMain : ISingleInstance
             else if (availableVersion != null)
             {
                 // export mode + manual launch: show OOBE at mode select page
-                OobeBrowser = new OobeBrowser(hash: "/oobe?step=2");
+                OobeBrowser = new OobeBrowser(hash: "/server");
                 OobeBrowser.Show();
                 ServerManager.StartApp(false, (url) =>
                 {

@@ -1,14 +1,15 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Index from '@/views/Index';
 import ChartPreviewPage from '@/views/ChartPreviewPage';
-import api from '@/client/api';
+import Oobe from '@/views/Oobe';
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     { path: '/', component: Index },
     { path: '/chart-preview', component: ChartPreviewPage },
-    { path: '/oobe', component: () => import('@/views/Oobe') },
+    { path: '/oobe', component: Oobe, name: 'oobe' },
+    { path: '/server', component: Oobe, name: 'server' },
   ],
 });
 

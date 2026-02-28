@@ -22,6 +22,8 @@ public sealed class OobeBrowser : Form
         webView21.CoreWebView2InitializationCompleted += OnCoreWebView2InitializationCompleted;
         FormClosed += (_, _) =>
         {
+            webView21.Dispose();
+            AppMain.OobeBrowser = null;
             AppMain.ActiveForm = null;
             AppLifecycleManager.CheckShouldExit();
         };
@@ -82,10 +84,11 @@ public sealed class OobeBrowser : Form
         }
     }
 
-    public void InjectBackendUrl(string url)
+    public async void InjectBackendUrl(string url)
     {
         loopbackUrl = new Uri(url);
+        await webView21.EnsureCoreWebView2Async();
         webView21.CoreWebView2.PostWebMessageAsString(url);
-        webView21.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{url}`");
+        await webView21.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($"globalThis.backendUrl = `{url}`");
     }
 }

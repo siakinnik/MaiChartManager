@@ -2,6 +2,7 @@ import { defineComponent, PropType, ref, computed, watch } from 'vue';
 import { Modal } from '@munet/ui';
 import useAsync from "@/hooks/useAsync";
 import api from "@/client/api";
+import { ensureBackendUrl } from '@/utils/ensureBackendUrl';
 import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
@@ -9,17 +10,7 @@ export default defineComponent({
   // },
   setup(props, { emit }) {
     const errors = useAsync(async () => {
-      // WebView2 环境下等待 backendUrl 注入后再发请求
-      if (location.hostname === 'mcm.invalid' && !(globalThis as any).backendUrl) {
-        await new Promise<void>(resolve => {
-          const interval = setInterval(() => {
-            if ((globalThis as any).backendUrl) {
-              clearInterval(interval);
-              resolve();
-            }
-          }, 50);
-        });
-      }
+      await ensureBackendUrl();
       return api.GetAppStartupErrors();
     })
     const show = ref(false)

@@ -1,18 +1,24 @@
-import { defineComponent, ref, computed, Transition, watch } from 'vue';
+import { defineComponent, ref, computed, Transition, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
 import api from '@/client/api';
 import WelcomePage from './WelcomePage';
 import GameDirPage from './GameDirPage';
 import ModeSelectPage from './ModeSelectPage';
+import ServerRunningPage from './ServerRunningPage';
 import './transitions.css';
+import { ensureBackendUrl } from '@/utils/ensureBackendUrl';
+
+enum Step {
+  Welcome,
+  GameDir,
+  ModeSelect,
+  ServerRunning,
+}
 
 export default defineComponent({
   setup() {
-    const { t } = useI18n();
     const route = useRoute();
-    const initialStep = Number(route.query.step) || 0;
-    const step = ref(initialStep);
+    const step = ref(route.name === 'server' ? Step.ServerRunning : Step.Welcome);
     const direction = ref<'forward' | 'backward'>('forward');
 
     // Step 1 state
@@ -22,7 +28,6 @@ export default defineComponent({
 
     // Step 2 state
     const completing = ref(false);
-    const remoteReady = ref(false);
     const lanAddresses = ref<string[]>([]);
 
     const canGoNext = computed(() => {
@@ -30,6 +35,14 @@ export default defineComponent({
       if (step.value === 1) return pathValid.value && !initializing.value;
       return false;
     });
+
+    onMounted(async () => {
+      if (route.name === 'server') {
+        await ensureBackendUrl();
+        const res = await api.GetLanAddresses();
+        lanAddresses.value = res.data || [];
+      }
+    })
 
     const goNext = async () => {
       if (step.value === 0) {
@@ -51,7 +64,11 @@ export default defineComponent({
     const goPrev = () => {
       if (step.value > 0) {
         direction.value = 'backward';
-        step.value--;
+        if (step.value === Step.ServerRunning) {
+          step.value = Step.ModeSelect;
+        } else {
+          step.value--;
+        }
         // 启动完之后退回的情况，应该等动画完再改
         // 就是要让它回到请选择模式（x
         // 或者说其实不应该这么做，服务器运行中那一页应该算是第四页吧
@@ -79,7 +96,8 @@ export default defineComponent({
             try {
               const res = await api.GetLanAddresses();
               lanAddresses.value = res.data || [];
-              remoteReady.value = true;
+              direction.value = 'forward';
+              step.value = Step.ServerRunning;
               completing.value = false;
               break;
             } catch {
@@ -116,13 +134,17 @@ export default defineComponent({
                 onUpdate:initializing={(v: boolean) => initializing.value = v}
               />
             }
-            {step.value === 2 &&
+            {step.value === Step.ModeSelect &&
               <ModeSelectPage
                 key="modeselect"
                 completing={completing.value}
-                remoteReady={remoteReady.value}
-                lanAddresses={lanAddresses.value}
                 onComplete={handleComplete}
+              />
+            }
+            {step.value === Step.ServerRunning &&
+              <ServerRunningPage
+                key="serverrunning"
+                lanAddresses={lanAddresses.value}
               />
             }
           </Transition>

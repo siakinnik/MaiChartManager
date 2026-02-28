@@ -13,6 +13,7 @@ import Charts from './Charts';
 import Tools from './Tools';
 import Settings from './Settings';
 import Splash from '@/components/Splash';
+import { ensureBackendUrl } from '@/utils/ensureBackendUrl';
 
 export default defineComponent({
   setup() {
@@ -43,25 +44,7 @@ export default defineComponent({
         showError();
       }
 
-      const waitForBackendUrl = () => new Promise<void>(resolve => {
-        // 非 WebView2 环境（远程浏览器），baseUrl 已经是 ''（相对路径），无需等待
-        if (location.hostname !== 'mcm.invalid') {
-          resolve();
-          return;
-        }
-        if ((globalThis as any).backendUrl) {
-          resolve();
-          return;
-        }
-        const interval = setInterval(() => {
-          if ((globalThis as any).backendUrl) {
-            clearInterval(interval);
-            resolve();
-          }
-        }, 50);
-      });
-
-      await waitForBackendUrl();
+      await ensureBackendUrl();
       updateVersion().then(() => {
         if (version.value?.license === LicenseStatus.Pending || version.value?.hardwareAcceleration === HardwareAccelerationStatus.Pending) {
           setTimeout(updateVersion, 2000);

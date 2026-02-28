@@ -103,28 +103,26 @@ export default defineComponent({
             }
           </Transition>
         </div>
-        {!completing.value && !remoteReady.value && (
-          <div class="relative h-16 shrink-0">
-            {step.value > 0 && (
-              <button
-                class="fixed bottom-6 left-6 w-14 h-14 rounded-full bg-[oklch(0.6_0.15_var(--hue))]! hover:bg-[oklch(0.6_0.15_var(--hue)/0.8)]! text-white cursor-pointer border-none flex items-center justify-center"
-                onClick={goPrev}
-              >
-                <div class="i-mdi-arrow-left text-xl" />
-              </button>
-            )}
-            {step.value < 2 && (
-              <button
-                class={['fixed bottom-6 right-6 w-14 h-14 rounded-full border-none flex items-center justify-center',
-                  canGoNext.value ? 'bg-[oklch(0.6_0.15_var(--hue))]! hover:bg-[oklch(0.6_0.15_var(--hue)/0.8)]! cursor-pointer text-white' : 'bg-gray-200! cursor-not-allowed text-gray-400']}
-                onClick={() => canGoNext.value && goNext()}
-                disabled={!canGoNext.value}
-              >
-                <div class="i-mdi-arrow-right text-6" />
-              </button>
-            )}
-          </div>
-        )}
+        <div class="relative h-16 shrink-0">
+          {step.value > 0 && (
+            <button
+              class="fixed bottom-6 left-6 w-14 h-14 rounded-full bg-[oklch(0.6_0.15_var(--hue))]! hover:bg-[oklch(0.6_0.15_var(--hue)/0.8)]! text-white cursor-pointer border-none flex items-center justify-center"
+              onClick={goPrev}
+            >
+              <div class="i-mdi-arrow-left text-xl" />
+            </button>
+          )}
+          {step.value < 2 && (
+            <button
+              class={['fixed bottom-6 right-6 w-14 h-14 rounded-full border-none flex items-center justify-center',
+                canGoNext.value ? 'bg-[oklch(0.6_0.15_var(--hue))]! hover:bg-[oklch(0.6_0.15_var(--hue)/0.8)]! cursor-pointer text-white' : 'bg-gray-200! cursor-not-allowed text-gray-400']}
+              onClick={() => canGoNext.value && goNext()}
+              disabled={!canGoNext.value}
+            >
+              <div class="i-mdi-arrow-right text-6" />
+            </button>
+          )}
+        </div>
       </div>
     );
   },

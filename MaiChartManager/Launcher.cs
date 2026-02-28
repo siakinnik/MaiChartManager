@@ -10,6 +10,9 @@ using Microsoft.VisualBasic;
 
 namespace MaiChartManager;
 
+/// <summary>
+/// Legacy 启动器窗口，现在应该只有在没有 webview2 的时候才使用
+/// </summary>
 public partial class Launcher : Form
 {
     public Launcher()
@@ -110,7 +113,7 @@ public partial class Launcher : Form
         textBox1.Text = folderBrowserDialog1.SelectedPath;
     }
 
-    private string loopbackUrl;
+    private string? loopbackUrl;
 
 
     [GeneratedRegex(@"[^\u0000-\u007F]")]
@@ -121,7 +124,7 @@ public partial class Launcher : Form
         return SpecialCharactersRegex().IsMatch(input);
     }
 
-    private void StartClicked(object sender, EventArgs e)
+    private void StartClicked(object? sender, EventArgs? e)
     {
         if (button2.Text == Locale.LauncherStop)
         {
@@ -183,18 +186,13 @@ public partial class Launcher : Form
         textBoxLanAuthPass.Enabled = false;
         button2.Text = Locale.LauncherStop;
 
-        ServerManager.StartApp(checkBox1.Checked, () =>
+        ServerManager.StartApp(checkBox1.Checked, (url) =>
         {
-            var server = ServerManager.app!.Services.GetRequiredService<IServer>();
-            var serverAddressesFeature = server.Features.Get<IServerAddressesFeature>();
-
-            if (serverAddressesFeature == null) return;
-
-            loopbackUrl = serverAddressesFeature.Addresses.First();
+            loopbackUrl = url;
 
             // 本地模式
             if (checkBox1.Checked) return;
-            Invoke(() => label1_LinkClicked(null, null));
+            AppMain.ShowBrowser(loopbackUrl);
             Dispose();
         });
 
@@ -210,15 +208,7 @@ public partial class Launcher : Form
 
     private void label1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        if (AppMain.BrowserWin is null || AppMain.BrowserWin.IsDisposed)
-        {
-            AppMain.BrowserWin = new Browser(loopbackUrl);
-            AppMain.BrowserWin.Show();
-        }
-        else
-        {
-            AppMain.BrowserWin.Activate();
-        }
+        AppMain.ShowBrowser(loopbackUrl ?? throw new InvalidOperationException("loopbackUrl is null"));
     }
 
     private void Launcher_FormClosed(object sender, FormClosedEventArgs e)
@@ -237,7 +227,7 @@ public partial class Launcher : Form
         }
     }
 
-    private async void checkBox_startup_Click(object sender, EventArgs e)
+    private async void checkBox_startup_Click(object? sender, EventArgs? e)
     {
         await SaveConfigFileAsync();
         var startupTask = await StartupTask.GetAsync("MaiChartManagerStartupId");
@@ -251,7 +241,7 @@ public partial class Launcher : Form
         }
     }
 
-    public void ShowWindow(object sender = null, EventArgs e = null)
+    public void ShowWindow(object? sender = null, EventArgs? e = null)
     {
         Visible = true;
         WindowState = FormWindowState.Normal;

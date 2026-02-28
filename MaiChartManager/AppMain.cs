@@ -67,11 +67,6 @@ public partial class AppMain : ISingleInstance
         }
     }
 
-    public static void ShowBrowser(string loopbackUrl)
-    {
-        AppLifecycleManager.ShowBrowser(loopbackUrl);
-    }
-
     public void Run()
     {
         try

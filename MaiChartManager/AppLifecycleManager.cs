@@ -48,7 +48,7 @@ public static class AppLifecycleManager
         }, null);
     }
 
-    public static void HideTrayIcon()
+    public static void DisposeTrayIcon()
     {
         AppMain.UiContext?.Post(_ =>
         {

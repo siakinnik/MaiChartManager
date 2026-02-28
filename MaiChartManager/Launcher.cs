@@ -192,7 +192,7 @@ public partial class Launcher : Form
 
             // 本地模式
             if (checkBox1.Checked) return;
-            AppMain.ShowBrowser(loopbackUrl);
+            AppLifecycleManager.ShowBrowser(loopbackUrl);
             Dispose();
         });
 
@@ -208,7 +208,7 @@ public partial class Launcher : Form
 
     private void label1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        AppMain.ShowBrowser(loopbackUrl ?? throw new InvalidOperationException("loopbackUrl is null"));
+        AppLifecycleManager.ShowBrowser(loopbackUrl ?? throw new InvalidOperationException("loopbackUrl is null"));
     }
 
     private void Launcher_FormClosed(object sender, FormClosedEventArgs e)

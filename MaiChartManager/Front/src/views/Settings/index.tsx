@@ -8,11 +8,23 @@ import api from "@/client/api";
 import { updateAll } from "@/store/refs";
 import styles from "./ThemeSlider.module.scss";
 import { selectedChannel } from "@/views/ModManager/shouldShowUpdateController";
+import { setLocale, availableLocales, locale } from '@/locales/index';
+import type { Locale } from '@/locales/index';
 
 
 export default defineComponent({
   setup() {
     const { t } = useI18n();
+
+    const localeLabels: Record<Locale, string> = {
+      'zh': '简体中文',
+      'zh-TW': '繁體中文',
+      'en': 'English',
+    };
+    const localeOptions = availableLocales.map(l => ({
+      label: localeLabels[l],
+      value: l,
+    }));
 
     const movieCodecOptions = [
       { label: t('chart.import.option.codecForceH264'), value: MovieCodec.ForceH264 },
@@ -94,6 +106,14 @@ export default defineComponent({
                   {t('settings.resetDefault')}
                 </button>
               </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="i-mdi-translate text-xl op-60" />
+              <Select
+                value={locale.value}
+                options={localeOptions}
+                onChange={(v: any) => setLocale(v as Locale)}
+              />
             </div>
           </div>
         </div>

@@ -40,6 +40,12 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
         StaticSettings.Config.GamePath = StaticSettings.GamePath;
         StaticSettings.Config.HistoryPath.Add(path);
 
+        AppMain.UiContext?.Post(_ =>
+        {
+            if (AppMain.BrowserWin is { IsDisposed: false })
+                AppMain.BrowserWin.Text = $"MaiChartManager ({StaticSettings.GamePath})";
+        }, null);
+
         return Ok();
     }
 
@@ -91,7 +97,7 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
             if (request.Export)
                 AppLifecycleManager.ShowTrayIcon();
             else
-                AppLifecycleManager.HideTrayIcon();
+                AppLifecycleManager.DisposeTrayIcon();
 
             _ = Task.Run(async () =>
             {
@@ -103,7 +109,7 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
                 ServerManager.StartApp(request.Export, (url) =>
                 {
                     if (StaticSettings.Config.Export) return;
-                    AppMain.ShowBrowser(url);
+                    AppLifecycleManager.ShowBrowser(url);
                     AppMain.UiContext?.Post(_ =>
                     {
                         AppMain.OobeBrowser?.Dispose();
@@ -114,7 +120,7 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
         }
         else if (!request.Export)
         {
-            AppMain.ShowBrowser(ServerManager.GetLoopbackUrl() ?? throw new InvalidOperationException("Loopback URL is null"));
+            AppLifecycleManager.ShowBrowser(ServerManager.GetLoopbackUrl() ?? throw new InvalidOperationException("Loopback URL is null"));
             AppMain.UiContext?.Post(_ =>
             {
                 AppMain.OobeBrowser?.Dispose();

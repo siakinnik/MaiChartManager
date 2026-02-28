@@ -62,10 +62,24 @@ export default defineComponent({
           authPassword: opts.authPassword || null,
         });
         if (opts.isRemote) {
-          const res = await api.GetLanAddresses();
-          lanAddresses.value = res.data || [];
-          remoteReady.value = true;
-          completing.value = false;
+          // Server restarts when export mode changes, need to wait for it to be ready
+          let retries = 0;
+          const maxRetries = 30;
+          while (retries < maxRetries) {
+            try {
+              const res = await api.GetLanAddresses();
+              lanAddresses.value = res.data || [];
+              remoteReady.value = true;
+              completing.value = false;
+              break;
+            } catch {
+              retries++;
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }
+          }
+          if (retries >= maxRetries) {
+            completing.value = false;
+          }
         }
       } catch (e) {
         completing.value = false;
@@ -108,6 +122,7 @@ export default defineComponent({
             <button
               class="fixed bottom-6 left-6 w-14 h-14 rounded-full bg-[oklch(0.6_0.15_var(--hue))]! hover:bg-[oklch(0.6_0.15_var(--hue)/0.8)]! text-white cursor-pointer border-none flex items-center justify-center"
               onClick={goPrev}
+              disabled={completing.value}
             >
               <div class="i-mdi-arrow-left text-xl" />
             </button>

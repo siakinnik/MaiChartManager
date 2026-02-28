@@ -40,7 +40,7 @@ export default defineComponent({
       if (props.remoteReady) {
         return (
           <div class="flex flex-col items-center justify-center h-full gap-6 px-12">
-            <div class="i-mdi-check-circle text-5xl text-green-600" />
+            <div class="i-material-symbols:check-circle-rounded text-5xl text-green-600" />
             <div class="text-xl font-bold op-90">{t('oobe.remoteReady')}</div>
             <div class="text-sm op-60">{t('oobe.lanAddresses')}</div>
             <div class="flex flex-col gap-2 items-center">

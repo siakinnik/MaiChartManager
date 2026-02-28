@@ -88,19 +88,23 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
 
         if (exportChanged)
         {
-            if (ServerManager.IsRunning)
+            _ = Task.Run(async () =>
             {
-                await ServerManager.StopAsync();
-            }
-            ServerManager.StartApp(request.Export, (url) =>
-            {
-                if (StaticSettings.Config.Export) return;
-                AppMain.ShowBrowser(url);
-                AppMain.UiContext?.Post(_ =>
+                await Task.Delay(100);
+                if (ServerManager.IsRunning)
                 {
-                    AppMain.OobeBrowser?.Dispose();
-                    AppMain.OobeBrowser = null;
-                }, null);
+                    await ServerManager.StopAsync();
+                }
+                ServerManager.StartApp(request.Export, (url) =>
+                {
+                    if (StaticSettings.Config.Export) return;
+                    AppMain.ShowBrowser(url);
+                    AppMain.UiContext?.Post(_ =>
+                    {
+                        AppMain.OobeBrowser?.Dispose();
+                        AppMain.OobeBrowser = null;
+                    }, null);
+                });
             });
         }
         else if (!request.Export)

@@ -39,6 +39,7 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
 
         StaticSettings.Config.GamePath = StaticSettings.GamePath;
         StaticSettings.Config.HistoryPath.Add(path);
+        StaticSettings.Config.Save();
 
         AppMain.UiContext?.Post(_ =>
         {

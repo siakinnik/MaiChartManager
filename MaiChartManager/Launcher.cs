@@ -193,7 +193,7 @@ public partial class Launcher : Form
             // 本地模式
             if (checkBox1.Checked) return;
             AppLifecycleManager.ShowBrowser(loopbackUrl);
-            Dispose();
+            AppMain.UiContext?.Post(_ => Dispose(), null);
         });
 
         if (!checkBox1.Checked) return;

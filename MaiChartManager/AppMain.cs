@@ -183,7 +183,7 @@ public partial class AppMain : ISingleInstance
                 // export mode + manual launch: show OOBE at mode select page
                 OobeBrowser = new OobeBrowser(hash: "/server");
                 OobeBrowser.Show();
-                ServerManager.StartApp(false, (url) =>
+                ServerManager.StartApp(true, (url) =>
                 {
                     UiContext?.Post(_ => OobeBrowser?.InjectBackendUrl(url), null);
                 });
@@ -191,7 +191,8 @@ public partial class AppMain : ISingleInstance
             else
             {
                 // 这里不用 Show，可能是在托盘的
-                var launcher = new Launcher();
+                var launcher = new Launcher(); // prevent GC by assigning to ActiveForm
+                ActiveForm = launcher;
             }
             Application.Run();
         }
@@ -230,8 +231,9 @@ public partial class AppMain : ISingleInstance
 
     public void OnInstanceInvoked(string[] args)
     {
-        if (ServerManager.IsRunning)
-            AppLifecycleManager.ShowBrowser(ServerManager.GetLoopbackUrl() ?? "");
+        var url = ServerManager.IsRunning ? ServerManager.GetLoopbackUrl() : null;
+        if (url != null)
+            AppLifecycleManager.ShowBrowser(url);
     }
 
     public static void SetLocale(string locale)

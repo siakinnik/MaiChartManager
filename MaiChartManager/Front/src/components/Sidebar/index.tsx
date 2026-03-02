@@ -57,7 +57,7 @@ export default defineComponent({
     return () => (
       <>
         {/* Desktop sidebar */}
-        <div class="max-[767px]:hidden w-16 flex flex-col items-center py-2 gap-1 h-100dvh shrink-0 border-r border-r-[oklch(0.9_0.02_var(--hue))] border-r-solid bg-[oklch(0.98_0.01_var(--hue))] z-20 relative cst">
+        <div class="hidden md:flex w-16 flex-col items-center py-2 gap-1 h-100dvh shrink-0 border-r border-r-[oklch(0.9_0.02_var(--hue))] border-r-solid bg-[oklch(0.98_0.01_var(--hue))] z-20 relative cst">
           {items.map((item) => renderItem(item.key, item.icon, item.labelKey, true))}
           <div class="mt-auto" />
           {renderItem('settings', 'i-mdi-cog', 'sidebar.settings', true)}
@@ -67,7 +67,7 @@ export default defineComponent({
 
         {/* Mobile bottom bar */}
         <div class={[
-          'min-[768px]:hidden fixed bottom-0 left-0 right-0 z-50',
+          'md:hidden fixed bottom-0 left-0 right-0 z-50',
           'flex items-center h-14 gap-1 px-1',
           'justify-center',
           'bg-[oklch(0.98_0.01_var(--hue))] border-t border-t-[oklch(0.9_0.02_var(--hue))] border-t-solid',

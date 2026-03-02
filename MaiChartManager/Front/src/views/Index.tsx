@@ -70,7 +70,7 @@ export default defineComponent({
       <div class="" ref={mainDivRef as any}>
         <DragDropDispatcher />
         <Splash show={!loaded.value} />
-        <div class={['grid cols-[auto_1fr] max-[768px]:cols-1']}>
+        <div class={['grid cols-1 pb-14 md:pb-0 md:cols-[auto_1fr]']}>
           <Sidebar v-model:active={sidebarActive.value} />
           {sidebarActive.value === 'charts' && <Charts />}
           {sidebarActive.value === 'mods' && <ModManager />}

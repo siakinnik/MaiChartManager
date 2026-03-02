@@ -2,7 +2,6 @@ import { defineComponent } from "vue";
 import AppearanceSection from "./AppearanceSection";
 import GameDirectorySection from "./GameDirectorySection";
 import ImportOptionsSection from "./ImportOptionsSection";
-import VideoOptionsSection from "./VideoOptionsSection";
 import AquaMaiSection from "./AquaMaiSection";
 
 export default defineComponent({
@@ -12,7 +11,6 @@ export default defineComponent({
         <AppearanceSection />
         <GameDirectorySection />
         <ImportOptionsSection />
-        <VideoOptionsSection />
         <AquaMaiSection />
       </div>
     );

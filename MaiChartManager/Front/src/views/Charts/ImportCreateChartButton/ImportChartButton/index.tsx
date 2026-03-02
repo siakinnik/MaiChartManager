@@ -145,7 +145,7 @@ export default defineComponent({
         const res = (await api.ImportChart({
           file: music.maidata,
           id: music.id,
-          ignoreLevelNum: appSettings.value.ignoreLevel,
+          ignoreLevelNum: tempOptions.value.ignoreLevel,
           genreId: savedOptions.value.genreId,
           addVersionId: savedOptions.value.addVersionId,
           version: savedOptions.value.version,
@@ -178,7 +178,7 @@ export default defineComponent({
 
         await api.SetAudio(music.id, selectedADir.value, { file: music.track, padding });
 
-        if (music.movie && !appSettings.value.disableBga) {
+        if (music.movie && !tempOptions.value.disableBga) {
           currentMovieProgress.value = 0;
           music.importStep = IMPORT_STEP.movie;
           try {
@@ -216,7 +216,7 @@ export default defineComponent({
       let id = getNextUnusedMusicId();
       const usedIds = [] as number[];
       errors.value = [];
-      tempOptions.value = { ...defaultTempOptions };
+      tempOptions.value = { ...defaultTempOptions, ignoreLevel: appSettings.value.ignoreLevel, disableBga: appSettings.value.disableBga };
       step.value = STEP.selectFile;
       meta.value = [];
       currentProcessing.value = dummyMeta;

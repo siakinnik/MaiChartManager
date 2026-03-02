@@ -1,5 +1,5 @@
 import { computed, defineComponent, effect, PropType, watch } from "vue";
-import { Button, Modal, NumberInput, Section } from "@munet/ui";
+import { Button, CheckBox, Modal, NumberInput, Section } from "@munet/ui";
 import { ImportChartMessage, MessageLevel, ShiftMethod } from "@/client/apiGen";
 import { ImportChartMessageEx, ImportMeta, SavedOptions, TempOptions } from "./types";
 import noJacket from '@/assets/noJacket.webp';
@@ -62,6 +62,12 @@ export default defineComponent({
               <div class="ml-1 text-sm">{t('music.edit.version')}</div>
               <VersionInput v-model:value={props.savedOptions.version}/>
             </div>
+            <CheckBox v-model:value={props.tempOptions.ignoreLevel}>
+                {t('settings.ignoreLevel')}
+            </CheckBox>
+            <CheckBox v-model:value={props.tempOptions.disableBga}>
+                {t('settings.disableBga')}
+            </CheckBox>
             <Section title={t('chart.import.option.advancedOptions')}>
                 <ShiftModeSelector tempOptions={props.tempOptions}></ShiftModeSelector>
             </Section>

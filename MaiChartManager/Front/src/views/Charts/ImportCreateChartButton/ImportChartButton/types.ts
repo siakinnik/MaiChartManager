@@ -51,6 +51,8 @@ export const defaultSavedOptions = {
 
 export type TempOptions = {
   shift: ShiftMethod,
-  shiftLocked?: boolean
+  shiftLocked?: boolean,
+  ignoreLevel?: boolean,
+  disableBga?: boolean,
 };
 export type SavedOptions = typeof defaultSavedOptions;

@@ -33,7 +33,11 @@ export default defineComponent({
         onClick={reload}
       >
         <span class={['i-ic-baseline-refresh text-6', load.value && 'animate-spin']} />
-        <span class="absolute left-full ml-2 px-3 py-1.5 rounded-lg bg-[oklch(0.7_0.13_var(--hue))] text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-100">
+        <span class={[
+          'absolute px-3 py-1.5 rounded-lg bg-[oklch(0.7_0.13_var(--hue))] text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-100',
+          'bottom-full mb-2 left-1/2 -translate-x-1/2',
+          'min-[768px]:bottom-auto min-[768px]:left-full min-[768px]:ml-2 min-[768px]:mb-0 min-[768px]:translate-x-0',
+        ]}>
           {t('sidebar.refreshData')}
         </span>
       </div>

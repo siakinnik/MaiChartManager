@@ -47,18 +47,17 @@ export default defineComponent({
           <div class="absolute bottom-0 left-1.5 right-1.5 h-0.75 rounded-t-full bg-[var(--link-color)]" />
         )}
         <span class={[icon, 'text-6']} />
-        {desktop && (
-          <span class="absolute left-full ml-2 px-3 py-1.5 rounded-lg bg-[oklch(0.7_0.13_var(--hue))] text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-100">
-            {t(labelKey)}
-          </span>
-        )}
+        <span class={[
+          'absolute px-3 py-1.5 rounded-lg bg-[oklch(0.7_0.13_var(--hue))] text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-100',
+          desktop ? 'left-full ml-2' : 'bottom-full mb-2 left-1/2 -translate-x-1/2',
+        ]}>{t(labelKey)}</span>
       </div>
     );
 
     return () => (
       <>
         {/* Desktop sidebar */}
-        <div class="max-[767px]:hidden w-16 flex flex-col items-center py-2 gap-1 h-100dvh shrink-0 border-r border-r-[oklch(0.9_0.02_var(--hue))] border-r-solid bg-[oklch(0.98_0.01_var(--hue))] z-20 relative of-y-auto of-x-hidden cst">
+        <div class="max-[767px]:hidden w-16 flex flex-col items-center py-2 gap-1 h-100dvh shrink-0 border-r border-r-[oklch(0.9_0.02_var(--hue))] border-r-solid bg-[oklch(0.98_0.01_var(--hue))] z-20 relative cst">
           {items.map((item) => renderItem(item.key, item.icon, item.labelKey, true))}
           <div class="mt-auto" />
           {renderItem('settings', 'i-mdi-cog', 'sidebar.settings', true)}
@@ -70,7 +69,7 @@ export default defineComponent({
         <div class={[
           'min-[768px]:hidden fixed bottom-0 left-0 right-0 z-50',
           'flex items-center h-14 gap-1 px-1',
-          'of-x-auto of-y-hidden cst',
+          'justify-center',
           'bg-[oklch(0.98_0.01_var(--hue))] border-t border-t-[oklch(0.9_0.02_var(--hue))] border-t-solid',
         ]}>
           {items.map((item) => renderItem(item.key, item.icon, item.labelKey, false))}

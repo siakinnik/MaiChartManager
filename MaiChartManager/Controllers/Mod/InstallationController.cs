@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using MaiChartManager.Utils;
@@ -34,7 +34,8 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
         bool IsJudgeDisplay4BInstalled,
         bool IsHidConflictExist,
         AquaMaiSignatureV2.VerifyResult? Signature,
-        bool IsMmlLibInstalled
+        bool IsAdxHidIoModAbsent,
+        bool IsMmlLegacyLibsInstalled
     );
 
     [HttpGet]
@@ -55,7 +56,17 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
             sig = AquaMaiSignatureV2.VerifySignature(System.IO.File.ReadAllBytes(ModPaths.AquaMaiDllInstalledPath));
         }
 
-        return new GameModInfo(IsMelonInstalled(), aquaMaiInstalled, aquaMaiVersion, aquaMaiBuiltinVersion!, GetIsJudgeDisplay4BInstalled(), GetIsHidConflictExist(), sig, GetIsMmlLibInstalled());
+        return new GameModInfo(
+            IsMelonInstalled(),
+            aquaMaiInstalled,
+            aquaMaiVersion,
+            aquaMaiBuiltinVersion!,
+            GetIsJudgeDisplay4BInstalled(),
+            GetIsHidConflictExist(),
+            sig,
+            GetIsAdxHidIoModAbsent(),
+            GetIsMmlLegacyLibsInstalled()
+        );
     }
 
     [NonAction]
@@ -100,12 +111,14 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
     #endregion
 
     [NonAction]
-    private static bool GetIsMmlLibInstalled()
+    private static bool GetIsAdxHidIoModAbsent()
     {
-        if (System.IO.File.Exists(Path.Combine(StaticSettings.GamePath, @"Mods\ADXHIDIOMod.dll")))
-        {
-            return false;
-        }
+        return !System.IO.File.Exists(Path.Combine(StaticSettings.GamePath, @"Mods\ADXHIDIOMod.dll"));
+    }
+
+    [NonAction]
+    private static bool GetIsMmlLegacyLibsInstalled()
+    {
         if (!System.IO.File.Exists(Path.Combine(StaticSettings.GamePath, @"Sinmai_Data\Plugins\hidapi.dll")))
         {
             return false;
@@ -118,21 +131,32 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
         return true;
     }
 
-    [HttpPost]
-    public void InstallMmlLibs()
+    private static void CopyFile(string src, string dest)
     {
-        if (GetIsMmlLibInstalled()) return;
+        Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
+        using var read = System.IO.File.OpenRead(src);
+        using var write = System.IO.File.Open(dest, FileMode.Create);
+        read.CopyTo(write);
+    }
+
+    public record InstallMmlLibsDto(bool UseLegacy);
+
+    [HttpPost]
+    public void InstallMmlLibs([FromBody] InstallMmlLibsDto req)
+    {
+        var isMaimollerLegacyModeEnabled = req.UseLegacy;
         if (System.IO.File.Exists(Path.Combine(StaticSettings.GamePath, @"Mods\ADXHIDIOMod.dll")))
         {
             System.IO.File.Delete(Path.Combine(StaticSettings.GamePath, @"Mods\ADXHIDIOMod.dll"));
         }
+        if (!isMaimollerLegacyModeEnabled || GetIsMmlLegacyLibsInstalled()) return;
         if (!System.IO.File.Exists(Path.Combine(StaticSettings.GamePath, @"Sinmai_Data\Plugins\hidapi.dll")))
         {
-            System.IO.File.Copy(Path.Combine(StaticSettings.exeDir, @"hidapi.dll"), Path.Combine(StaticSettings.GamePath, @"Sinmai_Data\Plugins\hidapi.dll"));
+            CopyFile(Path.Combine(StaticSettings.exeDir, @"hidapi.dll"), Path.Combine(StaticSettings.GamePath, @"Sinmai_Data\Plugins\hidapi.dll"));
         }
         if (!System.IO.File.Exists(Path.Combine(StaticSettings.GamePath, @"Sinmai_Data\Plugins\libadxhid.dll")))
         {
-            System.IO.File.Copy(Path.Combine(StaticSettings.exeDir, @"libadxhid.dll"), Path.Combine(StaticSettings.GamePath, @"Sinmai_Data\Plugins\libadxhid.dll"));
+            CopyFile(Path.Combine(StaticSettings.exeDir, @"libadxhid.dll"), Path.Combine(StaticSettings.GamePath, @"Sinmai_Data\Plugins\libadxhid.dll"));
         }
     }
 
@@ -143,7 +167,7 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
 
         foreach (var file in Directory.EnumerateFiles(judgeDisplay4BPath))
         {
-            System.IO.File.Copy(file, Path.Combine(StaticSettings.SkinAssetsDir, Path.GetFileName(file)), true);
+            CopyFile(file, Path.Combine(StaticSettings.SkinAssetsDir, Path.GetFileName(file)));
         }
     }
 
@@ -173,10 +197,7 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
     {
         var src = Path.Combine(StaticSettings.exeDir, "AquaMai.dll");
         var dest = Path.Combine(StaticSettings.GamePath, @"Mods\AquaMai.dll");
-        Directory.CreateDirectory(Path.GetDirectoryName(dest));
-        using var read = System.IO.File.OpenRead(src);
-        using var write = System.IO.File.Open(dest, FileMode.Create);
-        read.CopyTo(write);
+        CopyFile(src, dest);
     }
 
     [HttpPost]

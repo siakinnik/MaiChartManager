@@ -15,7 +15,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const install = useAsyncState(async () => {
-      await api.InstallMmlLibs();
+      await api.InstallMmlLibs({ useLegacy: isLegacyModeEnabled.value });
       await updateModInfo();
     }, undefined, {
       immediate: false,
@@ -34,12 +34,32 @@ export default defineComponent({
     ];
 
     const PREFIX = 'GameSystem.MaimollerIO.';
+    const useLegacyEntryPath = PREFIX + 'UseLegacy';
     const knownPaths = [
       ...['P1', 'Touch1p', 'Button1p', 'Led1p', 'P2', 'Touch2p', 'Button2p', 'Led2p', 'Button1', 'Button2', 'Button3', 'Button4'].map(it => PREFIX + it),
     ];
 
+    const isLegacyModeEnabled = computed(() => {
+      const legacyEntry = props.entryStates[useLegacyEntryPath];
+      if (!legacyEntry) {
+        return true;
+      }
+      return Boolean(legacyEntry.value);
+    });
+
+    const isMmlRequirementSatisfied = computed(() => {
+      const isAdxHidIoModAbsent = Boolean(modInfo.value?.isAdxHidIoModAbsent);
+      if (!isAdxHidIoModAbsent) {
+        return false;
+      }
+      if (!isLegacyModeEnabled.value) {
+        return true;
+      }
+      return Boolean(modInfo.value?.isMmlLegacyLibsInstalled);
+    });
+
     return () => <div class="flex flex-col gap-2">
-      {!modInfo.value?.isMmlLibInstalled ? <div class="flex gap-2 items-center m-l-35">
+      {!isMmlRequirementSatisfied.value ? <div class="flex gap-2 items-center m-l-35">
         <span class="c-orange">{t('mod.mmlIo.notInstalled')}</span>
         <Button variant="secondary" onClick={() => install.execute()} ing={install.isLoading.value}>{t('mod.oneClickInstall')}</Button>
       </div>

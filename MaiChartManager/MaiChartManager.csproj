@@ -28,7 +28,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <IsPublishable>False</IsPublishable>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CRACK</DefineConstants>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">

@@ -172,7 +172,8 @@ export interface GameModInfo {
   isJudgeDisplay4BInstalled?: boolean;
   isHidConflictExist?: boolean;
   signature?: VerifyResult;
-  isMmlLibInstalled?: boolean;
+  isAdxHidIoModAbsent?: boolean;
+  isMmlLegacyLibsInstalled?: boolean;
 }
 
 export interface GenreAddRequest {
@@ -276,6 +277,10 @@ export interface InstallAquaMaiOnlineDto {
   urls?: string[] | null;
   type?: string | null;
   sign?: string | null;
+}
+
+export interface InstallMmlLibsDto {
+  useLegacy?: boolean;
 }
 
 export interface MusicIdAndAssetDirPair {
@@ -1513,10 +1518,12 @@ export class Api<
      * @name InstallMmlLibs
      * @request POST:/MaiChartManagerServlet/InstallMmlLibsApi
      */
-    InstallMmlLibs: (params: RequestParams = {}) =>
+    InstallMmlLibs: (data: InstallMmlLibsDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/MaiChartManagerServlet/InstallMmlLibsApi`,
         method: "POST",
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 

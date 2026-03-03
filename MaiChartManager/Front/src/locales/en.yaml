@@ -528,6 +528,10 @@ about:
   h264Encoder: H264 Encoder
   premiumActive: Thank you for your support, premium features activated!
   continueSupport: Click here to continue supporting
+  offlineActivation: Offline Activation
+  enterActivationCode: Please enter activation code
+  activationCodeInvalid: Invalid activation code
+  activationSuccess: Premium features activated, thank you!
 jacket:
   upload: Upload Jacket
   select: Select Jacket

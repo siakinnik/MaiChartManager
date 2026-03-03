@@ -487,6 +487,10 @@ about:
   h264Encoder: H264 編碼器
   premiumActive: 感謝你的支援，贊助版功能已啟用！
   continueSupport: 如果還想繼續贊助請點擊
+  offlineActivation: 離線啟用
+  enterActivationCode: 請輸入啟用碼
+  activationCodeInvalid: 啟用碼無效
+  activationSuccess: 贊助版功能已啟用，謝謝你！
 jacket:
   upload: 上傳封面
   select: 選擇封面

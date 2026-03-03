@@ -493,6 +493,10 @@ about:
   h264Encoder: H264 编码器
   premiumActive: 感谢你的支持，赞助版功能已启用！
   continueSupport: 如果还想继续赞助请点击
+  offlineActivation: 离线激活
+  enterActivationCode: 请输入激活码
+  activationCodeInvalid: 激活码无效
+  activationSuccess: 赞助版功能已启用，谢谢你！
 jacket:
   upload: 上传封面
   select: 选择封面

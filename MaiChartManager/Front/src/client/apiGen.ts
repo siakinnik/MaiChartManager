@@ -768,6 +768,23 @@ export class Api<
     /**
      * No description
      *
+     * @tags AppLicense
+     * @name VerifyOfflineKey
+     * @request POST:/MaiChartManagerServlet/VerifyOfflineKeyApi
+     */
+    VerifyOfflineKey: (data: string, params: RequestParams = {}) =>
+      this.request<boolean, any>({
+        path: `/MaiChartManagerServlet/VerifyOfflineKeyApi`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags AppStatus
      * @name GetAppStartupErrors
      * @request GET:/MaiChartManagerServlet/GetAppStartupErrorsApi

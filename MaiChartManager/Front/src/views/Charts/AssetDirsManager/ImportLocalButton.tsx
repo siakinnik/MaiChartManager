@@ -1,6 +1,6 @@
 import { defineComponent, ref } from "vue";
 import { Button, Modal, Progress, addToast } from "@munet/ui";
-import api, { getUrl } from "@/client/api";
+import api, { getUrl, isWebView } from "@/client/api";
 import { updateAssetDirs } from "@/store/refs";
 import axios from "axios";
 import { UploadAssetDirResult } from "@/client/apiGen";
@@ -15,7 +15,7 @@ export default defineComponent({
 
     const importLocal = async () => {
       importWait.value = true;
-      if (location.hostname !== 'mcm.invalid') {
+      if (!isWebView) {
         // 浏览器模式
         let folderHandle: FileSystemDirectoryHandle;
         try {

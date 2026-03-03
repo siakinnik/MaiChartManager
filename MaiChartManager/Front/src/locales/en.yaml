@@ -547,6 +547,8 @@ settings:
   appearance: Appearance
   themeHue: Theme Hue
   resetDefault: Reset Default
+  zoom: UI Scale
+  zoomAuto: Auto
   importOptions: Import Options
   ignoreLevel: Ignore level, exclude from B50
   disableBga: Don't import BGA even if present

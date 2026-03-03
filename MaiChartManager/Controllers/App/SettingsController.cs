@@ -10,6 +10,8 @@ public class SettingsDto
     public bool NoScale { get; set; }
     public bool IgnoreLevel { get; set; }
     public bool DisableBga { get; set; }
+    public int UiZoom { get; set; }
+    public double TargetDpiScale { get; set; }
 }
 
 [ApiController]
@@ -26,6 +28,8 @@ public class SettingsController : ControllerBase
             NoScale = StaticSettings.Config.NoScale,
             IgnoreLevel = StaticSettings.Config.IgnoreLevel,
             DisableBga = StaticSettings.Config.DisableBga,
+            UiZoom = StaticSettings.Config.UiZoom,
+            TargetDpiScale = Browser.TargetDpiScale,
         };
     }
 
@@ -37,7 +41,6 @@ public class SettingsController : ControllerBase
         StaticSettings.Config.NoScale = dto.NoScale;
         StaticSettings.Config.IgnoreLevel = dto.IgnoreLevel;
         StaticSettings.Config.DisableBga = dto.DisableBga;
-
         StaticSettings.Config.Save();
     }
 }

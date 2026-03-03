@@ -364,6 +364,10 @@ export interface SettingsDto {
   noScale?: boolean;
   ignoreLevel?: boolean;
   disableBga?: boolean;
+  /** @format int32 */
+  uiZoom?: number;
+  /** @format double */
+  targetDpiScale?: number;
 }
 
 export interface UploadAssetDirResult {

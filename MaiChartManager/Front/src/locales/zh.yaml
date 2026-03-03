@@ -512,6 +512,8 @@ settings:
   appearance: 外观
   themeHue: 主题色相
   resetDefault: 重置默认
+  zoom: 界面缩放
+  zoomAuto: 自动
   importOptions: 导入选项
   ignoreLevel: 忽略定数，不参与 B50 计算
   disableBga: 有 BGA 也不要导入

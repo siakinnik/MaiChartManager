@@ -1,12 +1,14 @@
 import { defineComponent } from "vue";
 import { Button, showTransactionalDialog } from "@munet/ui";
-import api from "@/client/api";
+import api, { isWebView } from "@/client/api";
 import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
   setup(props) {
+    const { t } = useI18n();
+
     const onClick = async () => {
-      if (location.hostname !== 'mcm.invalid') {
+      if (!isWebView) {
         const confirmed = await showTransactionalDialog(
           t('message.notice'),
           t('purchase.needServerSide'),

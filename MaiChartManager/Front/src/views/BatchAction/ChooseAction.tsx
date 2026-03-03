@@ -2,7 +2,7 @@ import { defineComponent, PropType, ref } from "vue";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
 import { Button, Radio, Select, Popover } from "@munet/ui";
 import { STEP } from "@/views/BatchAction/index";
-import api from "@/client/api";
+import api, { isWebView } from "@/client/api";
 import { showNeedPurchaseDialog, updateMusicList, version } from "@/store/refs";
 import remoteExport from "@/views/BatchAction/remoteExport";
 import TransitionVertical from "@/components/TransitionVertical.vue";
@@ -51,13 +51,13 @@ export default defineComponent({
           break;
         case OPTIONS.CreateNewOpt:
         case OPTIONS.CreateNewOptCompatible:
-          if (location.hostname === 'mcm.invalid') {
+          if (isWebView) {
             props.continue(STEP.None);
             await api.RequestCopyTo({music: props.selectedMusic, removeEvents: selectedOption.value === OPTIONS.CreateNewOptCompatible, legacyFormat: false});
             break;
           }
         case OPTIONS.CreateNewOptMa2_103:
-          if (location.hostname === 'mcm.invalid') {
+          if (isWebView) {
             props.continue(STEP.None);
             await api.RequestCopyTo({music: props.selectedMusic, removeEvents: true, legacyFormat: true});
             break;

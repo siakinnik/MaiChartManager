@@ -506,6 +506,8 @@ settings:
   appearance: 外觀
   themeHue: 主題色相
   resetDefault: 重置預設
+  zoom: 介面縮放
+  zoomAuto: 自動
   importOptions: 匯入選項
   ignoreLevel: 忽略定數，不參與 B50 計算
   disableBga: 有 BGA 也不要匯入

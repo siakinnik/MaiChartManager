@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
 
 namespace MaiChartManager;
@@ -6,6 +7,7 @@ namespace MaiChartManager;
 public sealed partial class Browser : Form
 {
     private Uri? loopbackUrl;
+    private double _currentZoomFactor = 1.0;
     private static ILogger logger = AppMain.GetLogger<Browser>();
 
     private static bool IsRunningAsUwp()
@@ -28,6 +30,45 @@ public sealed partial class Browser : Form
         StartPosition = FormStartPosition.Manual;
         Location = WebViewHelper.CalculatePosition(Width, Height);
     }
+
+    public static double TargetDpiScale { get; private set; }
+
+    /// <summary>
+    /// 根据配置和屏幕信息计算 WebView2 的 ZoomFactor。
+    /// UiZoom=0 表示自动模式：等效宽度 < 1440 时，将目标缩放 clamp 到 100%~150%，
+    /// 然后除以系统缩放得到 ZoomFactor。
+    /// UiZoom>0 表示用户指定的百分比（相对于物理分辨率的缩放比例），
+    /// ZoomFactor = UiZoom / 100.0 / dpiScale。
+    /// </summary>
+    private double CalculateZoomFactor()
+    {
+        var dpiScale = DeviceDpi / 96.0;
+        var screen = Screen.FromControl(this);
+        var physicalWidth = screen.Bounds.Width;
+        var effectiveWidth = physicalWidth / dpiScale;
+
+        // 始终计算 auto 模式下的目标缩放，供前端显示
+        TargetDpiScale = effectiveWidth >= 1440
+            ? dpiScale
+            : Math.Clamp(physicalWidth / 1440.0, 1.0, 1.5);
+
+        var uiZoom = StaticSettings.Config.UiZoom;
+        if (uiZoom > 0)
+        {
+            // 用户指定的百分比是 Windows 缩放意义上的，需要除以当前系统缩放
+            return uiZoom / 100.0 / dpiScale;
+        }
+
+        // auto 模式
+        return TargetDpiScale / dpiScale;
+    }
+
+    private void ApplyZoomFactor()
+    {
+        _currentZoomFactor = CalculateZoomFactor();
+        webView21.ZoomFactor = _currentZoomFactor;
+    }
+
     private void webView21_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
     {
         if (IsRunningAsUwp())
@@ -42,11 +83,12 @@ public sealed partial class Browser : Form
 
         WebViewHelper.SetupCoreWebView2(webView21.CoreWebView2, loopbackUrl);
 
-        // webView21.CoreWebView2.AddWebResourceRequestedFilter("*://mcm.invalid/MaiChartManagerServlet/*", CoreWebView2WebResourceContext.All);
-        // webView21.CoreWebView2.WebResourceRequested += OnWebResourceRequested;
+        // 应用缩放
+        ApplyZoomFactor();
 
         webView21.CoreWebView2.PermissionRequested += WebViewHelper.OnPermissionRequested;
         webView21.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+        webView21.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
     }
 
     private async void CoreWebView2_NewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)
@@ -81,10 +123,32 @@ public sealed partial class Browser : Form
             e.NewWindow = webView.CoreWebView2;
             webView.CoreWebView2.DocumentTitleChanged += (_, _) => form.Text = webView.CoreWebView2.DocumentTitle;
             form.FormClosed += (_, _) => webView.Dispose();
+            webView.ZoomFactor = _currentZoomFactor;
         }
         finally
         {
             deferral.Complete();
+        }
+    }
+
+    private void OnWebMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
+    {
+        try
+        {
+            var message = e.WebMessageAsJson;
+            using var doc = JsonDocument.Parse(message);
+            var root = doc.RootElement;
+
+            if (root.GetProperty("type").GetString() != "setZoom") return;
+
+            var value = root.GetProperty("value").GetInt32();
+            StaticSettings.Config.UiZoom = value;
+            StaticSettings.Config.Save();
+            ApplyZoomFactor();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "处理 WebMessage 失败");
         }
     }
 

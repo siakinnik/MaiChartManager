@@ -1,14 +1,34 @@
-import { defineComponent } from "vue";
-import { Select } from "@munet/ui";
+import { computed, defineComponent, ref, watch } from "vue";
+import { Range, Select } from "@munet/ui";
 import { selectedThemeHue } from "@munet/ui";
 import { useI18n } from "vue-i18n";
 import { setLocale, availableLocales, locale } from '@/locales/index';
 import type { Locale } from '@/locales/index';
 import styles from "./ThemeSlider.module.scss";
+import { appSettings } from "@/store/settings";
+import { isWebView } from "@/client/api";
+
+function postZoomMessage(value: number) {
+  (window as any).chrome.webview.postMessage({ type: 'setZoom', value });
+}
 
 export default defineComponent({
   setup() {
     const { t } = useI18n();
+
+    const uiZoom = ref<number>(appSettings.value.uiZoom ?? 0);
+    watch(appSettings, (newVal) => {
+      uiZoom.value = newVal.uiZoom ?? 0;
+    }, { immediate: true });
+
+    const autoZoom = computed(() => Math.round((appSettings.value.targetDpiScale || 1) * 100) || 100)
+    const zoomDisplay = computed({
+      get: () => uiZoom.value || autoZoom.value,
+      set: (v: number) => {
+        uiZoom.value = v;
+        postZoomMessage(v);
+      }
+    })
 
     const localeLabels: Record<Locale, string> = {
       'zh': '简体中文',
@@ -32,7 +52,7 @@ export default defineComponent({
               onChange={(v: any) => setLocale(v as Locale)}
             />
           </div>
-          <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
             <input
               type="range"
               min={0}
@@ -42,14 +62,33 @@ export default defineComponent({
               onInput={(e) => { selectedThemeHue.value = Number((e.target as HTMLInputElement).value); }}
               class={[styles['chromatic-hue-slider'], 'w-full']}
             />
-            <div class="flex items-center justify-end">
-              <button
-                onClick={() => { selectedThemeHue.value = 353; }}
+            <button class="shrink-0"
+              onClick={() => { selectedThemeHue.value = 353; }}
+            >
+              {t('settings.resetDefault')}
+            </button>
+          </div>
+          {isWebView && (
+            <div class="flex items-center gap-2">
+              <span class="shrink-0">{t('settings.zoom')}</span>
+              <Range
+                min={50}
+                max={250}
+                step={5}
+                v-model={zoomDisplay.value}
+                origin={autoZoom.value}
+                class="w-full"
+              />
+              <span class="ml-auto shrink-0 text-sm op-60 w-12">
+                {uiZoom.value === 0 ? t('settings.zoomAuto') : `${uiZoom.value}%`}
+              </span>
+              <button class="shrink-0"
+                onClick={() => { uiZoom.value = 0; postZoomMessage(0); }}
               >
                 {t('settings.resetDefault')}
               </button>
             </div>
-          </div>
+          )}
         </div>
       </div>
     );

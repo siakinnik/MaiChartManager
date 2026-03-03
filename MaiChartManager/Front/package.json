@@ -16,7 +16,7 @@
     "@iconify/json": "^2.2.443",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@modyfi/vite-plugin-yaml": "^1.1.1",
-    "@munet/ui": "^1.0.9",
+    "@munet/ui": "^1.0.10",
     "@sentry/vite-plugin": "^5.1.0",
     "@sentry/vue": "^10.40.0",
     "@types/color": "^4.2.0",

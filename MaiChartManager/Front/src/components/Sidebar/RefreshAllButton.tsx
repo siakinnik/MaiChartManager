@@ -35,8 +35,9 @@ export default defineComponent({
         <span class={['i-ic-baseline-refresh text-6', load.value && 'animate-spin']} />
         <span class={[
           'absolute px-3 py-1.5 rounded-lg bg-[oklch(0.7_0.13_var(--hue))] text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-100',
+          'max-[439px]:hidden',
           'bottom-full mb-2 left-1/2 -translate-x-1/2',
-          'min-[768px]:bottom-auto min-[768px]:left-full min-[768px]:ml-2 min-[768px]:mb-0 min-[768px]:translate-x-0',
+          'md:bottom-auto md:left-full md:ml-2 md:mb-0 md:translate-x-0',
         ]}>
           {t('sidebar.refreshData')}
         </span>

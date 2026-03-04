@@ -1,6 +1,7 @@
 import { defineComponent, ref } from 'vue';
 
-import { globalCapture, modInfo, modUpdateInfo, updateModInfo } from "@/store/refs";
+import { globalCapture, modInfo, updateModInfo } from "@/store/refs";
+import { modUpdateInfo } from "@/store/appUpdate";
 import api from "@/client/api";
 import { latestVersion } from './shouldShowUpdateController';
 import { useI18n } from 'vue-i18n';

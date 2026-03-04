@@ -14,6 +14,7 @@ import Tools from './Tools';
 import Settings from './Settings';
 import Splash from '@/components/Splash';
 import { ensureBackendUrl } from '@/utils/ensureBackendUrl';
+import ChangelogModal from '@/components/ChangelogModal';
 
 export default defineComponent({
   setup() {
@@ -70,6 +71,7 @@ export default defineComponent({
       <div class="" ref={mainDivRef as any}>
         <DragDropDispatcher />
         <Splash show={!loaded.value} />
+        <ChangelogModal ready={loaded.value} />
         <div class={['grid cols-1 pb-14 md:pb-0 md:cols-[auto_1fr]']}>
           <Sidebar v-model:active={sidebarActive.value} />
           {sidebarActive.value === 'charts' && <Charts />}

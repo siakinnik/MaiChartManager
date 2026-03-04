@@ -1,6 +1,7 @@
 import { computed } from "vue";
 import { useStorage } from "@vueuse/core";
-import { modInfo, modUpdateInfo } from "@/store/refs";
+import { modInfo } from "@/store/refs";
+import { modUpdateInfo } from "@/store/appUpdate";
 
 export function compareVersions(v1: string, v2: string) {
   if (v1.startsWith('v')) {

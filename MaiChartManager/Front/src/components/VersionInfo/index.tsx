@@ -1,11 +1,9 @@
 import { computed, defineComponent, ref } from "vue";
 import AppIcon from '@/components/AppIcon';
 import '@fontsource/nerko-one'
-import { appUpdateInfo, updateVersion, version } from "@/store/refs";
+import { updateVersion, version } from "@/store/refs";
+import { appUpdateInfo, openChangelog } from "@/store/appUpdate";
 import { compareVersions } from "@/views/ModManager/shouldShowUpdateController";
-import { locale } from "@/locales";
-import { VueMarkdownIt } from '@f3ve/vue-markdown-it';
-import style from './style.module.sass';
 import StorePurchaseButton from "@/components/StorePurchaseButton";
 import AfdianIcon from "@/icons/afdian.svg";
 import { HardwareAccelerationStatus, LicenseStatus } from "@/client/apiGen";
@@ -14,23 +12,17 @@ import { Modal, TextInput, Button, addToast, theme } from "@munet/ui";
 import api from "@/client/api";
 
 export default defineComponent({
-  setup(props) {
+  setup() {
     const show = ref(false);
     const showOfflineActivation = ref(false);
     const activationCode = ref('');
     const activating = ref(false);
     const displayVersion = computed(() => version.value?.version?.split('+')[0]);
-    const showChangelog = ref(false);
 
     const hasAppUpdate = computed(() => {
       if (!appUpdateInfo.value?.version || !version.value?.version) return false;
       const currentVersion = version.value.version.split('+')[0];
       return compareVersions(appUpdateInfo.value.version, currentVersion) > 0;
-    });
-
-    const changelogNotes = computed(() => {
-      if (!appUpdateInfo.value?.notes) return '';
-      return appUpdateInfo.value.notes[locale.value] || appUpdateInfo.value.notes['en'] || '';
     });
 
     const { t } = useI18n();
@@ -63,6 +55,24 @@ export default defineComponent({
       }
     };
 
+    const openCurrentVersionChangelog = async () => {
+      const currentVer = version.value?.version;
+      if (!currentVer) return;
+      await openChangelog(currentVer, {
+        showAfterLoaded: true,
+        skipIfEmpty: true,
+      });
+    };
+
+    const openLatestVersionChangelog = async () => {
+      const latestVer = appUpdateInfo.value?.version;
+      if (!latestVer) return;
+      await openChangelog(latestVer, {
+        showAfterLoaded: true,
+        skipIfEmpty: true,
+      });
+    };
+
     return () => version.value && <div class={'w-15 py-1 flex items-center justify-center rounded-md cursor-pointer transition-all duration-200 bg-avatarMenuButton text-3.5 shrink-0 relative'} onClick={onVersionClick}>
       v{displayVersion.value}
       {hasAppUpdate.value && <div class="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-red-500 pointer-events-none" />}
@@ -78,16 +88,22 @@ export default defineComponent({
           <a class="i-mdi-github hover:c-[var(--text-color)] transition-300" href="https://github.com/clansty/MaiChartManager" target="_blank"/>
           <a class="i-ri-qq-fill hover:c-[var(--text-color)] transition-300" href="https://qm.qq.com/q/U3gT7CDuy6" target="_blank" />
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
             {t('about.version')}: v{version.value.version}
+            <span
+              class={[theme.value.lc, 'fl cursor-pointer']}
+              onClick={openCurrentVersionChangelog}
+            >
+              {t('about.viewChangelog')}
+            </span>
             {hasAppUpdate.value && <>
               <span class="c-red-500 font-bold">{t('about.updateAvailable', { version: appUpdateInfo.value!.version })}</span>
-              <a
+              <span
                 class={[theme.value.lc, 'fl cursor-pointer']}
-                onClick={() => { showChangelog.value = true; }}
+                onClick={openLatestVersionChangelog}
               >
                 {t('about.viewChangelog')}
-              </a>
+              </span>
               <Button onClick={() => window.open('ms-windows-store://pdp/?ProductId=9P1JDKQ60G4G')}>
                 {t('about.updateHint')}
               </Button>
@@ -155,15 +171,6 @@ export default defineComponent({
         </Button>,
       }}</Modal>
 
-      <Modal
-        width="min(85vw,50em)"
-        title={t('about.changelogTitle')}
-        v-model:show={showChangelog.value}
-      >
-        <div class={style.mdContent}>
-          <VueMarkdownIt source={changelogNotes.value} />
-        </div>
-      </Modal>
     </div>;
   }
 })

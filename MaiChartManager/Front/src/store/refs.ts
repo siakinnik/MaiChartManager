@@ -1,14 +1,14 @@
 import { computed, ref, watch } from "vue";
 import { AppVersionResult, ConfigDto, GameModInfo, GenreXml, GetAssetsDirsResult, MusicXmlWithABJacket, VersionXml } from "@/client/apiGen";
-import api, { aquaMaiVersionConfig } from "@/client/api";
+import api from "@/client/api";
 import { captureException } from "@sentry/vue";
 import posthog from "posthog-js";
 import { useStorage, useWindowFocus, whenever } from "@vueuse/core";
 import { locale } from "@/locales";
 import { updateAquaMaiConfig } from "@/views/ModManager/refs";
 import { updateSettings } from "@/store/settings";
-import { GetGetConfigTypeEnum } from "@/client/aquaMaiVersionConfigApiGen";
 import { SidebarItem } from "@/components/Sidebar";
+import { eagerFetchChangelog, updateAppUpdateInfo, updateModUpdateInfo } from "@/store/appUpdate";
 
 export const sidebarActive = ref<SidebarItem>('charts');
 
@@ -82,11 +82,6 @@ export const selectedLevel = ref(0);
 export const disableSync = ref(false);
 
 export { aquaMaiConfig } from "@/views/ModManager/refs";
-export const modUpdateInfo = ref<Awaited<ReturnType<typeof aquaMaiVersionConfig.getGetConfig>>['data']>([{
-  type: GetGetConfigTypeEnum.Builtin,
-}])
-
-export const appUpdateInfo = ref<{ version: string; notes: Record<string, string> } | null>(null);
 
 export const saveMusicIfNeeded = async (id: number) => {
   if (!id) return;
@@ -132,48 +127,15 @@ export const updateAssetDirs = async () => {
 export const updateVersion = async () => {
   version.value = (await api.GetAppVersion()).data;
   locale.value = version.value?.locale || 'en';
+  // 预加载当前版本的更新日志
+  if (version.value?.version) {
+    eagerFetchChangelog(version.value.version);
+  }
 }
 
 export const updateModInfo = async () => {
   modInfo.value = (await api.GetGameModInfo()).data;
 }
-
-export const updateModUpdateInfo = async () => {
-  try {
-    modUpdateInfo.value = await Promise.any([
-      (async () => {
-        const res = await aquaMaiVersionConfig.getGetConfig({
-          cache: 'no-cache',
-        });
-        return res.data;
-      })(),
-      (async () => {
-        const res = await fetch('https://munet-version-config-1251600285.cos.ap-shanghai.myqcloud.com/aquamai.json', {
-          cache: 'no-cache',
-        });
-        if (!res.ok) {
-          throw new Error(`Failed to fetch mod update info: ${res.status} ${res.statusText}`);
-        }
-        return await res.json();
-      })(),
-    ]);
-  } catch (e) {
-    console.error('Failed to get mod update info:', e);
-  }
-}
-
-export const updateAppUpdateInfo = async () => {
-  try {
-    const res = await fetch('https://munet-version-config-1251600285.cos.ap-shanghai.myqcloud.com/mcm.json', {
-      cache: 'no-cache',
-    });
-    if (!res.ok) return;
-    appUpdateInfo.value = await res.json();
-  } catch (e) {
-    console.error('Failed to get app update info:', e);
-  }
-}
-
 
 export const updateAll = async () => Promise.all([
   updateVersion(),

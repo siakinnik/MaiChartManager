@@ -1,7 +1,7 @@
 import { defineComponent, ref, watch } from "vue";
 
 import api from "@/client/api";
-import { globalCapture, modInfo, updateModInfo, updateMusicList, modUpdateInfo } from "@/store/refs";
+import { globalCapture, modInfo, updateModInfo, updateMusicList } from "@/store/refs";
 import AquaMaiConfigurator from "./AquaMaiConfigurator";
 import { latestVersion, shouldShowUpdate } from "./shouldShowUpdateController";
 import ModInstallDropdown from "@/views/ModManager/ModInstallDropdown";

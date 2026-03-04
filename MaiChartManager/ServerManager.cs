@@ -136,6 +136,7 @@ public static class ServerManager
                 }
             )
             .AddControllers()
+            .AddApplicationPart(typeof(ServerManager).Assembly)
             .AddJsonOptions(options =>
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 

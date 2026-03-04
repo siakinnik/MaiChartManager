@@ -491,6 +491,10 @@ about:
   enterActivationCode: 請輸入啟用碼
   activationCodeInvalid: 啟用碼無效
   activationSuccess: 贊助版功能已啟用，謝謝你！
+  updateAvailable: 有新版本可用 ({version})
+  viewChangelog: 查看更新日誌
+  changelogTitle: 更新日誌
+  updateHint: 前往 Microsoft Store 更新
 jacket:
   upload: 上傳封面
   select: 選擇封面

@@ -497,6 +497,10 @@ about:
   enterActivationCode: 请输入激活码
   activationCodeInvalid: 激活码无效
   activationSuccess: 赞助版功能已启用，谢谢你！
+  updateAvailable: 有新版本可用 ({version})
+  viewChangelog: 查看更新日志
+  changelogTitle: 更新日志
+  updateHint: 前往 Microsoft Store 更新
 jacket:
   upload: 上传封面
   select: 选择封面

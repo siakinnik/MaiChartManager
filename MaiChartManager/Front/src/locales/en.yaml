@@ -532,6 +532,10 @@ about:
   enterActivationCode: Please enter activation code
   activationCodeInvalid: Invalid activation code
   activationSuccess: Premium features activated, thank you!
+  updateAvailable: 'New version available ({version})'
+  viewChangelog: View Changelog
+  changelogTitle: Changelog
+  updateHint: Update from Microsoft Store
 jacket:
   upload: Upload Jacket
   select: Select Jacket

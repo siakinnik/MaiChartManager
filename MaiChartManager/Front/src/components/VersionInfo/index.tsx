@@ -1,8 +1,11 @@
 import { computed, defineComponent, ref } from "vue";
-import { Popover, Qrcode } from "@munet/ui";
 import AppIcon from '@/components/AppIcon';
 import '@fontsource/nerko-one'
-import { updateVersion, version } from "@/store/refs";
+import { appUpdateInfo, updateVersion, version } from "@/store/refs";
+import { compareVersions } from "@/views/ModManager/shouldShowUpdateController";
+import { locale } from "@/locales";
+import { VueMarkdownIt } from '@f3ve/vue-markdown-it';
+import style from './style.module.sass';
 import StorePurchaseButton from "@/components/StorePurchaseButton";
 import AfdianIcon from "@/icons/afdian.svg";
 import { HardwareAccelerationStatus, LicenseStatus } from "@/client/apiGen";
@@ -17,6 +20,19 @@ export default defineComponent({
     const activationCode = ref('');
     const activating = ref(false);
     const displayVersion = computed(() => version.value?.version?.split('+')[0]);
+    const showChangelog = ref(false);
+
+    const hasAppUpdate = computed(() => {
+      if (!appUpdateInfo.value?.version || !version.value?.version) return false;
+      const currentVersion = version.value.version.split('+')[0];
+      return compareVersions(appUpdateInfo.value.version, currentVersion) > 0;
+    });
+
+    const changelogNotes = computed(() => {
+      if (!appUpdateInfo.value?.notes) return '';
+      return appUpdateInfo.value.notes[locale.value] || appUpdateInfo.value.notes['en'] || '';
+    });
+
     const { t } = useI18n();
 
     const onVersionClick = (e: MouseEvent) => {
@@ -47,8 +63,9 @@ export default defineComponent({
       }
     };
 
-    return () => version.value && <div class={'w-15 py-1 flex items-center justify-center rounded-md cursor-pointer transition-all duration-200 bg-avatarMenuButton text-3.5 shrink-0'} onClick={onVersionClick}>
+    return () => version.value && <div class={'w-15 py-1 flex items-center justify-center rounded-md cursor-pointer transition-all duration-200 bg-avatarMenuButton text-3.5 shrink-0 relative'} onClick={onVersionClick}>
       v{displayVersion.value}
+      {hasAppUpdate.value && <div class="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-red-500 pointer-events-none" />}
 
       <Modal
         width="min(85vw,60em)"
@@ -61,8 +78,20 @@ export default defineComponent({
           <a class="i-mdi-github hover:c-[var(--text-color)] transition-300" href="https://github.com/clansty/MaiChartManager" target="_blank"/>
           <a class="i-ri-qq-fill hover:c-[var(--text-color)] transition-300" href="https://qm.qq.com/q/U3gT7CDuy6" target="_blank" />
           </div>
-          <div>
+          <div class="flex items-center gap-2">
             {t('about.version')}: v{version.value.version}
+            {hasAppUpdate.value && <>
+              <span class="c-red-500 font-bold">{t('about.updateAvailable', { version: appUpdateInfo.value!.version })}</span>
+              <a
+                class={[theme.value.lc, 'fl cursor-pointer']}
+                onClick={() => { showChangelog.value = true; }}
+              >
+                {t('about.viewChangelog')}
+              </a>
+              <Button onClick={() => window.open('ms-windows-store://pdp/?ProductId=9P1JDKQ60G4G')}>
+                {t('about.updateHint')}
+              </Button>
+            </>}
           </div>
           <div>
             {t('about.gameVersion')}: 1.{version.value.gameVersion}
@@ -125,6 +154,16 @@ export default defineComponent({
           {t('common.confirm')}
         </Button>,
       }}</Modal>
+
+      <Modal
+        width="min(85vw,50em)"
+        title={t('about.changelogTitle')}
+        v-model:show={showChangelog.value}
+      >
+        <div class={style.mdContent}>
+          <VueMarkdownIt source={changelogNotes.value} />
+        </div>
+      </Modal>
     </div>;
   }
 })

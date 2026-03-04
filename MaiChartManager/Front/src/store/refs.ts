@@ -86,6 +86,8 @@ export const modUpdateInfo = ref<Awaited<ReturnType<typeof aquaMaiVersionConfig.
   type: GetGetConfigTypeEnum.Builtin,
 }])
 
+export const appUpdateInfo = ref<{ version: string; notes: Record<string, string> } | null>(null);
+
 export const saveMusicIfNeeded = async (id: number) => {
   if (!id) return;
   const music = musicListAll.value.find(m => m.id === id);
@@ -160,6 +162,18 @@ export const updateModUpdateInfo = async () => {
   }
 }
 
+export const updateAppUpdateInfo = async () => {
+  try {
+    const res = await fetch('https://munet-version-config-1251600285.cos.ap-shanghai.myqcloud.com/mcm.json', {
+      cache: 'no-cache',
+    });
+    if (!res.ok) return;
+    appUpdateInfo.value = await res.json();
+  } catch (e) {
+    console.error('Failed to get app update info:', e);
+  }
+}
+
 
 export const updateAll = async () => Promise.all([
   updateVersion(),
@@ -169,6 +183,7 @@ export const updateAll = async () => Promise.all([
   updateMusicList(),
   updateModInfo(),
   updateModUpdateInfo(),
+  updateAppUpdateInfo(),
   updateAquaMaiConfig(),
   updateSettings(),
 ])

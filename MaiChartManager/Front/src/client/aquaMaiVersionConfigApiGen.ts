@@ -14,12 +14,21 @@ export enum GetGetConfigTypeEnum {
   Builtin = "builtin",
   Release = "release",
   Ci = "ci",
+  Slow = "slow",
 }
 
 export enum PostUpsertConfigTypeEnum {
   Builtin = "builtin",
   Release = "release",
   Ci = "ci",
+  Slow = "slow",
+}
+
+export enum GetAdminStatusTypeEnum {
+  Builtin = "builtin",
+  Release = "release",
+  Ci = "ci",
+  Slow = "slow",
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -352,6 +361,97 @@ export class Api<
         method: "POST",
         body: data,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PostAdminClear
+     * @summary 清除慢速通道队列
+     * @request POST:/api/admin/clear
+     */
+    postAdminClear: (params: RequestParams = {}) =>
+      this.request<
+        {
+          /** @min 0 */
+          delayDays: number;
+          lastPromotedVersion?: string;
+          promotedAt?: string;
+          clearedAt?: string;
+        },
+        any
+      >({
+        path: `/api/admin/clear`,
+        method: "POST",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PostAdminDelay
+     * @summary 设置慢速通道延迟天数
+     * @request POST:/api/admin/delay
+     */
+    postAdminDelay: (
+      data: {
+        /** @min 0 */
+        days: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        {
+          delayDays: number;
+        },
+        any
+      >({
+        path: `/api/admin/delay`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name GetAdminStatus
+     * @summary 获取慢速通道状态
+     * @request GET:/api/admin/status
+     */
+    getAdminStatus: (params: RequestParams = {}) =>
+      this.request<
+        {
+          meta: {
+            /** @min 0 */
+            delayDays: number;
+            lastPromotedVersion?: string;
+            promotedAt?: string;
+            clearedAt?: string;
+          };
+          slow: {
+            version?: string;
+            /** @format date-time */
+            createdAt?: string;
+            type: GetAdminStatusTypeEnum;
+            /** @format uri */
+            url?: string;
+            /** @format uri */
+            url2?: string;
+            sign?: string;
+            /** @default false */
+            default?: boolean;
+          };
+        },
+        any
+      >({
+        path: `/api/admin/status`,
+        method: "GET",
         format: "json",
         ...params,
       }),

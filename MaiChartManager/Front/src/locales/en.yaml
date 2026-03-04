@@ -438,6 +438,22 @@ mod:
     tip: If mixing Maimoller with other protocols, disable this for the non-Maimoller side
   on: 'On'
   off: 'Off'
+  pdx:
+    noDevice: "No PDX device detected"
+    deviceCount: "{count} PDX device(s) detected"
+    driverWinusb: "Current driver: Exclusive mode"
+    driverDefault: "Current driver: Windows Touch mode"
+    switchToExclusive: "Switch to Exclusive mode"
+    switchToWintouch: "Switch to Windows Touch mode"
+    switchSuccess: "Driver switched successfully"
+    switchFailed: "Driver switch failed"
+    switchCancelled: "Permission request cancelled"
+    refresh: "Refresh device status"
+    unavailable: "PDX driver tool unavailable"
+    selectDevice: "Select device"
+    path1P: "1P Device Path"
+    path2P: "2P Device Path"
+    pathDesc: "USB port path, e.g. 2.2. Use the path shown in the configuration tool. Leave empty to use the first detected device as 1P"
 tools:
   title: Tools
   audioConvert: Audio Convert (ACB + AWB)

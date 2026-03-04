@@ -405,6 +405,22 @@ mod:
   off: 关
   enable: 启用
   disable: 禁用
+  pdx:
+    noDevice: "未检测到 PDX 设备"
+    deviceCount: "检测到 {count} 个 PDX 设备"
+    driverWinusb: "当前驱动: 独占模式"
+    driverDefault: "当前驱动: Windows 触摸模式"
+    switchToExclusive: "切换到独占模式"
+    switchToWintouch: "切换到 Windows 触摸模式"
+    switchSuccess: "驱动切换成功"
+    switchFailed: "驱动切换失败"
+    switchCancelled: "已取消权限请求"
+    refresh: "刷新设备状态"
+    unavailable: "PDX 驱动工具不可用"
+    selectDevice: "选择设备"
+    path1P: "1P 设备路径"
+    path2P: "2P 设备路径"
+    pathDesc: "USB 端口路径，例如 2.2。请使用配置工具中显示的路径。留空则使用第一个检测到的设备作为 1P"
 tools:
   title: 工具
   audioConvert: 音频转换（ACB + AWB）

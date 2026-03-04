@@ -327,6 +327,14 @@ export interface MusicXmlWithABJacket {
   problems?: string[] | null;
 }
 
+export interface PdxDriverStatusDto {
+  isUsingWinusb?: boolean;
+  /** @format int32 */
+  deviceCount?: number;
+  available?: boolean;
+  devicePaths?: string[];
+}
+
 export interface PutAssetDirTxtValueRequest {
   dirName?: string | null;
   fileName?: string | null;
@@ -2384,6 +2392,56 @@ export class Api<
       this.request<void, any>({
         path: `/MaiChartManagerServlet/SwitchToSetModeApi`,
         method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Pdx
+     * @name GetPdxDevicePaths
+     * @request GET:/MaiChartManagerServlet/GetPdxDevicePathsApi
+     */
+    GetPdxDevicePaths: (params: RequestParams = {}) =>
+      this.request<string[], any>({
+        path: `/MaiChartManagerServlet/GetPdxDevicePathsApi`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Pdx
+     * @name GetPdxDriverStatus
+     * @request GET:/MaiChartManagerServlet/GetPdxDriverStatusApi
+     */
+    GetPdxDriverStatus: (params: RequestParams = {}) =>
+      this.request<PdxDriverStatusDto, any>({
+        path: `/MaiChartManagerServlet/GetPdxDriverStatusApi`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Pdx
+     * @name SwitchPdxDriver
+     * @request POST:/MaiChartManagerServlet/SwitchPdxDriverApi
+     */
+    SwitchPdxDriver: (
+      query?: {
+        direction?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/SwitchPdxDriverApi`,
+        method: "POST",
+        query: query,
         ...params,
       }),
 

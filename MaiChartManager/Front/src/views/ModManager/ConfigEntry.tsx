@@ -56,22 +56,22 @@ export default defineComponent({
               case 'System.Boolean':
                 return <CheckBox v-model:value={props.entryState.value}>{props.entryState.value ? '开' : '关'}</CheckBox>;
               case 'System.String':
-                return <TextInput class="w-full" v-model:value={props.entryState.value} placeholder=""/>;
+                return <TextInput class="w-full" innerClass="h-42px!" v-model:value={props.entryState.value} placeholder=""/>;
               case 'System.Int32':
               case 'System.Int64':
-                return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1}/>;
+                return <NumberInput innerClass="h-42px!" v-model:value={props.entryState.value} decimal={0} step={1}/>;
               case 'System.UInt32':
               case 'System.UInt64':
-                return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1} min={0}/>;
+                return <NumberInput innerClass="h-42px!" v-model:value={props.entryState.value} decimal={0} step={1} min={0}/>;
               case 'System.Byte':
-                return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1} min={0} max={255}/>;
+                return <NumberInput innerClass="h-42px!" v-model:value={props.entryState.value} decimal={0} step={1} min={0} max={255}/>;
               case 'System.UInt16':
-                return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1} min={0} max={65535}/>;
+                return <NumberInput innerClass="h-42px!" v-model:value={props.entryState.value} decimal={0} step={1} min={0} max={65535}/>;
               case 'System.Int16':
-                return <NumberInput v-model:value={props.entryState.value} decimal={0} step={1} min={-32768} max={32767}/>;
+                return <NumberInput innerClass="h-42px!" v-model:value={props.entryState.value} decimal={0} step={1} min={-32768} max={32767}/>;
               case 'System.Double':
               case 'System.Single':
-                return <NumberInput v-model:value={props.entryState.value} step={.1}/>;
+                return <NumberInput innerClass="h-42px!" v-model:value={props.entryState.value} step={.1}/>;
               case 'AquaMai.Config.Types.KeyCodeOrName':
                 return <Select v-model:value={props.entryState.value} options={Object.entries(KeyCodeName).map(([label, value]) => ({ label, value }))}/>;
               case 'AquaMai.Config.Types.KeyCodeID':

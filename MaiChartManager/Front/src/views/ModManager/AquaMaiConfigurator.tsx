@@ -195,8 +195,7 @@ export default defineComponent({
               </div>
             }}</Popover>
           </div>
-          {/* @ts-ignore */}
-          <TextInput v-model:value={search.value} placeholder={t('mod.searchPlaceholder')} ref={searchRef} class="flex-1"/>
+          <TextInput v-model:value={search.value} placeholder={t('mod.searchPlaceholder')} ref={searchRef} innerClass="h-42px!" class="flex-1"/>
         </div>
         <div ref={scrollContainerRef} class="of-y-auto cst flex-1 p-2 pt-0 text-14px">
           <div class="flex flex-col gap-1">

@@ -54,7 +54,7 @@ export default defineComponent({
         </div>
         {selected.value ? <>
             {t('mod.touchSensitivity.settingsFor', {area: selected.value.toUpperCase()})}
-            <NumberInput v-model:value={props.entryStates[`GameSettings.TouchSensitivity.${selected.value.toUpperCase()}`].value} min={0} max={100} step={1}/>
+            <NumberInput innerClass="h-42px!" v-model:value={props.entryStates[`GameSettings.TouchSensitivity.${selected.value.toUpperCase()}`].value} min={0} max={100} step={1}/>
             <div class="flex gap-2 mb">
               <Button variant="secondary" onClick={() => applyToGlobal(props.entryStates[`GameSettings.TouchSensitivity.${selected.value!.toUpperCase()}`].value)}>{t('mod.touchSensitivity.applyToGlobal')}</Button>
               <Button variant="secondary" onClick={() => applyToArea(selected.value!.substring(0, 1) as any, props.entryStates[`GameSettings.TouchSensitivity.${selected.value!.toUpperCase()}`].value)}>

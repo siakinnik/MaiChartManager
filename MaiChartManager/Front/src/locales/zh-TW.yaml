@@ -399,6 +399,21 @@ mod:
     tip: 如果混用 Maimoller 與其他協議，請對不是 Maimoller 的一侧停用
   on: 開
   off: 關
+  stableChannel: "穩定通道"
+  fastChannel: "快速通道"
+  mumod: "MuMod"
+  mumodDesc: "自動更新載入器"
+  mumodInstalled: "MuMod 已安裝"
+  mumodChannel: "更新通道"
+  mumodChannelSlow: "穩定"
+  mumodChannelFast: "快速"
+  cacheUpdating: "正在更新快取..."
+  cacheFailed: "快取更新失敗"
+  conflict:
+    title: "偵測到衝突"
+    message: "AquaMai 和 MuMod 同時存在，請選擇保留哪一個"
+    deleteAquaMai: "刪除 AquaMai"
+    deleteMuMod: "刪除 MuMod"
   pdx:
     noDevice: "未偵測到 PDX 設備"
     deviceCount: "偵測到 {count} 個 PDX 設備"

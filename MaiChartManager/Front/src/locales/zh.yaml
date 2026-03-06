@@ -405,6 +405,21 @@ mod:
   off: 关
   enable: 启用
   disable: 禁用
+  stableChannel: "稳定通道"
+  fastChannel: "快速通道"
+  mumod: "MuMod"
+  mumodDesc: "自动更新加载器"
+  mumodInstalled: "MuMod 已安装"
+  mumodChannel: "更新通道"
+  mumodChannelSlow: "稳定"
+  mumodChannelFast: "快速"
+  cacheUpdating: "正在更新缓存..."
+  cacheFailed: "缓存更新失败"
+  conflict:
+    title: "检测到冲突"
+    message: "AquaMai 和 MuMod 同时存在，请选择保留哪一个"
+    deleteAquaMai: "删除 AquaMai"
+    deleteMuMod: "删除 MuMod"
   pdx:
     noDevice: "未检测到 PDX 设备"
     deviceCount: "检测到 {count} 个 PDX 设备"

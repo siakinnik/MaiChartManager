@@ -438,6 +438,21 @@ mod:
     tip: If mixing Maimoller with other protocols, disable this for the non-Maimoller side
   on: 'On'
   off: 'Off'
+  stableChannel: "Stable Channel"
+  fastChannel: "Fast Channel"
+  mumod: "MuMod"
+  mumodDesc: "Auto-update Loader"
+  mumodInstalled: "MuMod Installed"
+  mumodChannel: "Update Channel"
+  mumodChannelSlow: "Stable"
+  mumodChannelFast: "Fast"
+  cacheUpdating: "Updating cache..."
+  cacheFailed: "Cache update failed"
+  conflict:
+    title: "Conflict Detected"
+    message: "Both AquaMai and MuMod are present, please choose which to keep"
+    deleteAquaMai: "Delete AquaMai"
+    deleteMuMod: "Delete MuMod"
   pdx:
     noDevice: "No PDX device detected"
     deviceCount: "{count} PDX device(s) detected"

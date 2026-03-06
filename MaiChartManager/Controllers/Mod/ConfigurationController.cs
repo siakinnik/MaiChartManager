@@ -12,8 +12,21 @@ namespace MaiChartManager.Controllers.Mod;
 
 [ApiController]
 [Route("MaiChartManagerServlet/[action]Api")]
-public class ConfigurationController(StaticSettings settings, ILogger<ConfigurationController> logger) : ControllerBase
+public class ConfigurationController : ControllerBase
 {
+    private readonly StaticSettings settings;
+    private readonly ILogger<ConfigurationController> logger;
+    private readonly MuModService muModService;
+    private static MuModService? staticMuModService;
+
+    public ConfigurationController(StaticSettings settings, ILogger<ConfigurationController> logger, MuModService muModService)
+    {
+        this.settings = settings;
+        this.logger = logger;
+        this.muModService = muModService;
+        staticMuModService = muModService;
+    }
+
     public class UnsupportedConfigApiVersionException() : Exception(Locale.UnsupportedConfigVersion);
 
     public class ConfigCorruptedException() : Exception(Locale.AquaMaiConfigCorrupted);
@@ -41,12 +54,17 @@ public class ConfigurationController(StaticSettings settings, ILogger<Configurat
     [NonAction]
     public static IConfig GetCurrentAquaMaiConfig(bool forceDefault = false, bool skipSignatureCheck = false)
     {
-        if (!System.IO.File.Exists(ModPaths.AquaMaiDllInstalledPath))
+        string dllPath;
+        try
         {
-            throw new AquaMaiNotInstalledException();
+            dllPath = GetAquaMaiDllPath(staticMuModService);
+        }
+        catch (AquaMaiNotInstalledException)
+        {
+            throw;
         }
 
-        var binary = System.IO.File.ReadAllBytes(ModPaths.AquaMaiDllInstalledPath);
+        var binary = System.IO.File.ReadAllBytes(dllPath);
         if (!skipSignatureCheck)
         {
             var sigResult = AquaMaiSignatureV2.VerifySignature(binary);
@@ -92,11 +110,43 @@ public class ConfigurationController(StaticSettings settings, ILogger<Configurat
         return config;
     }
 
+    [NonAction]
+    private string GetAquaMaiDllPath()
+    {
+        return GetAquaMaiDllPath(muModService);
+    }
+
+    [NonAction]
+    private static string GetAquaMaiDllPath(MuModService? muModService)
+    {
+        var muModInstalled = muModService?.IsMuModInstalled() == true;
+        var aquaMaiInstalled = System.IO.File.Exists(ModPaths.AquaMaiDllInstalledPath);
+
+        if (muModInstalled && !aquaMaiInstalled)
+        {
+            var cachePath = muModService!.GetResolvedCachePath();
+            if (!System.IO.File.Exists(cachePath))
+            {
+                throw new AquaMaiNotInstalledException();
+            }
+
+            return cachePath;
+        }
+
+        if (aquaMaiInstalled)
+        {
+            return ModPaths.AquaMaiDllInstalledPath;
+        }
+
+        throw new AquaMaiNotInstalledException();
+    }
+
     [HttpGet]
     public AquaMaiConfigDto.ConfigDto GetAquaMaiConfig(bool forceDefault = false, bool skipSignatureCheck = false)
     {
+        var dllPath = GetAquaMaiDllPath();
         Dictionary<string, string[]>? configSort = null;
-        using (var stream = new FileStream(ModPaths.AquaMaiDllInstalledPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (var stream = new FileStream(dllPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
             var asm = ModuleDefinition.ReadModule(stream);
             var configSortRes = asm.Resources.FirstOrDefault(it => it is EmbeddedResource { Name: "configSort.yaml.compressed" } or EmbeddedResource { Name: "configSort.yaml" });
@@ -108,7 +158,8 @@ public class ConfigurationController(StaticSettings settings, ILogger<Configurat
                 configSort = deserializer.Deserialize<Dictionary<string, string[]>>(yaml);
             }
         }
-        var config = GetCurrentAquaMaiConfig(forceDefault, skipSignatureCheck);
+        var shouldSkipSignatureCheck = skipSignatureCheck || !string.Equals(dllPath, ModPaths.AquaMaiDllInstalledPath, StringComparison.OrdinalIgnoreCase);
+        var config = GetCurrentAquaMaiConfig(forceDefault, shouldSkipSignatureCheck);
         return new AquaMaiConfigDto.ConfigDto(
             config.ReflectionManager.Sections.Select(section =>
             {
@@ -124,10 +175,11 @@ public class ConfigurationController(StaticSettings settings, ILogger<Configurat
     [HttpPut]
     public async Task SetAquaMaiConfig(AquaMaiConfigDto.ConfigSaveDto config)
     {
+        var dllPath = GetAquaMaiDllPath();
         var jsonOptions = new JsonSerializerOptions();
         jsonOptions.Converters.Add(new JsonStringEnumConverter());
 
-        var configInterface = HeadlessConfigLoader.LoadFromPacked(ModPaths.AquaMaiDllInstalledPath);
+        var configInterface = HeadlessConfigLoader.LoadFromPacked(dllPath);
         CheckConfigApiVersion(configInterface);
         var configEdit = configInterface.CreateConfig();
 

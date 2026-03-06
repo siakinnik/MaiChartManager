@@ -63,7 +63,20 @@ export const latestVersion = computed(() => {
   return defaultVersionInfo;
 })
 
+// MuMod 模式：MuMod 已安装且没有冲突（两者都不存在的情况不算 MuMod 模式）
+export const isMuModMode = computed(() => {
+  return !!modInfo.value?.muModInstalled && !modInfo.value?.isBothModsPresent;
+});
+
 export const shouldShowUpdate = computed(() => {
+  if (isMuModMode.value) {
+    // MuMod 模式下：比较缓存版本和最新版本
+    if (!modInfo.value?.muModCacheVersion) return true;
+    const muModType = modInfo.value?.muModChannel === 'fast' ? 'ci' : 'slow';
+    const muModLatest = modUpdateInfo.value?.find(it => it.type === muModType);
+    if (!muModLatest?.version) return false;
+    return compareVersions(modInfo.value.muModCacheVersion, muModLatest.version) < 0;
+  }
   if (!modInfo.value?.aquaMaiInstalled) return true;
   if (!modInfo.value?.aquaMaiVersion) return true;
   let currentVersion = modInfo.value.aquaMaiVersion;

@@ -1,6 +1,6 @@
 import api from "@/client/api";
 import { useAsyncState } from '@vueuse/core';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { ConfigDto } from "@/client/apiGen";
 import { modInfo } from "@/store/refs";
 import { compareVersions } from "./shouldShowUpdateController";
@@ -64,4 +64,13 @@ export const updateAquaMaiConfig = async (forceDefault = false, skipSignatureChe
   skipSignatureCheckRef.value = skipSignatureCheck;
   configJustLoaded.value = true;
   await executeGetConfig();
+};
+
+// MuMod 状态
+export const muModChannel = computed(() => modInfo.value?.muModChannel ?? 'slow');
+export const isBothModsPresent = computed(() => !!modInfo.value?.isBothModsPresent);
+
+export const updateMuModChannel = async (channel: string) => {
+  await api.SetMuModChannelAndEnsureCache({ channel });
+  await updateAquaMaiConfig();
 };

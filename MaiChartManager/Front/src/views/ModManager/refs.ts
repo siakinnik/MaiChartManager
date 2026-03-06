@@ -1,8 +1,9 @@
 import api from "@/client/api";
 import { useAsyncState } from '@vueuse/core';
 import { computed, ref } from 'vue';
+import { debounce } from 'perfect-debounce';
 import { ConfigDto } from "@/client/apiGen";
-import { modInfo } from "@/store/refs";
+import { globalCapture, modInfo, updateModInfo } from "@/store/refs";
 import { compareVersions } from "./shouldShowUpdateController";
 
 // 请求参数 ref
@@ -70,7 +71,14 @@ export const updateAquaMaiConfig = async (forceDefault = false, skipSignatureChe
 export const muModChannel = computed(() => modInfo.value?.muModChannel ?? 'slow');
 export const isBothModsPresent = computed(() => !!modInfo.value?.isBothModsPresent);
 
-export const updateMuModChannel = async (channel: string) => {
-  await api.SetMuModChannelAndEnsureCache({ channel });
-  await updateAquaMaiConfig();
+const updateMuModChannelImpl = async (channel: string) => {
+  try {
+    await api.SetMuModChannelAndEnsureCache({ channel });
+    await updateModInfo();
+    await updateAquaMaiConfig();
+  } catch (e: any) {
+    globalCapture(e, 'mod.cacheFailed');
+  }
 };
+
+export const updateMuModChannel = debounce(updateMuModChannelImpl, 1500);

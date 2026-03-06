@@ -218,6 +218,10 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
         var src = Path.Combine(StaticSettings.exeDir, "AquaMai.dll");
         var dest = Path.Combine(StaticSettings.GamePath, @"Mods\AquaMai.dll");
         CopyFile(src, dest);
+        if (System.IO.File.Exists(ModPaths.MuModDllInstalledPath))
+        {
+            System.IO.File.Delete(ModPaths.MuModDllInstalledPath);
+        }
     }
 
     [HttpPost]
@@ -285,6 +289,10 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
             var dest = Path.Combine(StaticSettings.GamePath, @"Mods\AquaMai.dll");
             Directory.CreateDirectory(Path.GetDirectoryName(dest));
             await System.IO.File.WriteAllBytesAsync(dest, data);
+            if (System.IO.File.Exists(ModPaths.MuModDllInstalledPath))
+            {
+                System.IO.File.Delete(ModPaths.MuModDllInstalledPath);
+            }
             return;
         }
         throw new InvalidOperationException("Failed to download AquaMai from all urls", lastException);

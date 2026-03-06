@@ -9,7 +9,7 @@ namespace MaiChartManager.Controllers.Mod;
 
 [ApiController]
 [Route("MaiChartManagerServlet/[action]Api")]
-public class InstallationController(StaticSettings settings, ILogger<InstallationController> logger) : ControllerBase
+public class InstallationController(StaticSettings settings, ILogger<InstallationController> logger, MuModService muModService) : ControllerBase
 {
     private static string judgeDisplay4BPath = Path.Combine(StaticSettings.exeDir, "Resources", "JudgeDisplay4B");
 
@@ -35,7 +35,12 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
         bool IsHidConflictExist,
         AquaMaiSignatureV2.VerifyResult? Signature,
         bool IsAdxHidIoModAbsent,
-        bool IsMmlLegacyLibsInstalled
+        bool IsMmlLegacyLibsInstalled,
+        bool MuModInstalled,
+        string? MuModVersion,
+        string? MuModChannel,
+        string? MuModCacheVersion,
+        bool IsBothModsPresent
     );
 
     [HttpGet]
@@ -56,6 +61,16 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
             sig = AquaMaiSignatureV2.VerifySignature(System.IO.File.ReadAllBytes(ModPaths.AquaMaiDllInstalledPath));
         }
 
+        var muModInstalled = muModService.IsMuModInstalled();
+        var muModVersion = muModInstalled ? muModService.GetMuModVersion() : null;
+        string? muModChannel = null;
+        string? muModCacheVersion = null;
+        if (muModInstalled)
+        {
+            try { muModChannel = muModService.ReadConfig().Channel; } catch { }
+            muModCacheVersion = muModService.GetCacheInfo();
+        }
+
         return new GameModInfo(
             IsMelonInstalled(),
             aquaMaiInstalled,
@@ -65,7 +80,12 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
             GetIsHidConflictExist(),
             sig,
             GetIsAdxHidIoModAbsent(),
-            GetIsMmlLegacyLibsInstalled()
+            GetIsMmlLegacyLibsInstalled(),
+            muModInstalled,
+            muModVersion,
+            muModChannel,
+            muModCacheVersion,
+            aquaMaiInstalled && muModInstalled
         );
     }
 

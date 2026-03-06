@@ -269,8 +269,6 @@ mod:
   other: 其他
   needEnableOption: 需要开启此选项
   unsupportedType: '不支持的类型: {type}'
-  notInstalledTitle: 没有安装 AquaMai
-  notInstalledWarningMessage: 没有安装 MelonLoader 或者 AquaMai，在游戏中将无法加载歌曲封面。请点击 Mod 管理来安装
   dontShowAgain: 不再提示
   versionNotFound: 未找到对应版本
   installFailed: 安装 AquaMai 失败，文件可能被占用了？
@@ -280,7 +278,8 @@ mod:
   versionTooLow: AquaMai 版本过低，请更新到 1.6.0 以上
   installed: 已安装
   installedVersion: 已安装
-  availableVersion: 可安装
+  availableVersion: 最新
+  loaded: 已加载
   killGameProcess: 关闭游戏进程
   needInstallOrUpdate: AquaMai 未安装或需要更新
   ioKeyMap:
@@ -409,7 +408,7 @@ mod:
   fastChannel: "快速通道"
   mumod: "MuMod"
   mumodDesc: "自动更新加载器"
-  mumodInstalled: "MuMod 已安装"
+  mumodInstalled: "已安装"
   mumodChannel: "更新通道"
   mumodChannelSlow: "稳定"
   mumodChannelFast: "快速"

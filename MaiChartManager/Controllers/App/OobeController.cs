@@ -69,9 +69,9 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
     }
 
     [HttpPost]
-    public void InitializeGameData()
+    public async Task InitializeGameData()
     {
-        settings.InitializeGameData();
+        await settings.InitializeGameData();
     }
 
     [HttpGet]

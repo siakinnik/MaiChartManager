@@ -149,10 +149,17 @@ export default defineComponent({
             )}
             {!isMuModMode.value && <AquaMaiSignatureStatusDisplay/>}
             <span class="max-[1060px]:hidden">{t('mod.availableVersion')}:</span>
-            <span class={[shouldShowUpdate.value && "c-orange", "max-[1060px]:hidden"]}>{latestVersion.value.version}</span>
+            <span class={[shouldShowUpdate.value && "c-orange", "max-[1060px]:hidden"]}>{latestVersion.value.version}{isMuModMode.value && ` (${t('mod.loaded')})`}</span>
             <Button onClick={() => api.KillGameProcess()}>
               {t('mod.killGameProcess')}
             </Button>
+            {isMuModMode.value && (
+              <>
+                <span class="shrink-0">{t('mod.mumodChannel')}:</span>
+                <Radio k={'slow'} v-model:value={localMuModChannel.value}>{t('mod.mumodChannelSlow')}</Radio>
+                <Radio k={'fast'} v-model:value={localMuModChannel.value}>{t('mod.mumodChannelFast')}</Radio>
+              </>
+            )}
           </div>
           {isBothModsPresent.value && (
             <div class="flex flex-col gap-2 p-4 bg-orange-50 border border-orange-200 border-solid rounded-xl">
@@ -162,13 +169,6 @@ export default defineComponent({
                 <Button onClick={() => deleteAquaMai()}>{t('mod.conflict.deleteAquaMai')}</Button>
                 <Button onClick={() => deleteMuMod()}>{t('mod.conflict.deleteMuMod')}</Button>
               </div>
-            </div>
-          )}
-          {isMuModMode.value && (
-            <div class="flex items-center gap-3 px-2 py-1">
-              <span class="shrink-0">{t('mod.mumodChannel')}:</span>
-              <Radio k={'slow'} v-model:value={localMuModChannel.value}>{t('mod.mumodChannelSlow')}</Radio>
-              <Radio k={'fast'} v-model:value={localMuModChannel.value}>{t('mod.mumodChannelFast')}</Radio>
             </div>
           )}
           {!isBothModsPresent.value && editorPart}

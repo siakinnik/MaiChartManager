@@ -291,10 +291,6 @@ mod:
   other: Other
   needEnableOption: Need to enable this option
   unsupportedType: 'Unsupported type: {type}'
-  notInstalledTitle: AquaMai Not Installed
-  notInstalledWarningMessage: >-
-    MelonLoader or AquaMai is not installed, music jackets won't load in game.
-    Click Mod Management to install
   dontShowAgain: Don't show again
   versionNotFound: Version not found
   installFailed: Failed to install AquaMai, files may be in use?
@@ -304,7 +300,8 @@ mod:
   versionTooLow: AquaMai version too low, please update to 1.6.0 or above
   installed: Installed
   installedVersion: Installed
-  availableVersion: Available
+  availableVersion: Latest
+  loaded: Loaded
   killGameProcess: Kill Game Process
   needInstallOrUpdate: AquaMai not installed or needs update
   adxHid:
@@ -442,7 +439,7 @@ mod:
   fastChannel: "Fast Channel"
   mumod: "MuMod"
   mumodDesc: "Auto-update Loader"
-  mumodInstalled: "MuMod Installed"
+  mumodInstalled: "Installed"
   mumodChannel: "Update Channel"
   mumodChannelSlow: "Stable"
   mumodChannelFast: "Fast"

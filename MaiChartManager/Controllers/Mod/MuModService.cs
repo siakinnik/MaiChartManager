@@ -85,24 +85,12 @@ public class MuModService(ILogger<MuModService> logger)
         var config = ReadConfig();
         var rawPath = string.IsNullOrWhiteSpace(config.CachePath) ? DefaultCacheRelativePath : config.CachePath;
 
-        if (ContainsParentTraversal(rawPath))
-        {
-            throw new InvalidOperationException("MuMod cache path cannot contain '..'");
-        }
-
         var expandedPath = Environment.ExpandEnvironmentVariables(rawPath.Trim());
         var candidate = Path.IsPathRooted(expandedPath)
             ? expandedPath
             : Path.Combine(StaticSettings.GamePath, expandedPath);
 
-        var fullPath = Path.GetFullPath(candidate);
-        var gameRoot = Path.GetFullPath(StaticSettings.GamePath);
-        if (!IsPathInsideRoot(fullPath, gameRoot))
-        {
-            throw new InvalidOperationException($"MuMod cache path escapes game directory: {fullPath}");
-        }
-
-        return fullPath;
+        return Path.GetFullPath(candidate);
     }
 
     public async Task<EnsureCacheResult> EnsureCache(CancellationToken ct = default)
@@ -187,19 +175,6 @@ public class MuModService(ILogger<MuModService> logger)
     public string? GetMuModVersion()
     {
         return File.Exists(ModPaths.MuModDllInstalledPath) ? ReadProductVersion(ModPaths.MuModDllInstalledPath) : null;
-    }
-
-    private static bool ContainsParentTraversal(string path)
-    {
-        var segments = path.Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries);
-        return segments.Any(segment => segment == "..");
-    }
-
-    private static bool IsPathInsideRoot(string fullPath, string rootPath)
-    {
-        var normalizedRoot = rootPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
-        return fullPath.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(fullPath, rootPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar), StringComparison.OrdinalIgnoreCase);
     }
 
     private static string ResolveApiType(string channel)

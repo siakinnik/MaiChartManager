@@ -36,7 +36,7 @@ public class ModConfigService
         }
     }
 
-    public string GetAquaMaiDllPath()
+    public async Task<string> GetAquaMaiDllPath(CancellationToken ct = default)
     {
         var muModInstalled = _muModService.IsMuModInstalled();
         var aquaMaiInstalled = File.Exists(ModPaths.AquaMaiDllInstalledPath);
@@ -44,6 +44,11 @@ public class ModConfigService
         if (muModInstalled && !aquaMaiInstalled)
         {
             var cachePath = _muModService.GetResolvedCachePath();
+            if (!File.Exists(cachePath))
+            {
+                // 缓存不存在，下载（DLL 不大，卡一下没事）
+                await _muModService.EnsureCache(ct);
+            }
             if (!File.Exists(cachePath))
             {
                 throw new AquaMaiNotInstalledException();
@@ -60,9 +65,9 @@ public class ModConfigService
         throw new AquaMaiNotInstalledException();
     }
 
-    public IConfig GetCurrentAquaMaiConfig(bool forceDefault = false, bool skipSignatureCheck = false)
+    public async Task<IConfig> GetCurrentAquaMaiConfig(bool forceDefault = false, bool skipSignatureCheck = false, CancellationToken ct = default)
     {
-        var dllPath = GetAquaMaiDllPath();
+        var dllPath = await GetAquaMaiDllPath(ct);
 
         var binary = File.ReadAllBytes(dllPath);
         if (!skipSignatureCheck)

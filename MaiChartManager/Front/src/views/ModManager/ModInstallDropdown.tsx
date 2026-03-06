@@ -12,7 +12,7 @@ export default defineComponent({
     const showDone = ref(false);
     const { t } = useI18n();
     const installType = ref<'builtin' | 'slow' | 'ci' | 'mumod'>('slow');
-    
+
     const { isLoading: installing, execute: doInstallAsync } = useAsyncState(
       async () => {
         const type = installType.value;
@@ -38,19 +38,19 @@ export default defineComponent({
         onError: (e: any) => globalCapture(e, t('mod.installFailed')),
       }
     );
-    
+
     const doInstall = (type: 'builtin' | 'slow' | 'ci' | 'mumod') => {
       installType.value = type;
       doInstallAsync(0);
     };
-    
+
     const formatVersionDesc = (type: string) => {
       const entry = modUpdateInfo.value?.find(it => it.type === type);
       if (!entry?.version) return '';
       const date = entry.createdAt ? new Date(entry.createdAt).toLocaleDateString() : '';
-      return date ? `v${entry.version} · ${date}` : `v${entry.version}`;
+      return date ? `${entry.version} · ${date}` : `${entry.version}`;
     };
-    
+
     const installChannel = (type: 'slow' | 'ci') => {
       const hasOnlineVersion = modUpdateInfo.value?.find(it => it.type === type && it.url);
       if (hasOnlineVersion) {
@@ -59,7 +59,7 @@ export default defineComponent({
         doInstall('builtin');
       }
     };
-    
+
     const options = computed(() => [
       {
         label: t('mod.stableChannel'),
@@ -77,9 +77,9 @@ export default defineComponent({
         action: () => doInstall('mumod'),
       },
     ]);
-    
+
     return () => (
-      <DropMenu options={options.value} align="right">
+      <DropMenu options={options.value}>
         {{
           trigger: (onClick: any) => (
             <Button ing={installing.value} onClick={onClick}>

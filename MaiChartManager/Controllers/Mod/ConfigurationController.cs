@@ -26,9 +26,9 @@ public class ConfigurationController : ControllerBase
     }
 
     [HttpGet]
-    public AquaMaiConfigDto.ConfigDto GetAquaMaiConfig(bool forceDefault = false, bool skipSignatureCheck = false)
+    public async Task<AquaMaiConfigDto.ConfigDto> GetAquaMaiConfig(bool forceDefault = false, bool skipSignatureCheck = false)
     {
-        var dllPath = modConfigService.GetAquaMaiDllPath();
+        var dllPath = await modConfigService.GetAquaMaiDllPath();
         Dictionary<string, string[]>? configSort = null;
         using (var stream = new FileStream(dllPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         {
@@ -43,7 +43,7 @@ public class ConfigurationController : ControllerBase
             }
         }
         var shouldSkipSignatureCheck = skipSignatureCheck || !string.Equals(dllPath, ModPaths.AquaMaiDllInstalledPath, StringComparison.OrdinalIgnoreCase);
-        var config = modConfigService.GetCurrentAquaMaiConfig(forceDefault, shouldSkipSignatureCheck);
+        var config = await modConfigService.GetCurrentAquaMaiConfig(forceDefault, shouldSkipSignatureCheck);
         return new AquaMaiConfigDto.ConfigDto(
             config.ReflectionManager.Sections.Select(section =>
             {
@@ -59,7 +59,7 @@ public class ConfigurationController : ControllerBase
     [HttpPut]
     public async Task SetAquaMaiConfig(AquaMaiConfigDto.ConfigSaveDto config)
     {
-        var dllPath = modConfigService.GetAquaMaiDllPath();
+        var dllPath = await modConfigService.GetAquaMaiDllPath();
         var jsonOptions = new JsonSerializerOptions();
         jsonOptions.Converters.Add(new JsonStringEnumConverter());
 

@@ -41,7 +41,7 @@ public partial class StaticSettings
         try
         {
             GetGameVersion();
-            RescanAll();
+            RescanAll().GetAwaiter().GetResult();
         }
         catch (Exception e)
         {
@@ -52,12 +52,12 @@ public partial class StaticSettings
         }
     }
 
-    public void InitializeGameData()
+    public async Task InitializeGameData()
     {
         try
         {
             GetGameVersion();
-            RescanAll();
+            await RescanAll();
         }
         catch (Exception e)
         {
@@ -96,13 +96,13 @@ public partial class StaticSettings
         return _musicList;
     }
 
-    public void RescanAll()
+    public async Task RescanAll()
     {
         GetGameVersion();
         StartupErrorsList.Clear();
         try
         {
-            var config = _modConfigService.GetCurrentAquaMaiConfig();
+            var config = await _modConfigService.GetCurrentAquaMaiConfig();
             UpdateAssetPathsFromAquaMaiConfig(config);
         }
         catch (Exception)

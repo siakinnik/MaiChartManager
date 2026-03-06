@@ -31,10 +31,12 @@ public partial class StaticSettings
     public static string CurrentLocale { get; set; } = "zh";
 
     private readonly ILogger<StaticSettings> _logger;
+    private readonly Controllers.Mod.ModConfigService _modConfigService;
 
-    public StaticSettings(ILogger<StaticSettings> logger)
+    public StaticSettings(ILogger<StaticSettings> logger, Controllers.Mod.ModConfigService modConfigService)
     {
         _logger = logger;
+        _modConfigService = modConfigService;
         if (string.IsNullOrEmpty(GamePath)) return; // OOBE mode: skip scan
         try
         {
@@ -98,7 +100,15 @@ public partial class StaticSettings
     {
         GetGameVersion();
         StartupErrorsList.Clear();
-        UpdateAssetPathsFromAquaMaiConfig();
+        try
+        {
+            var config = _modConfigService.GetCurrentAquaMaiConfig();
+            UpdateAssetPathsFromAquaMaiConfig(config);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("无法获取 AquaMai 配置");
+        }
         ScanMusicList();
         ScanGenre();
         ScanVersionList();
@@ -302,21 +312,8 @@ public partial class StaticSettings
         return $"A{id:000}";
     }
 
-    public static void UpdateAssetPathsFromAquaMaiConfig(IConfig? config = null)
+    public static void UpdateAssetPathsFromAquaMaiConfig(IConfig config)
     {
-        if (config == null)
-        {
-            try
-            {
-                config = Controllers.Mod.ConfigurationController.GetCurrentAquaMaiConfig();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("无法获取 AquaMai 配置");
-                return;
-            }
-        }
-
         var imageAssetsDir = config.GetEntryState("GameSystem.Assets.LoadLocalImages.ImageAssetsDir");
         // 旧版兼容
         var localAssetsDir = config.GetEntryState("GameSystem.Assets.LoadLocalImages.LocalAssetsDir");

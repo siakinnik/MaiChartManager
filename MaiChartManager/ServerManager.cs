@@ -117,6 +117,7 @@ public static class ServerManager
             .AddSingleton<StaticSettings>()
             .AddSingleton<MaidataImportService>()
             .AddSingleton<MuModService>()
+            .AddSingleton<ModConfigService>()
             .AddEndpointsApiExplorer()
             .AddSwaggerGen(options => { options.CustomSchemaIds(type => type.Name == "Config" ? type.FullName : type.Name); })
             .Configure<FormOptions>(x =>

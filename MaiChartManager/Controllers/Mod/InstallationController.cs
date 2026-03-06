@@ -291,6 +291,49 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
     }
 
     [HttpPost]
+    public async Task InstallMuMod()
+    {
+        CopyFile(ModPaths.MuModDllBuiltinPath, ModPaths.MuModDllInstalledPath);
+
+        if (System.IO.File.Exists(ModPaths.AquaMaiDllInstalledPath))
+        {
+            System.IO.File.Delete(ModPaths.AquaMaiDllInstalledPath);
+        }
+
+        if (!System.IO.File.Exists(ModPaths.MuModConfigPath))
+        {
+            System.IO.File.WriteAllText(ModPaths.MuModConfigPath, "Channel = \"slow\"\nCachePath = \"LocalAssets\\\\MuMod.cache\"\n");
+        }
+
+        try
+        {
+            await muModService.EnsureCache(CancellationToken.None);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Failed to download MuMod cache during install, but DLL was installed successfully");
+        }
+    }
+
+    [HttpPost]
+    public void DeleteAquaMai()
+    {
+        if (System.IO.File.Exists(ModPaths.AquaMaiDllInstalledPath))
+        {
+            FileSystem.DeleteFile(ModPaths.AquaMaiDllInstalledPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+        }
+    }
+
+    [HttpPost]
+    public void DeleteMuMod()
+    {
+        if (System.IO.File.Exists(ModPaths.MuModDllInstalledPath))
+        {
+            FileSystem.DeleteFile(ModPaths.MuModDllInstalledPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+        }
+    }
+
+    [HttpPost]
     public void KillGameProcess()
     {
         foreach (var process in Process.GetProcessesByName("Sinmai"))

@@ -235,6 +235,7 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
         var key = req.Type switch
         {
             "ci" => CI_KEY,
+            "slow" => CI_KEY,
             "release" => RELEASE_KEY,
             _ => throw new ArgumentException("Invalid type", nameof(req.Type)),
         };

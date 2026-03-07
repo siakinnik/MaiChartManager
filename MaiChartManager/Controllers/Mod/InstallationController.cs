@@ -30,7 +30,6 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
         bool MelonLoaderInstalled,
         bool AquaMaiInstalled,
         string AquaMaiVersion,
-        string BundledAquaMaiVersion,
         bool IsJudgeDisplay4BInstalled,
         bool IsHidConflictExist,
         AquaMaiSignatureV2.VerifyResult? Signature,
@@ -52,8 +51,6 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
         {
             aquaMaiVersion = FileVersionInfo.GetVersionInfo(ModPaths.AquaMaiDllInstalledPath).ProductVersion ?? "N/A";
         }
-
-        var aquaMaiBuiltinVersion = FileVersionInfo.GetVersionInfo(ModPaths.AquaMaiDllBuiltinPath).ProductVersion;
 
         var muModInstalled = muModService.IsMuModInstalled();
 
@@ -79,7 +76,6 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
             IsMelonInstalled(),
             aquaMaiInstalled,
             aquaMaiVersion,
-            aquaMaiBuiltinVersion!,
             GetIsJudgeDisplay4BInstalled(),
             GetIsHidConflictExist(),
             sig,
@@ -213,18 +209,6 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
 
             Directory.CreateDirectory(Path.GetDirectoryName(Path.Combine(StaticSettings.GamePath, entry.FullName)));
             entry.ExtractToFile(Path.Combine(StaticSettings.GamePath, entry.FullName), true);
-        }
-    }
-
-    [HttpPost]
-    public void InstallAquaMai()
-    {
-        var src = Path.Combine(StaticSettings.exeDir, "AquaMai.dll");
-        var dest = Path.Combine(StaticSettings.GamePath, @"Mods\AquaMai.dll");
-        CopyFile(src, dest);
-        if (System.IO.File.Exists(ModPaths.MuModDllInstalledPath))
-        {
-            System.IO.File.Delete(ModPaths.MuModDllInstalledPath);
         }
     }
 

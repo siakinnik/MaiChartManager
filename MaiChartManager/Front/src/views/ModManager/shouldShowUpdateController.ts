@@ -54,19 +54,11 @@ export const latestVersion = computed(() => {
   const defaultVersionInfo =
     modUpdateInfo.value?.find(it => it.type === effectiveChannel) ||
     modUpdateInfo.value?.find(it => it.default) ||
-    modUpdateInfo.value?.[0] || { type: 'builtin' };
-  if (defaultVersionInfo.type === "builtin") {
+    modUpdateInfo.value?.[0];
+  if (!defaultVersionInfo?.version) {
     return {
-      version: modInfo.value!.bundledAquaMaiVersion!,
-      type: 'builtin',
-    };
-  }
-  let latestVersionStr = defaultVersionInfo.version!;
-  let builtinVersion = modInfo.value!.bundledAquaMaiVersion!;
-  if (compareVersions(latestVersionStr, builtinVersion) < 0) {
-    return {
-      version: builtinVersion,
-      type: 'builtin',
+      version: undefined as string | undefined,
+      type: 'unknown',
     };
   }
   return defaultVersionInfo;
@@ -85,7 +77,7 @@ export const shouldShowUpdate = computed(() => {
   if (!modInfo.value?.aquaMaiVersion) return true;
   let currentVersion = modInfo.value.aquaMaiVersion;
 
-  if (!latestVersion.value?.version) return true;
+  if (!latestVersion.value?.version) return false;
 
   return compareVersions(currentVersion, latestVersion.value.version) < 0;
 })

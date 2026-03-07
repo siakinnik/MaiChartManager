@@ -2,15 +2,12 @@ import { ref } from "vue";
 import { useStorage } from "@vueuse/core";
 import { locale } from "@/locales";
 import { aquaMaiVersionConfig } from "@/client/api";
-import { GetGetConfigTypeEnum } from "@/client/aquaMaiVersionConfigApiGen";
 
 const CHANGELOG_BUCKET_BASE = 'https://munet-version-config-1251600285.cos.ap-shanghai.myqcloud.com/mcm-changelog';
 
 // --- Mod 更新 ---
 
-export const modUpdateInfo = ref<Awaited<ReturnType<typeof aquaMaiVersionConfig.getGetConfig>>['data']>([{
-  type: GetGetConfigTypeEnum.Builtin,
-}])
+export const modUpdateInfo = ref<Awaited<ReturnType<typeof aquaMaiVersionConfig.getGetConfig>>['data']>([])
 
 export const updateModUpdateInfo = async () => {
   try {

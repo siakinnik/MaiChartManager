@@ -11,15 +11,13 @@ export default defineComponent({
   setup() {
     const showDone = ref(false);
     const { t } = useI18n();
-    const installType = ref<'builtin' | 'slow' | 'ci' | 'mumod'>('slow');
+    const installType = ref<'slow' | 'ci' | 'mumod'>('slow');
 
     const { isLoading: installing, execute: doInstallAsync } = useAsyncState(
       async () => {
         const type = installType.value;
         if (type === 'mumod') {
           await api.InstallMuMod();
-        } else if (type === 'builtin') {
-          await api.InstallAquaMai();
         } else {
           const version = modUpdateInfo.value?.find(it => it.type === type);
           if (!version) throw new Error(t('mod.versionNotFound'));
@@ -39,7 +37,7 @@ export default defineComponent({
       }
     );
 
-    const doInstall = (type: 'builtin' | 'slow' | 'ci' | 'mumod') => {
+    const doInstall = (type: 'slow' | 'ci' | 'mumod') => {
       installType.value = type;
       doInstallAsync(0);
     };
@@ -52,31 +50,32 @@ export default defineComponent({
     };
 
     const installChannel = (type: 'slow' | 'ci') => {
-      const hasOnlineVersion = modUpdateInfo.value?.find(it => it.type === type && it.url);
-      if (hasOnlineVersion) {
-        doInstall(type);
-      } else {
-        doInstall('builtin');
-      }
+      doInstall(type);
     };
 
-    const options = computed(() => [
-      {
-        label: t('mod.stableChannel'),
-        desc: formatVersionDesc('slow'),
-        action: () => installChannel('slow'),
-      },
-      {
-        label: t('mod.fastChannel'),
-        desc: formatVersionDesc('ci'),
-        action: () => installChannel('ci'),
-      },
-      {
+    const options = computed(() => {
+      const result = [];
+      if (modUpdateInfo.value?.find(it => it.type === 'slow' && it.url)) {
+        result.push({
+          label: t('mod.stableChannel'),
+          desc: formatVersionDesc('slow'),
+          action: () => installChannel('slow'),
+        });
+      }
+      if (modUpdateInfo.value?.find(it => it.type === 'ci' && it.url)) {
+        result.push({
+          label: t('mod.fastChannel'),
+          desc: formatVersionDesc('ci'),
+          action: () => installChannel('ci'),
+        });
+      }
+      result.push({
         label: 'MuMod',
         desc: t('mod.mumodDesc'),
         action: () => doInstall('mumod'),
-      },
-    ]);
+      });
+      return result;
+    });
 
     return () => (
       <DropMenu options={options.value}>

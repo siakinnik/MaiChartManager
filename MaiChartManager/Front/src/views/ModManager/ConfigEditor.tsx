@@ -3,14 +3,14 @@ import { defineComponent, ref, watch } from "vue";
 import api from "@/client/api";
 import { globalCapture, modInfo, updateModInfo, updateMusicList } from "@/store/refs";
 import AquaMaiConfigurator from "./AquaMaiConfigurator";
-import { latestVersion, shouldShowUpdate } from "./shouldShowUpdateController";
+import { latestVersion, shouldShowUpdate, isMuModMode } from "./shouldShowUpdateController";
 import ModInstallDropdown from "@/views/ModManager/ModInstallDropdown";
 import { useI18n } from 'vue-i18n';
-import { Button, addToast } from '@munet/ui';
+import { Button, addToast, Radio } from '@munet/ui';
 import { debounce } from 'perfect-debounce';
 import AquaMaiSignatureStatusDisplay from "./AquaMaiSignatureStatusDisplay";
 import { useAsyncState } from '@vueuse/core';
-import { aquaMaiConfig as config, configReadErr, configReadErrTitle, updateAquaMaiConfig, configJustLoaded } from "./refs";
+import { aquaMaiConfig as config, configReadErr, configReadErrTitle, updateAquaMaiConfig, configJustLoaded, muModChannel, isBothModsPresent, updateMuModChannel } from "./refs";
 
 export default defineComponent({
   setup() {
@@ -60,6 +60,33 @@ export default defineComponent({
       await updateAquaMaiConfig(false, true);
     }
 
+    const localMuModChannel = ref(muModChannel.value);
+    watch(muModChannel, (v) => { localMuModChannel.value = v; });
+
+    const { execute: deleteAquaMai } = useAsyncState(async () => {
+      await api.DeleteAquaMai();
+      await updateModInfo();
+      await updateAquaMaiConfig();
+    }, undefined, {
+      immediate: false,
+      onError: (e: any) => globalCapture(e, t('mod.conflict.deleteAquaMai')),
+    });
+
+    const { execute: deleteMuMod } = useAsyncState(async () => {
+      await api.DeleteMuMod();
+      await updateModInfo();
+      await updateAquaMaiConfig();
+    }, undefined, {
+      immediate: false,
+      onError: (e: any) => globalCapture(e, t('mod.conflict.deleteMuMod')),
+    });
+
+    watch(localMuModChannel, (v) => {
+      if (v !== muModChannel.value) {
+        updateMuModChannel(v);
+      }
+    });
+
     return () => {
 
       let editorPart = <></>;
@@ -105,21 +132,46 @@ export default defineComponent({
             {modInfo.value.melonLoaderInstalled ? <span class="c-green-6 max-[1060px]:hidden">{t('mod.installed')}</span> : <span class="c-red-6">{t('mod.notInstalled')}</span>}
             {!modInfo.value.melonLoaderInstalled && <Button ing={installingMelonLoader.value} onClick={() => installMelonLoader()}>{t('mod.install')}</Button>}
             <div class={["w-8", "max-[1060px]:hidden"]}/>
-            <span class="max-[1060px]:hidden">AquaMai:</span>
-            {modInfo.value.aquaMaiInstalled ?
-              !shouldShowUpdate.value ? <span class="c-green-6 max-[1060px]:hidden">{t('mod.installed')}</span> : <span class="c-orange">{t('mod.updateAvailable')}</span> :
-              <span class="c-red-6">{t('mod.notInstalled')}</span>}
+            <span class="max-[1060px]:hidden">{isMuModMode.value ? 'MuMod:' : 'AquaMai:'}</span>
+            {isMuModMode.value ? (
+              <span class="c-green-6 max-[1060px]:hidden">{t('mod.mumodInstalled')}</span>
+            ) : (
+              modInfo.value.aquaMaiInstalled ?
+                !shouldShowUpdate.value ? <span class="c-green-6 max-[1060px]:hidden">{t('mod.installed')}</span> : <span class="c-orange">{t('mod.updateAvailable')}</span> :
+                <span class="c-red-6">{t('mod.notInstalled')}</span>
+            )}
             <ModInstallDropdown/>
             <span class="max-[1060px]:hidden">{t('mod.installedVersion')}:</span>
-            <span class="max-[450px]:hidden">{modInfo.value.aquaMaiVersion !=='N/A' && 'v'}{modInfo.value.aquaMaiVersion}</span>
+            {isMuModMode.value ? (
+              <span class="max-[450px]:hidden">v{modInfo.value.muModVersion ?? 'N/A'}</span>
+            ) : (
+              <span class="max-[450px]:hidden">{modInfo.value.aquaMaiVersion !== 'N/A' && 'v'}{modInfo.value.aquaMaiVersion}</span>
+            )}
             <AquaMaiSignatureStatusDisplay/>
             <span class="max-[1060px]:hidden">{t('mod.availableVersion')}:</span>
-            <span class={[shouldShowUpdate.value && "c-orange", "max-[1060px]:hidden"]}>{latestVersion.value.version}</span>
+            <span class={[shouldShowUpdate.value && "c-orange", "max-[1060px]:hidden"]}>{latestVersion.value.version}{isMuModMode.value && ` (${t('mod.loaded')})`}</span>
             <Button onClick={() => api.KillGameProcess()}>
               {t('mod.killGameProcess')}
             </Button>
+            {isMuModMode.value && (
+              <>
+                <span class="shrink-0">{t('mod.mumodChannel')}:</span>
+                <Radio k={'slow'} v-model:value={localMuModChannel.value}>{t('mod.mumodChannelSlow')}</Radio>
+                <Radio k={'fast'} v-model:value={localMuModChannel.value}>{t('mod.mumodChannelFast')}</Radio>
+              </>
+            )}
           </div>
-          {editorPart}
+          {isBothModsPresent.value && (
+            <div class="flex flex-col gap-2 p-4 bg-orange-50 border border-orange-200 border-solid rounded-xl">
+              <div class="font-semibold c-orange-7">{t('mod.conflict.title')}</div>
+              <div class="c-orange-6">{t('mod.conflict.message')}</div>
+              <div class="flex gap-2">
+                <Button onClick={() => deleteAquaMai()}>{t('mod.conflict.deleteAquaMai')}</Button>
+                <Button onClick={() => deleteMuMod()}>{t('mod.conflict.deleteMuMod')}</Button>
+              </div>
+            </div>
+          )}
+          {!isBothModsPresent.value && editorPart}
         </div>}
       </div>
     };

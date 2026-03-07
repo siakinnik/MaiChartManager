@@ -9,7 +9,7 @@ namespace MaiChartManager.Controllers.Mod;
 
 [ApiController]
 [Route("MaiChartManagerServlet/[action]Api")]
-public class InstallationController(StaticSettings settings, ILogger<InstallationController> logger) : ControllerBase
+public class InstallationController(StaticSettings settings, ILogger<InstallationController> logger, MuModService muModService) : ControllerBase
 {
     private static string judgeDisplay4BPath = Path.Combine(StaticSettings.exeDir, "Resources", "JudgeDisplay4B");
 
@@ -35,7 +35,12 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
         bool IsHidConflictExist,
         AquaMaiSignatureV2.VerifyResult? Signature,
         bool IsAdxHidIoModAbsent,
-        bool IsMmlLegacyLibsInstalled
+        bool IsMmlLegacyLibsInstalled,
+        bool MuModInstalled,
+        string? MuModVersion,
+        string? MuModChannel,
+        string? MuModCacheVersion,
+        bool IsBothModsPresent
     );
 
     [HttpGet]
@@ -50,10 +55,24 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
 
         var aquaMaiBuiltinVersion = FileVersionInfo.GetVersionInfo(ModPaths.AquaMaiDllBuiltinPath).ProductVersion;
 
+        var muModInstalled = muModService.IsMuModInstalled();
+
         AquaMaiSignatureV2.VerifyResult? sig = null;
         if (aquaMaiInstalled)
         {
             sig = AquaMaiSignatureV2.VerifySignature(System.IO.File.ReadAllBytes(ModPaths.AquaMaiDllInstalledPath));
+        }
+        else if (muModInstalled)
+        {
+            sig = AquaMaiSignatureV2.VerifySignature(System.IO.File.ReadAllBytes(ModPaths.MuModDllInstalledPath));
+        }
+        var muModVersion = muModInstalled ? muModService.GetMuModVersion() : null;
+        string? muModChannel = null;
+        string? muModCacheVersion = null;
+        if (muModInstalled)
+        {
+            try { muModChannel = muModService.ReadConfig().Channel; } catch { }
+            muModCacheVersion = muModService.GetCacheInfo();
         }
 
         return new GameModInfo(
@@ -65,7 +84,12 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
             GetIsHidConflictExist(),
             sig,
             GetIsAdxHidIoModAbsent(),
-            GetIsMmlLegacyLibsInstalled()
+            GetIsMmlLegacyLibsInstalled(),
+            muModInstalled,
+            muModVersion,
+            muModChannel,
+            muModCacheVersion,
+            aquaMaiInstalled && muModInstalled
         );
     }
 
@@ -198,6 +222,10 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
         var src = Path.Combine(StaticSettings.exeDir, "AquaMai.dll");
         var dest = Path.Combine(StaticSettings.GamePath, @"Mods\AquaMai.dll");
         CopyFile(src, dest);
+        if (System.IO.File.Exists(ModPaths.MuModDllInstalledPath))
+        {
+            System.IO.File.Delete(ModPaths.MuModDllInstalledPath);
+        }
     }
 
     [HttpPost]
@@ -265,9 +293,56 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
             var dest = Path.Combine(StaticSettings.GamePath, @"Mods\AquaMai.dll");
             Directory.CreateDirectory(Path.GetDirectoryName(dest));
             await System.IO.File.WriteAllBytesAsync(dest, data);
+            if (System.IO.File.Exists(ModPaths.MuModDllInstalledPath))
+            {
+                System.IO.File.Delete(ModPaths.MuModDllInstalledPath);
+            }
             return;
         }
         throw new InvalidOperationException("Failed to download AquaMai from all urls", lastException);
+    }
+
+    [HttpPost]
+    public async Task InstallMuMod()
+    {
+        CopyFile(ModPaths.MuModDllBuiltinPath, ModPaths.MuModDllInstalledPath);
+
+        if (System.IO.File.Exists(ModPaths.AquaMaiDllInstalledPath))
+        {
+            System.IO.File.Delete(ModPaths.AquaMaiDllInstalledPath);
+        }
+
+        if (!System.IO.File.Exists(ModPaths.MuModConfigPath))
+        {
+            System.IO.File.WriteAllText(ModPaths.MuModConfigPath, "Channel = \"slow\"\nCachePath = \"LocalAssets\\\\MuMod.cache\"\n");
+        }
+
+        try
+        {
+            await muModService.EnsureCache(CancellationToken.None);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Failed to download MuMod cache during install, but DLL was installed successfully");
+        }
+    }
+
+    [HttpPost]
+    public void DeleteAquaMai()
+    {
+        if (System.IO.File.Exists(ModPaths.AquaMaiDllInstalledPath))
+        {
+            FileSystem.DeleteFile(ModPaths.AquaMaiDllInstalledPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+        }
+    }
+
+    [HttpPost]
+    public void DeleteMuMod()
+    {
+        if (System.IO.File.Exists(ModPaths.MuModDllInstalledPath))
+        {
+            FileSystem.DeleteFile(ModPaths.MuModDllInstalledPath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+        }
     }
 
     [HttpPost]

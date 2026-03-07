@@ -443,7 +443,7 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
     }
 
     [HttpPost]
-    public void ModifyId(int id, [FromBody] int newId, string assetDir)
+    public async Task ModifyId(int id, [FromBody] int newId, string assetDir)
     {
         if (IapManager.License != IapManager.LicenseStatus.Active) return;
         var music = settings.GetMusic(id, assetDir);
@@ -530,7 +530,7 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
         FileSystem.MoveDirectory(oldMusicDir, newMusicDir, UIOption.OnlyErrorDialogs);
 
         // rescan all
-        settings.RescanAll();
+        await settings.RescanAll();
     }
 
     [HttpGet]

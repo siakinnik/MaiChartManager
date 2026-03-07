@@ -151,6 +151,12 @@ export interface DeleteAssetRequest {
   fileName?: string | null;
 }
 
+export interface EnsureCacheResultDto {
+  success?: boolean;
+  version?: string | null;
+  error?: string | null;
+}
+
 export interface Entry {
   path?: string | null;
   name?: string | null;
@@ -174,6 +180,11 @@ export interface GameModInfo {
   signature?: VerifyResult;
   isAdxHidIoModAbsent?: boolean;
   isMmlLegacyLibsInstalled?: boolean;
+  muModInstalled?: boolean;
+  muModVersion?: string | null;
+  muModChannel?: string | null;
+  muModCacheVersion?: string | null;
+  isBothModsPresent?: boolean;
 }
 
 export interface GenreAddRequest {
@@ -283,6 +294,11 @@ export interface InstallMmlLibsDto {
   useLegacy?: boolean;
 }
 
+export interface MuModConfigDto {
+  channel?: string | null;
+  cachePath?: string | null;
+}
+
 export interface MusicIdAndAssetDirPair {
   /** @format int32 */
   id?: number;
@@ -332,7 +348,7 @@ export interface PdxDriverStatusDto {
   /** @format int32 */
   deviceCount?: number;
   available?: boolean;
-  devicePaths?: string[];
+  devicePaths?: string[] | null;
 }
 
 export interface PutAssetDirTxtValueRequest {
@@ -369,6 +385,10 @@ export interface SetAudioPreviewRequest {
   startTime?: number;
   /** @format double */
   endTime?: number;
+}
+
+export interface SetChannelDto {
+  channel?: string | null;
 }
 
 export interface SettingsDto {
@@ -666,7 +686,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title MaiChartManager
+ * @title MaiChartManager.GenClient
  * @version 1.0
  */
 export class Api<
@@ -1614,6 +1634,48 @@ export class Api<
      * No description
      *
      * @tags Installation
+     * @name InstallMuMod
+     * @request POST:/MaiChartManagerServlet/InstallMuModApi
+     */
+    InstallMuMod: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/InstallMuModApi`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Installation
+     * @name DeleteAquaMai
+     * @request POST:/MaiChartManagerServlet/DeleteAquaMaiApi
+     */
+    DeleteAquaMai: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/DeleteAquaMaiApi`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Installation
+     * @name DeleteMuMod
+     * @request POST:/MaiChartManagerServlet/DeleteMuModApi
+     */
+    DeleteMuMod: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/MaiChartManagerServlet/DeleteMuModApi`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Installation
      * @name KillGameProcess
      * @request POST:/MaiChartManagerServlet/KillGameProcessApi
      */
@@ -1737,6 +1799,56 @@ export class Api<
         method: "PUT",
         body: data,
         type: ContentType.FormData,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MuMod
+     * @name GetMuModConfig
+     * @request GET:/MaiChartManagerServlet/GetMuModConfigApi
+     */
+    GetMuModConfig: (params: RequestParams = {}) =>
+      this.request<MuModConfigDto, any>({
+        path: `/MaiChartManagerServlet/GetMuModConfigApi`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MuMod
+     * @name SetMuModChannelAndEnsureCache
+     * @request PUT:/MaiChartManagerServlet/SetMuModChannelAndEnsureCacheApi
+     */
+    SetMuModChannelAndEnsureCache: (
+      data: SetChannelDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<EnsureCacheResultDto, any>({
+        path: `/MaiChartManagerServlet/SetMuModChannelAndEnsureCacheApi`,
+        method: "PUT",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MuMod
+     * @name EnsureMuModCache
+     * @request POST:/MaiChartManagerServlet/EnsureMuModCacheApi
+     */
+    EnsureMuModCache: (params: RequestParams = {}) =>
+      this.request<EnsureCacheResultDto, any>({
+        path: `/MaiChartManagerServlet/EnsureMuModCacheApi`,
+        method: "POST",
+        format: "json",
         ...params,
       }),
 

@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Serialization;
 using System.Windows.Forms;
 using idunno.Authentication.Basic;
+using MaiChartManager.Controllers.Mod;
 using MaiChartManager.Services;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -113,8 +114,11 @@ public static class ServerManager
             });
 
         builder.Services
+            .AddHttpClient()
             .AddSingleton<StaticSettings>()
             .AddSingleton<MaidataImportService>()
+            .AddSingleton<MuModService>()
+            .AddSingleton<ModConfigService>()
             .AddEndpointsApiExplorer()
             .AddSwaggerGen(options => { options.CustomSchemaIds(type => type.Name == "Config" ? type.FullName : type.Name); })
             .Configure<FormOptions>(x =>

@@ -89,6 +89,10 @@ public sealed partial class Browser : Form
         webView21.CoreWebView2.PermissionRequested += WebViewHelper.OnPermissionRequested;
         webView21.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
         webView21.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
+
+#if DEBUG
+        WindowState = FormWindowState.Minimized;
+#endif
     }
 
     private async void CoreWebView2_NewWindowRequested(object? sender, CoreWebView2NewWindowRequestedEventArgs e)

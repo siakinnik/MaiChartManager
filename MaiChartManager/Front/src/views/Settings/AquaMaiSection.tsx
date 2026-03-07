@@ -1,13 +1,15 @@
 import { defineComponent } from "vue";
 import { Radio } from "@munet/ui";
 import { useI18n } from "vue-i18n";
-import { selectedChannel } from "@/views/ModManager/shouldShowUpdateController";
+import { selectedChannel, isMuModMode } from "@/views/ModManager/shouldShowUpdateController";
 
 export default defineComponent({
   setup() {
     const { t } = useI18n();
 
-    return () => (
+    return () => {
+      if (isMuModMode.value) return null;
+      return (
       <div class="mb-6">
         <div class="text-lg font-semibold mb-3 text-[var(--link-color)]">AquaMai</div>
         <div class="rounded-xl bg-white/60 p-4 flex flex-col gap-4 border border-gray-200 border-solid">
@@ -23,6 +25,7 @@ export default defineComponent({
           </div>
         </div>
       </div>
-    );
+      );
+    };
   },
 });

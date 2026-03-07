@@ -41,9 +41,18 @@ export function compareVersions(v1: string, v2: string) {
 
 export const selectedChannel = useStorage<'slow' | 'ci'>('aquamai-update-channel', 'slow');
 
+// MuMod 模式：MuMod 已安装且没有冲突（两者都不存在的情况不算 MuMod 模式）
+export const isMuModMode = computed(() => {
+  return !!modInfo.value?.muModInstalled && !modInfo.value?.isBothModsPresent;
+});
+
 export const latestVersion = computed(() => {
+  // MuMod 模式下，使用 muModChannel 对应的 API type 查找最新版本
+  const effectiveChannel = isMuModMode.value
+    ? (modInfo.value?.muModChannel === 'fast' ? 'ci' : 'slow')
+    : selectedChannel.value;
   const defaultVersionInfo =
-    modUpdateInfo.value?.find(it => it.type === selectedChannel.value) ||
+    modUpdateInfo.value?.find(it => it.type === effectiveChannel) ||
     modUpdateInfo.value?.find(it => it.default) ||
     modUpdateInfo.value?.[0] || { type: 'builtin' };
   if (defaultVersionInfo.type === "builtin") {
@@ -52,9 +61,9 @@ export const latestVersion = computed(() => {
       type: 'builtin',
     };
   }
-  let latestVersion = defaultVersionInfo.version!;
+  let latestVersionStr = defaultVersionInfo.version!;
   let builtinVersion = modInfo.value!.bundledAquaMaiVersion!;
-  if (compareVersions(latestVersion, builtinVersion) < 0) {
+  if (compareVersions(latestVersionStr, builtinVersion) < 0) {
     return {
       version: builtinVersion,
       type: 'builtin',
@@ -64,6 +73,14 @@ export const latestVersion = computed(() => {
 })
 
 export const shouldShowUpdate = computed(() => {
+  if (isMuModMode.value) {
+    // MuMod 模式下：比较缓存版本和最新版本
+    if (!modInfo.value?.muModCacheVersion) return true;
+    const muModType = modInfo.value?.muModChannel === 'fast' ? 'ci' : 'slow';
+    const muModLatest = modUpdateInfo.value?.find(it => it.type === muModType);
+    if (!muModLatest?.version) return false;
+    return compareVersions(modInfo.value.muModCacheVersion, muModLatest.version) < 0;
+  }
   if (!modInfo.value?.aquaMaiInstalled) return true;
   if (!modInfo.value?.aquaMaiVersion) return true;
   let currentVersion = modInfo.value.aquaMaiVersion;

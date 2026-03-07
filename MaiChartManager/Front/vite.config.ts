@@ -34,6 +34,7 @@ export default defineConfig(({command}) => ({
   server: {
     proxy: {
       '/MaiChartManagerServlet': 'http://localhost:5181'
-    }
+    },
+    port: 5182,
   }
 }));

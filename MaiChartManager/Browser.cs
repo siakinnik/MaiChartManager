@@ -27,6 +27,17 @@ public sealed partial class Browser : Form
         webView21.Source = new Uri("https://mcm.invalid/index.html");
         webView21.DefaultBackgroundColor = Color.Transparent;
         IapManager.BindToForm(this);
+
+        // 竖屏显示器时，限制窗口高度不超过显示器宽度的 2/3
+        var landscape = Screen.AllScreens.FirstOrDefault(s => s.WorkingArea.Width >= s.WorkingArea.Height);
+        if (landscape == null)
+        {
+            var portrait = Screen.PrimaryScreen ?? Screen.AllScreens[0];
+            var maxHeight = portrait.WorkingArea.Width * 2 / 3;
+            if (Height > maxHeight)
+                Height = maxHeight;
+        }
+
         StartPosition = FormStartPosition.Manual;
         Location = WebViewHelper.CalculatePosition(Width, Height);
     }

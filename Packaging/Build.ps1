@@ -124,7 +124,7 @@ try {
     $ConfigName = if ($Mode -eq "Canary") { "Crack" } else { "Release" }
     Write-Host "Using Configuration: $ConfigName" -ForegroundColor Yellow
     
-    dotnet publish -p:Configuration=$ConfigName
+    dotnet publish Sitreamai.slnx -c $ConfigName
     if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed with exit code $LASTEXITCODE" }
 } finally {
     Pop-Location

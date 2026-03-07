@@ -55,13 +55,17 @@ public class InstallationController(StaticSettings settings, ILogger<Installatio
 
         var aquaMaiBuiltinVersion = FileVersionInfo.GetVersionInfo(ModPaths.AquaMaiDllBuiltinPath).ProductVersion;
 
+        var muModInstalled = muModService.IsMuModInstalled();
+
         AquaMaiSignatureV2.VerifyResult? sig = null;
         if (aquaMaiInstalled)
         {
             sig = AquaMaiSignatureV2.VerifySignature(System.IO.File.ReadAllBytes(ModPaths.AquaMaiDllInstalledPath));
         }
-
-        var muModInstalled = muModService.IsMuModInstalled();
+        else if (muModInstalled)
+        {
+            sig = AquaMaiSignatureV2.VerifySignature(System.IO.File.ReadAllBytes(ModPaths.MuModDllInstalledPath));
+        }
         var muModVersion = muModInstalled ? muModService.GetMuModVersion() : null;
         string? muModChannel = null;
         string? muModCacheVersion = null;

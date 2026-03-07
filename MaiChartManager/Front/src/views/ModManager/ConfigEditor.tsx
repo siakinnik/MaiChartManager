@@ -147,7 +147,7 @@ export default defineComponent({
             ) : (
               <span class="max-[450px]:hidden">{modInfo.value.aquaMaiVersion !== 'N/A' && 'v'}{modInfo.value.aquaMaiVersion}</span>
             )}
-            {!isMuModMode.value && <AquaMaiSignatureStatusDisplay/>}
+            <AquaMaiSignatureStatusDisplay/>
             <span class="max-[1060px]:hidden">{t('mod.availableVersion')}:</span>
             <span class={[shouldShowUpdate.value && "c-orange", "max-[1060px]:hidden"]}>{latestVersion.value.version}{isMuModMode.value && ` (${t('mod.loaded')})`}</span>
             <Button onClick={() => api.KillGameProcess()}>

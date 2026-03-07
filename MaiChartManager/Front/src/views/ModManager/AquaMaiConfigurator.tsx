@@ -158,9 +158,9 @@ export default defineComponent({
       }) || [];
     });
 
-    return () => <div class="grid cols-[15em_auto] max-[900px]:cols-1">
+    return () => <div class="grid cols-[15em_auto] rows-1 max-[900px]:cols-1 flex-1 min-h-0">
       {/* 左侧导航 */}
-      <div class="flex flex-col gap-0.5 max-[900px]:hidden of-y-auto h-[calc(100dvh-80px)]">
+      <div class="flex flex-col gap-0.5 max-[900px]:hidden of-y-auto h-full">
         {allTabs.value.map(tab =>
           <div
             key={tab.key}
@@ -174,7 +174,7 @@ export default defineComponent({
           </div>
         )}
       </div>
-      <div class="flex flex-col h-[calc(100dvh-80px)]">
+      <div class="flex flex-col h-full">
         <div class="flex gap-2 p-2 shrink-0">
           <div class={["min-[900px]:hidden"]}>
             <Popover trigger="click">{{

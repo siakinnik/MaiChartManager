@@ -15,7 +15,7 @@ export default defineComponent({
       if (shouldShowUpdate.value) return 'warning'
     })
 
-    return () => <div class="p-xy h-100dvh of-y-auto">
+    return () => <div class="p-xy h-100dvh flex flex-col of-hidden">
       {modInfo.value && <ConfigEditor />}
     </div>;
   }

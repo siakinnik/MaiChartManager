@@ -17,7 +17,7 @@ export default defineComponent({
     })
 
     return () => <div>
-      <div class="ml-1 text-sm">{t('chart.import.option.shiftMode')}</div>
+      <div class="text-sm">{t('chart.import.option.shiftMode')}</div>
       <div class="flex flex-col gap-2 w-full">
         <div class="flex gap-2 h-34px items-center">
           <Popover trigger="hover">

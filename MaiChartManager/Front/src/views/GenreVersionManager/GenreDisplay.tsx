@@ -112,7 +112,7 @@ export default defineComponent({
                       }}
             /> :
             // contenteditable 的换行有疑难杂症
-            <pre class="b b-gray-3 b-solid rounded-sm h-12 lh-normal box-content text-align-center flex items-center justify-center my-4">{props.genre.genreNameTwoLine}</pre>
+            <pre class="b b-gray-3 b-solid rounded-sm h-12 lh-normal box-content text-align-center flex items-center justify-center my-4 bg-white">{props.genre.genreNameTwoLine}</pre>
         }
         <Buttons/>
       </div>

@@ -85,7 +85,7 @@ export default defineComponent({
         show.value = "";
         const result = (await api.ReplaceChart(selectMusicId.value, level, selectedADir.value, { file, shift: tempOption.value.shift })).data;
         if (!result.fatal) {
-          await showTransactionalDialog(t('music.edit.replaceChartSuccess'), '', undefined, true);
+          addToast({ type:'success', message: t('music.edit.replaceChartSuccess') })
         } else {
           apiResp.value = result; // 用于在失败时显示错误信息
           show.value = "failed";
@@ -130,7 +130,7 @@ export default defineComponent({
           </div>}
           {show.value === "maidata" && <div>
             <ShiftModeSelector tempOptions={tempOption.value}></ShiftModeSelector>
-            <div>{t('music.edit.replaceChartShiftModeHint')}</div>
+            <div class="text-sm">{t('music.edit.replaceChartShiftModeHint')}</div>
           </div>}
         </div>,
         actions: () => <>

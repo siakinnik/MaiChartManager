@@ -125,8 +125,8 @@ export default defineComponent({
         editorPart = <AquaMaiConfigurator config={config.value!} useNewSort={true}/>
       }
 
-      return <div class="flex flex-col gap-2 h-full of-y-auto">
-        {!!modInfo.value && <div class="flex flex-col gap-2">
+      return <div class="flex flex-col gap-2 flex-1 min-h-0">
+        {!!modInfo.value && <div class="flex flex-col gap-2 flex-1 min-h-0">
           <div class="flex gap-2 items-center flex-wrap">
             <span class="max-[1060px]:hidden">MelonLoader:</span>
             {modInfo.value.melonLoaderInstalled ? <span class="c-green-6 max-[1060px]:hidden">{t('mod.installed')}</span> : <span class="c-red-6">{t('mod.notInstalled')}</span>}

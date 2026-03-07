@@ -71,9 +71,9 @@ export default defineComponent({
               />
             </div>
           </div>,
-          actions: () => <div class="flex gap-2 justify-end">
+          actions: () => <>
             <Button onClick={save}>{t('common.confirm')}</Button>
-          </div>
+          </>
         }}</Modal>
       </Button>
     )

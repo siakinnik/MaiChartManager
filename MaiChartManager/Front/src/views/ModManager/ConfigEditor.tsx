@@ -154,11 +154,11 @@ export default defineComponent({
               {t('mod.killGameProcess')}
             </Button>
             {isMuModMode.value && (
-              <>
+              <div class="flex gap-2 items-center">
                 <span class="shrink-0">{t('mod.mumodChannel')}:</span>
                 <Radio k={'slow'} v-model:value={localMuModChannel.value}>{t('mod.mumodChannelSlow')}</Radio>
                 <Radio k={'fast'} v-model:value={localMuModChannel.value}>{t('mod.mumodChannelFast')}</Radio>
-              </>
+              </div>
             )}
           </div>
           {isBothModsPresent.value && (

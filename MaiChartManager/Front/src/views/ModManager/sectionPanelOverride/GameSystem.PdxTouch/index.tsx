@@ -99,7 +99,7 @@ export default defineComponent({
                       />,
                   }}
                 </DropMenu>
-                <div class="text-sm op-60">{t('mod.pdx.pathDesc')}</div>
+                <div class="text-sm op-80">{t('mod.pdx.pathDesc')}</div>
               </div>
             </div>
           }
@@ -124,7 +124,6 @@ export default defineComponent({
                       />,
                   }}
                 </DropMenu>
-                <div class="text-sm op-60">{t('mod.pdx.pathDesc')}</div>
               </div>
             </div>
           }

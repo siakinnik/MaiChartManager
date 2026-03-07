@@ -71,7 +71,7 @@ export default defineComponent({
                   <CheckBox v-model:value={props.entryStates['GameSystem.KeyMap.DisableIO4_2P'].value}>{props.entryStates['GameSystem.KeyMap.DisableIO4_2P'].value ? t('mod.keyMap.disable2P') : t('mod.keyMap.enable2P')}</CheckBox>
                   <CheckBox v-model:value={props.entryStates['GameSystem.KeyMap.DisableIO4System'].value}>{props.entryStates['GameSystem.KeyMap.DisableIO4System'].value ? t('mod.keyMap.disableSystem') : t('mod.keyMap.enableSystem')}</CheckBox>
               </div>
-              {t('mod.keyMap.disableIO4Tip')}
+              <div class="text-sm op-80">{t('mod.keyMap.disableIO4Tip')}</div>
             </div>
           </div>}
         {props.section.entries?.filter(it => !knownPaths.includes(it.path!))

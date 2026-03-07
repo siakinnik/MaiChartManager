@@ -87,7 +87,7 @@ export default defineComponent({
           })()}
           {comments.shouldEnableOptions[props.entry.path!] && !props.entryState.value && <ProblemsDisplay problems={[t('mod.needEnableOption')]}/>}
         </div>
-        {comment.value}
+        <div class="text-sm op-80">{comment.value}</div>
       </div>
     </div>;
   },

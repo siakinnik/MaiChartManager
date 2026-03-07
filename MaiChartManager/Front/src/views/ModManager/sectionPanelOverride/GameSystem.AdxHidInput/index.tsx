@@ -53,14 +53,14 @@ export default defineComponent({
               <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button1')}</div>
               <div class="flex flex-col gap-2 w-full ws-pre-line">
                 <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button1'].value} options={options}/>
-                {t('mod.adxHid.button1Desc')}
+                <div class="text-sm op-80">{t('mod.adxHid.button1Desc')}</div>
               </div>
             </div>
             <div class="flex gap-2 items-start">
               <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button2')}</div>
               <div class="flex flex-col gap-2 w-full ws-pre-line">
                 <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button2'].value} options={options}/>
-                {t('mod.adxHid.button2Desc')}
+                <div class="text-sm op-80">{t('mod.adxHid.button2Desc')}</div>
               </div>
             </div>
           </div>
@@ -71,14 +71,14 @@ export default defineComponent({
               <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button3')}</div>
               <div class="flex flex-col gap-2 w-full ws-pre-line">
                 <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button3'].value} options={options}/>
-                {t('mod.adxHid.button3Desc')}
+                <div class="text-sm op-80">{t('mod.adxHid.button3Desc')}</div>
               </div>
             </div>
             <div class="flex gap-2 items-start">
               <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button4')}</div>
               <div class="flex flex-col gap-2 w-full ws-pre-line">
                 <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button4'].value} options={options}/>
-                {t('mod.adxHid.button4Desc')}
+                <div class="text-sm op-80">{t('mod.adxHid.button4Desc')}</div>
               </div>
             </div>
           </div>

@@ -66,7 +66,7 @@ export default defineComponent({
         : <div class="flex gap-2 items-center m-l-35">
           <span class="c-green-6">{t('mod.mmlIo.installed')}</span>
         </div>}
-      <div class="m-l-35">
+      <div class="m-l-35 op-80">
         {t('mod.mmlIo.tip')}
       </div>
       <div class="grid grid-cols-1 min-[500px]:grid-cols-2 gap-y-12px">

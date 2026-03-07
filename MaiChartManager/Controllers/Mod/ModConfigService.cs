@@ -69,7 +69,7 @@ public class ModConfigService
     {
         var dllPath = await GetAquaMaiDllPath(ct);
 
-        var binary = File.ReadAllBytes(dllPath);
+        var binary = await File.ReadAllBytesAsync(dllPath, ct);
         if (!skipSignatureCheck)
         {
             var sigResult = AquaMaiSignatureV2.VerifySignature(binary);
@@ -85,7 +85,7 @@ public class ModConfigService
         {
             try
             {
-                var view = configInterface.CreateConfigView(File.ReadAllText(ModPaths.AquaMaiConfigPath));
+                var view = configInterface.CreateConfigView(await File.ReadAllTextAsync(ModPaths.AquaMaiConfigPath, ct));
                 var migrationManager = configInterface.GetConfigMigrationManager();
 
                 if (migrationManager.GetVersion(view) != migrationManager.LatestVersion)
@@ -96,7 +96,6 @@ public class ModConfigService
 
                 var parser = configInterface.GetConfigParser();
                 parser.Parse(config, view);
-                StaticSettings.UpdateAssetPathsFromAquaMaiConfig(config);
             }
             catch (Exception ex)
             {

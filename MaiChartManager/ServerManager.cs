@@ -114,6 +114,7 @@ public static class ServerManager
             });
 
         builder.Services
+            .AddHttpClient()
             .AddSingleton<StaticSettings>()
             .AddSingleton<MaidataImportService>()
             .AddSingleton<MuModService>()

@@ -5,7 +5,7 @@ using Tomlyn;
 
 namespace MaiChartManager.Controllers.Mod;
 
-public class MuModService(ILogger<MuModService> logger)
+public class MuModService(ILogger<MuModService> logger, IHttpClientFactory httpClientFactory)
 {
     private const string CosVersionApiUrl = "https://munet-version-config-1251600285.cos.ap-shanghai.myqcloud.com/aquamai.json";
     private const string CfVersionApiUrl = "https://aquamai-version-config.mumur.net/api/config";
@@ -268,12 +268,9 @@ public class MuModService(ILogger<MuModService> logger)
         }
     }
 
-    private static async Task<VersionInfoModel[]> FetchVersionInfosAsync(string url, CancellationToken ct)
+    private async Task<VersionInfoModel[]> FetchVersionInfosAsync(string url, CancellationToken ct)
     {
-        using var client = new HttpClient
-        {
-            Timeout = TimeSpan.FromSeconds(15)
-        };
+        using var client = httpClientFactory.CreateClient();
 
         var json = await client.GetStringAsync(url, ct);
         var result = JsonSerializer.Deserialize<VersionInfoModel[]>(json, new JsonSerializerOptions
@@ -284,12 +281,9 @@ public class MuModService(ILogger<MuModService> logger)
         return result ?? [];
     }
 
-    private static async Task<byte[]> DownloadFromUrlsAsync(IReadOnlyList<string> urls, CancellationToken ct)
+    private async Task<byte[]> DownloadFromUrlsAsync(IReadOnlyList<string> urls, CancellationToken ct)
     {
-        using var client = new HttpClient
-        {
-            Timeout = TimeSpan.FromSeconds(15)
-        };
+        using var client = httpClientFactory.CreateClient();
 
         Exception? lastError = null;
         foreach (var url in urls)

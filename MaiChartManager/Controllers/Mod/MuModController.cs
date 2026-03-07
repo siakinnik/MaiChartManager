@@ -20,13 +20,12 @@ public class MuModController(MuModService muModService) : ControllerBase
     [HttpPut]
     public async Task<EnsureCacheResultDto> SetMuModChannelAndEnsureCache([FromBody] SetChannelDto req)
     {
-        if (req.Channel != "slow" && req.Channel != "fast")
-        {
-            throw new ArgumentException("Channel must be 'slow' or 'fast'", nameof(req));
-        }
-
         try
         {
+            if (req.Channel != "slow" && req.Channel != "fast")
+            {
+                return new EnsureCacheResultDto(false, null, "Channel must be 'slow' or 'fast'");
+            }
             muModService.WriteChannel(req.Channel);
             var result = await muModService.EnsureCache(CancellationToken.None);
             return new EnsureCacheResultDto(result.Success, result.Version, result.Error);

@@ -56,7 +56,7 @@ export default defineComponent({
 
       return <div class="flex flex-col gap-2">
         {/* Device status area */}
-        <div class="flex gap-2 items-center m-l-35">
+        <div class="flex gap-2 items-center m-l-35 flex-wrap">
           {status && !status.available && <span class="op-60">{t('mod.pdx.unavailable')}</span>}
           {status?.available && status.deviceCount === 0 && <span class="op-60">{t('mod.pdx.noDevice')}</span>}
           {status?.available && !!status.deviceCount && <>

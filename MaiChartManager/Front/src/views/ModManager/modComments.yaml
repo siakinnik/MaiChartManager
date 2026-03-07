@@ -30,5 +30,13 @@ sectionNameEn:
   过新过热: Too New Too Hot
   不建议关闭: Not Recommend to Disable
   控制器输入: Controller Input
+  输入设置: Input Settings
+  判定: Judgment
+  显示: Display
+  音频: Audio
+  其他硬件: Other Hardware
+  解锁与省时: Unlock & Time Saving
+  选曲界面: Music Selection
+  过新过热（实验性）: Too New Too Hot (Experimental)
 
 customPanelPosition: {}

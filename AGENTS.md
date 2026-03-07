@@ -64,7 +64,7 @@ Sitreamai/
 
 ```bash
 # 构建（需要 Visual Studio 或 dotnet CLI）
-dotnet build Sitreamai.sln -c Release
+dotnet build Sitreamai.slnx -c Release
 
 # 前端开发
 cd MaiChartManager/Front && pnpm install && pnpm dev

@@ -7,6 +7,7 @@
     <InvariantGlobalization>false</InvariantGlobalization>
     <UseWindowsForms>true</UseWindowsForms>
     <IsPublishable>False</IsPublishable>
+    <IsTransformWebConfigDisabled>True</IsTransformWebConfigDisabled>
     <ValidateExecutableReferencesMatchSelfContained>False</ValidateExecutableReferencesMatchSelfContained>
     <Configurations>Debug;Release;Crack</Configurations>
   </PropertyGroup>

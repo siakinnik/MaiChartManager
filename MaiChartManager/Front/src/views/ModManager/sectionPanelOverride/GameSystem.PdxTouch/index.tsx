@@ -7,6 +7,7 @@ import { Button, TextInput, DropMenu, addToast } from '@munet/ui';
 import { defineComponent, PropType } from 'vue';
 import ConfigEntry from '../../ConfigEntry';
 import useAsync from '@/hooks/useAsync';
+import { ENTRY_GROUP_PADDING, ENTRY_LABEL_CLASS } from '../../constants';
 
 const deviceStatus = useAsync(
   async () => {
@@ -54,7 +55,7 @@ export default defineComponent({
       const status = deviceStatus.data.value;
       const paths = status?.devicePaths ?? [];
 
-      return <div class="flex flex-col gap-2">
+      return <div class={["flex flex-col gap-2", ENTRY_GROUP_PADDING]}>
         {/* Device status area */}
         <div class="flex gap-2 items-center m-l-35 flex-wrap">
           {status && !status.available && <span class="op-60">{t('mod.pdx.unavailable')}</span>}
@@ -82,7 +83,7 @@ export default defineComponent({
           {/* path1p input */}
           {props.section.entries?.some(it => it.path === PREFIX + 'Path1p') &&
             <div class="flex gap-2 items-start">
-              <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.pdx.path1P')}</div>
+              <div class={ENTRY_LABEL_CLASS}>{t('mod.pdx.path1P')}</div>
               <div class="flex-1 flex flex-col gap-1">
                 <DropMenu
                   options={(paths).map(p => ({
@@ -107,7 +108,7 @@ export default defineComponent({
           {/* path2p input */}
           {props.section.entries?.some(it => it.path === PREFIX + 'Path2p') &&
             <div class="flex gap-2 items-start">
-              <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.pdx.path2P')}</div>
+              <div class={ENTRY_LABEL_CLASS}>{t('mod.pdx.path2P')}</div>
               <div class="flex-1 flex flex-col gap-1">
                 <DropMenu
                   options={(paths).map(p => ({
@@ -130,10 +131,8 @@ export default defineComponent({
         </div>
 
         {/* remaining entries (e.g. radius) */}
-        <div class="flex flex-col gap-2 p-l-3">
-          {props.section.entries?.filter(it => !knownPaths.includes(it.path!))
-            .map((entry) => <ConfigEntry key={entry.path!} entry={entry} entryState={props.entryStates[entry.path!]}/>)}
-        </div>
+        {props.section.entries?.filter(it => !knownPaths.includes(it.path!))
+          .map((entry) => <ConfigEntry key={entry.path!} entry={entry} entryState={props.entryStates[entry.path!]}/>)}
       </div>;
     };
   },

@@ -8,6 +8,7 @@ import comments from "./modComments.yaml";
 import { KeyCodeID } from "./types/KeyCodeID";
 import { useI18n } from 'vue-i18n';
 import { locale } from "@/locales";
+import { ENTRY_LABEL_CLASS } from "./constants";
 
 export default defineComponent({
   props: {
@@ -44,7 +45,7 @@ export default defineComponent({
       // @ts-ignore
                       title={props.entry.path!}
     >
-      <div class="ml-1 w-9em shrink-0 h-42px flex items-center justify-end">{getNameForPath(props.entry.path!, props.entry.name!, props.entry.attribute?.comment?.nameZh)}</div>
+      <div class={ENTRY_LABEL_CLASS}>{getNameForPath(props.entry.path!, props.entry.name!, props.entry.attribute?.comment?.nameZh)}</div>
       <div class="flex flex-col gap-2 w-full ws-pre-line">
         <div class="flex gap-2 h-42px items-center">
           {(() => {

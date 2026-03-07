@@ -7,6 +7,7 @@ import { locale } from '@/locales';
 import { CheckBox, Popover, TransitionVertical } from '@munet/ui';
 import ProblemsDisplay from '@/components/ProblemsDisplay';
 import ConfigEntry from './ConfigEntry';
+import { ENTRY_GROUP_PADDING } from './constants';
 
 export default defineComponent({
   props: {
@@ -57,7 +58,7 @@ export default defineComponent({
           {customPanelPosition === 'top' && <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/>}
           {(CustomPanel && customPanelPosition === 'override') ?
             <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/> :
-            !!props.section.entries?.length && <div class="flex flex-col gap-2 p-l-15 max-[900px]:p-l-10 max-[500px]:p-l-5!">
+            !!props.section.entries?.length && <div class={["flex flex-col gap-2", ENTRY_GROUP_PADDING]}>
               {props.section.entries?.filter(it => !it.attribute?.hideWhenDefault || (it.attribute?.hideWhenDefault && !props.entryStates[it.path!].isDefault))
                 .map((entry) => <ConfigEntry key={entry.path!} entry={entry} entryState={props.entryStates[entry.path!]}/>)}
             </div>}

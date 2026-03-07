@@ -5,6 +5,7 @@ import api from "@/client/api";
 import { modInfo, updateModInfo } from "@/store/refs";
 import { useI18n } from 'vue-i18n';
 import ConfigEntry from '../../ConfigEntry';
+import { ENTRY_GROUP_PADDING, ENTRY_LABEL_CLASS } from '../../constants';
 
 export default defineComponent({
   props: {
@@ -38,7 +39,7 @@ export default defineComponent({
       load.value = false
     }
 
-    return () => <div class="flex flex-col gap-2">
+    return () => <div class={["flex flex-col gap-2", ENTRY_GROUP_PADDING]}>
       {modInfo.value?.isHidConflictExist ? <div class="flex gap-2 items-center m-l-35">
           <span class="c-orange">{t('mod.adxHid.conflictDetected')}</span>
           <Button variant="secondary" onClick={del} ing={load.value}>{t('mod.adxHid.oneClickDelete')}</Button>
@@ -47,47 +48,41 @@ export default defineComponent({
           <span class="c-green-6">{t('mod.adxHid.noConflict')}</span>
         </div>}
       <div class="grid grid-cols-1 min-[500px]:grid-cols-2 gap-y-12px">
-        <div>
-          <div class="flex flex-col gap-2">
-            <div class="flex gap-2 items-start">
-              <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button1')}</div>
-              <div class="flex flex-col gap-2 w-full ws-pre-line">
-                <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button1'].value} options={options}/>
-                <div class="text-sm op-80">{t('mod.adxHid.button1Desc')}</div>
-              </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex gap-2 items-start">
+            <div class={ENTRY_LABEL_CLASS}>{t('mod.adxHid.button1')}</div>
+            <div class="flex flex-col gap-2 w-full ws-pre-line">
+              <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button1'].value} options={options}/>
+              <div class="text-sm op-80">{t('mod.adxHid.button1Desc')}</div>
             </div>
-            <div class="flex gap-2 items-start">
-              <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button2')}</div>
-              <div class="flex flex-col gap-2 w-full ws-pre-line">
-                <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button2'].value} options={options}/>
-                <div class="text-sm op-80">{t('mod.adxHid.button2Desc')}</div>
-              </div>
+          </div>
+          <div class="flex gap-2 items-start">
+            <div class={ENTRY_LABEL_CLASS}>{t('mod.adxHid.button2')}</div>
+            <div class="flex flex-col gap-2 w-full ws-pre-line">
+              <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button2'].value} options={options}/>
+              <div class="text-sm op-80">{t('mod.adxHid.button2Desc')}</div>
             </div>
           </div>
         </div>
-        <div>
-          <div class="flex flex-col gap-2">
-            <div class="flex gap-2 items-start">
-              <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button3')}</div>
-              <div class="flex flex-col gap-2 w-full ws-pre-line">
-                <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button3'].value} options={options}/>
-                <div class="text-sm op-80">{t('mod.adxHid.button3Desc')}</div>
-              </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex gap-2 items-start">
+            <div class={ENTRY_LABEL_CLASS}>{t('mod.adxHid.button3')}</div>
+            <div class="flex flex-col gap-2 w-full ws-pre-line">
+              <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button3'].value} options={options}/>
+              <div class="text-sm op-80">{t('mod.adxHid.button3Desc')}</div>
             </div>
-            <div class="flex gap-2 items-start">
-              <div class="ml-1 text-sm w-10em shrink-0 h-42px flex items-center justify-end">{t('mod.adxHid.button4')}</div>
-              <div class="flex flex-col gap-2 w-full ws-pre-line">
-                <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button4'].value} options={options}/>
-                <div class="text-sm op-80">{t('mod.adxHid.button4Desc')}</div>
-              </div>
+          </div>
+          <div class="flex gap-2 items-start">
+            <div class={ENTRY_LABEL_CLASS}>{t('mod.adxHid.button4')}</div>
+            <div class="flex flex-col gap-2 w-full ws-pre-line">
+              <Select v-model:value={props.entryStates['GameSystem.AdxHidInput.Button4'].value} options={options}/>
+              <div class="text-sm op-80">{t('mod.adxHid.button4Desc')}</div>
             </div>
           </div>
         </div>
       </div>
-      <div class="flex flex-col gap-2 p-l-3">
-        {props.section.entries?.filter(it => !knownPaths.includes(it.path!))
-          .map((entry) => <ConfigEntry key={entry.path!} entry={entry} entryState={props.entryStates[entry.path!]}/>)}
-      </div>
+      {props.section.entries?.filter(it => !knownPaths.includes(it.path!))
+        .map((entry) => <ConfigEntry key={entry.path!} entry={entry} entryState={props.entryStates[entry.path!]}/>)}
     </div>
   },
 });

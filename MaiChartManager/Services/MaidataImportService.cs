@@ -243,8 +243,6 @@ public partial class MaidataImportService
         }
 
         float.TryParse(maiData.GetValueOrDefault("first"), out var first);
-        // Mai 的歌曲是从两帧后开始播放的
-        first -= 1 / 30f;
 
         var paddings = allCharts.Values.Select(chart => CalcMusicPadding(chart.simaiSharpChart, first)).ToList();
         // 音频前面被增加了多少

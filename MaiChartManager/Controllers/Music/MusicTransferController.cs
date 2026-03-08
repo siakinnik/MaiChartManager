@@ -8,9 +8,8 @@ using MaiLib;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic.FileIO;
 using NAudio.Lame;
-using SimaiSharp;
+using NAudio.Wave;
 using Vanara.Windows.Forms;
-using Xabe.FFmpeg;
 using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
 
 namespace MaiChartManager.Controllers.Music;
@@ -549,13 +548,26 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
         await using var zipStream = HttpContext.Response.BodyWriter.AsStream();
         using var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, leaveOpen: true);
 
+        // 计算由于WAV转MP3导致的音频开头增加的空白段的长度，以便稍后通过&first参数给予修正。
+        // 具体的情况和原理，详见https://github.com/MuNET-OSS/MaiChartManager/issues/40
+        var wavPath = await AudioConvert.GetCachedWavPath(GetAudioCandidateIds(music));
+        if (wavPath is null)
+        {
+            var message = BuildAudioResolveErrorMessage(music);
+            logger.LogError("{message}", message);
+            throw new FileNotFoundException(message);
+        }
+        using var wavReader = new WaveFileReader(wavPath);
+        // 根据上面issue中的结论，wav转mp3引起的开头空白段的长度为1728采样点
+        var audioDelay = 1728 / (double)wavReader.WaveFormat.SampleRate;
+        
         Ma2Parser parser = new();
         var simaiFile = new StringBuilder();
 
         simaiFile.AppendLine($"&title={music.Name}");
         simaiFile.AppendLine($"&artist={music.Artist}");
         simaiFile.AppendLine($"&wholebpm={music.Bpm}");
-        simaiFile.AppendLine("&first=0.0333");
+        simaiFile.AppendLine($"&first={audioDelay::0.####}");
         simaiFile.AppendLine($"&shortid={music.Id}");
         simaiFile.AppendLine($"&genreid={music.GenreId}");
         var genre = StaticSettings.GenreList.FirstOrDefault(it => it.Id == music.GenreId);
@@ -622,6 +634,7 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
             imageStream.Close();
         }
 
+        // 导出音频
         var soundEntry = zipArchive.CreateEntry("track.mp3");
         await using var soundStream = soundEntry.Open();
         var tag = new ID3TagData
@@ -633,16 +646,10 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
             Comment = version?.GenreName,
             AlbumArt = img,
         };
-        var wavPath = await AudioConvert.GetCachedWavPath(GetAudioCandidateIds(music));
-        if (wavPath is null)
-        {
-            var message = BuildAudioResolveErrorMessage(music);
-            logger.LogError("{message}", message);
-            throw new FileNotFoundException(message);
-        }
 
-        AudioConvert.ConvertWavPathToMp3Stream(wavPath, soundStream, tag);
+        AudioConvert.ConvertWavToMp3Stream(wavReader, soundStream, tag);
         soundStream.Close();
+        wavReader.Close();
 
         if (!ignoreVideo && StaticSettings.MovieDataMap.TryGetValue(music.NonDxId, out var movieUsmPath))
         {

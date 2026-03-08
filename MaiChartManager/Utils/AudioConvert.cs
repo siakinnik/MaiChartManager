@@ -77,6 +77,11 @@ public static class AudioConvert
     public static void ConvertWavPathToMp3Stream(string wavPath, Stream mp3Stream, ID3TagData? tagData = null)
     {
         using var reader = new WaveFileReader(wavPath);
+        ConvertWavToMp3Stream(reader, mp3Stream, tagData);
+    }
+    
+    public static void ConvertWavToMp3Stream(WaveFileReader reader, Stream mp3Stream, ID3TagData? tagData = null)
+    {
         using var writer = new LameMP3FileWriter(mp3Stream, reader.WaveFormat, 256, tagData);
         reader.CopyTo(writer);
     }

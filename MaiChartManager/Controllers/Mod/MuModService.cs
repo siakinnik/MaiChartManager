@@ -41,7 +41,7 @@ public class MuModService(ILogger<MuModService> logger, IHttpClientFactory httpC
         }
 
         var text = File.ReadAllText(ModPaths.MuModConfigPath);
-        var model = Toml.ToModel<MuModConfigModel>(text) ?? new MuModConfigModel();
+        var model = Toml.ToModel<MuModConfigModel>(text, options: new TomlModelOptions { ConvertPropertyName = name => name }) ?? new MuModConfigModel();
         model.Channel = string.IsNullOrWhiteSpace(model.Channel) ? "slow" : model.Channel;
         model.CachePath = string.IsNullOrWhiteSpace(model.CachePath) ? DefaultCacheRelativePath : model.CachePath;
         return model;
@@ -57,7 +57,7 @@ public class MuModService(ILogger<MuModService> logger, IHttpClientFactory httpC
         var config = ReadConfig();
         config.Channel = channel;
 
-        var content = Toml.FromModel(config);
+        var content = Toml.FromModel(config, new TomlModelOptions { ConvertPropertyName = name => name });
         var targetPath = ModPaths.MuModConfigPath;
         var dir = Path.GetDirectoryName(targetPath);
         if (!string.IsNullOrEmpty(dir))

@@ -11,18 +11,7 @@ namespace MaiChartManager.Controllers.Charts;
 public class ImportChartController(StaticSettings settings, ILogger<StaticSettings> logger, 
     MaidataImportService importService) : ControllerBase
 {
-    private static float getFirstBarFromChart(MaiChart chart)
-    {
-        var bpm = chart.TimingChanges[0].tempo;
-        if (bpm == 0)
-        {
-            throw new DivideByZeroException(Locale.ChartBpmZero);
-        }
-
-        return 60 / bpm * 4;
-    }
-
-    public record ImportChartCheckResult(bool Accept, IEnumerable<ImportChartMessage> Errors, float MusicPadding, bool IsDx, string? Title, float first, float bar);
+    public record ImportChartCheckResult(bool Accept, IEnumerable<ImportChartMessage> Errors, Dictionary<ShiftMethod, float> chartPaddings, bool IsDx, string? Title, float first);
 
     [HttpPost]
     public ImportChartCheckResult ImportChartCheck(IFormFile file, [FromForm] bool isReplacement = false)
@@ -110,12 +99,12 @@ public class ImportChartController(StaticSettings settings, ILogger<StaticSettin
             {
                 errors.Add(new ImportChartMessage(Locale.MusicNoCharts, MessageLevel.Fatal));
                 fatal = true;
-                return new ImportChartCheckResult(!fatal, errors, 0, false, title, 0, 0);
+                return new ImportChartCheckResult(!fatal, errors, new Dictionary<ShiftMethod, float>(), false, title, 0);
             }
 
-            var paddings = new List<float>();
             float.TryParse(maiData.GetValueOrDefault("first"), out var first);
             var isDx = false;
+            var maiCharts = new List<MaiChart>();
 
             foreach (var kvp in allChartText)
             {
@@ -135,7 +124,7 @@ public class ImportChartController(StaticSettings settings, ILogger<StaticSettin
                 try
                 {
                     var chart = importService.TryParseChartSimaiSharp(chartText, kvp.Key, errors);
-                    paddings.Add(MaidataImportService.CalcMusicPadding(chart, first));
+                    maiCharts.Add(chart);
 
                     var candidate = importService.TryParseChart(chartText, chart, kvp.Key, errors);
                     if (candidate is null) throw new Exception(Locale.ChartParseGenericError);
@@ -151,19 +140,16 @@ public class ImportChartController(StaticSettings settings, ILogger<StaticSettin
             foreachAllChartTextContinue: ;
             }
 
-            var padding = paddings.Max();
+            var chartPaddings = MaidataImportService.CalcChartPadding(maiCharts, out _);
 
-            // 计算 bar
-            var bar = getFirstBarFromChart(importService.TryParseChartSimaiSharp(allChartText.First().Value, allChartText.First().Key, errors));
-
-            return new ImportChartCheckResult(!fatal, errors, padding, isDx, title, first, bar);
+            return new ImportChartCheckResult(!fatal, errors, chartPaddings, isDx, title, first);
         }
         catch (Exception e)
         {
             logger.LogError(e, "解析谱面失败（大）");
             errors.Add(new ImportChartMessage(Locale.ChartParseFailedGlobal, MessageLevel.Fatal));
             fatal = true;
-            return new ImportChartCheckResult(!fatal, errors, 0, false, "", 0, 0);
+            return new ImportChartCheckResult(!fatal, errors, new Dictionary<ShiftMethod, float>(), false, "", 0);
         }
     }
     

@@ -52,12 +52,20 @@ public partial class MaidataImportService
     [GeneratedRegex(@"\{([\d\.]+)\}")]
     public static partial Regex MeasureTagRegex();
 
-    private static string Add1Bar(string maidata)
+    private static string Add1Bar(string maidata, float bpm)
     {
         var regex = BpmTagRegex();
-        var bpm = regex.Match(maidata).Value;
-        // 这里使用 {4},,,, 而不是 {1}, 因为要是谱面一开始根本没有写 {x} 的话，默认是 {4}。要是用了 {1}, 会覆盖默认的 {4}
-        return string.Concat(bpm, "{4},,,,", maidata.AsSpan(bpm.Length));
+        var bpmStr = regex.Match(maidata).Value;
+        if (Math.Abs(float.Parse(bpmStr[1..^1]) - bpm) < 0.001f) // 本质是比较maidata中声明的(bpm)和我们参数传进来的bpm是否不等。以防浮点运算误差使用了range比较。
+        {
+            // 如果相等的话，则把新的小节插在bpmStr后面即可
+            // 这里使用 {4},,,, 而不是 {1}, 因为要是谱面一开始根本没有写 {x} 的话，默认是 {4}。要是用了 {1}, 会覆盖默认的 {4}
+            return string.Concat(bpmStr, "{4},,,,", maidata.AsSpan(bpmStr.Length));
+        }
+        else
+        {
+            return string.Concat($"({bpm})", "{4},,,,", maidata);
+        }
     }
 
     [GeneratedRegex(@"(\d){")]
@@ -195,16 +203,55 @@ public partial class MaidataImportService
         }
     }
 
-    public static float CalcMusicPadding(MaiChart chart, float first)
+    public static Dictionary<ShiftMethod, float> CalcChartPadding(List<MaiChart> charts, out float addBarBpm)
     {
-        // TimingChanges 对应的是所有的 {int}
-        var bpm = chart.TimingChanges[0].tempo;
-        // 一小节多长
-        var bar = 60 / bpm * 4;
+        // 谱面导入时，会有两个地方涉及到时间的调整：
+        // 1. 对谱面的调整。在下方的ImportMaidata函数中应用，对谱面进行相应的调整（用simaisharp移动一定的时间，或加上一小节）。
+        // 2. 对音频的调整，通过向CueConverter.SetAudio API中传入padding参数，来对音频进行裁剪。
+        //    - 详见Front/src/views/Charts/ImportCreateChartButton/ImportChartButton/index.tsx
+        // 上述两个调整之间存在这样的关系：对音频的调整 一定等于 对谱面的调整 + 谱面本身蕴含的谱面相对于音频的偏移（即&first）。
+        // 只要输入的谱面本身在simai的语义下正确，上述关系就必定是成立的。
+        // PS：我们的代码里chartPadding为正表示谱面后移、音频开头相应加空白；而maidata的&first为正表示裁剪掉音频开头。因此实际计算中，应该满足的是audioPadding=chartPadding-&first。、
+        // 因此，我们只需要在这里计算好每种ShiftMode下的 (1.对谱面的调整) chartPadding，发送给前端。前端-&first后作为 (2.对音频的调整) 发给SetAudioApi即可。
+        
+        // 首先计算一个概念：notePadding = bar - firstTiming
+        // 其中，firstTiming是从谱面开头到谱面的第一押的时间。（PS：这里的谱面开头指的是经过&first修正后的、逻辑上的谱面开头。=原始音频文件的开头+&first修正。）
+        // 因此，notePadding = bar - firstTiming 其实是一个 **衡量第一押距离第二小节开头有多远的量** 。
+        // 当它是正数时表示第一押在第二小节开头的前面，（所以需要增加一小节/延后谱面）。负数则表示第一押已经在在第二小节开头的后面了。
+        // PS：由于Bar模式下计算chartPadding时将会用到bpm，这里把notePadding和bpm一起返回
+        var notePaddingOfEachChart = charts.Select(chart =>
+        {
+            var bpm = chart.TimingChanges[0].tempo;
+            var bar = 60 / bpm * 4;
+            
+            var firstTiming = chart.NoteCollections[0].time; // 从谱面开头到谱面的第一押的时间
+            var notePadding = bar - firstTiming;
+            return (notePadding, bpm);
+        }).ToList();
+        
+        // 取notePadding的最大值作为整个谱的偏移量，这是因为如果有多张谱面，我们需要保证所有谱面的第一押都移出第一小节之外
+        var (notePadding, bpm) = notePaddingOfEachChart.Max();
 
-        // 第一押什么时候出来
-        var firstTiming = chart.NoteCollections[0].time + first;
-        return bar - firstTiming;
+        addBarBpm = 0f;
+        var result = new Dictionary<ShiftMethod, float>();
+        // 接下来为每种ShiftMode具体计算chartPadding：
+        result[ShiftMethod.NoShift] = 0f; // NoShift时，显然
+        
+        // 由于notePadding的含义就是 *第一押距离第二小节开头的距离*，所以Legacy模式下为了把第一押对到第二小节开头上，所需的东西就是这个。
+        result[ShiftMethod.Legacy] = notePadding; 
+        
+        // Bar模式下，（为了数值计算上的稳定），我们仅在notePadding > 0.01的情况下才addBar。
+        if (notePadding > 0.01)
+        {
+            result[ShiftMethod.Bar] = 60 / bpm * 4; // 取值为bpm所对应的bar长度
+            addBarBpm = bpm;
+        }
+        else
+        {
+            result[ShiftMethod.Bar] = 0f; // 否则，不对谱面做任何移动，等价于NoShift了。
+        }
+        
+        return result;
     }
 
     private record AllChartsEntry(string chartText, MaiChart simaiSharpChart);
@@ -244,32 +291,17 @@ public partial class MaidataImportService
 
         float.TryParse(maiData.GetValueOrDefault("first"), out var first);
 
-        var paddings = allCharts.Values.Select(chart => CalcMusicPadding(chart.simaiSharpChart, first)).ToList();
-        // 音频前面被增加了多少
-        var audioPadding = paddings.Max(); // bar - firstTiming = bar - 谱面前面休止符的时间 - &first
-        var shouldAddBar = false;
-        float chartPadding;
-        switch (shift)
-        {
-            case ShiftMethod.Legacy:
-                chartPadding = audioPadding + first;
-                break;
-            case ShiftMethod.Bar when audioPadding + first > 0.1:
-                shouldAddBar = true;
-                chartPadding = 0f;
-                break;
-            default:
-                chartPadding = 0f;
-                break;
-        }
-
-        if (shouldAddBar)
+        var chartPaddingDict = CalcChartPadding(allCharts.Values.Select(entry => entry.simaiSharpChart).ToList(), out var addBarBpm);
+        var chartPadding = chartPaddingDict[shift]; // 当前所选择的模式所具体对应的chartPadding
+        
+        if (shift == ShiftMethod.Bar && chartPadding > 0)
         {
             foreach (var (level, chart) in allCharts)
             {
-                var newText = Add1Bar(chart.chartText);
+                var newText = Add1Bar(chart.chartText, addBarBpm);
                 allCharts[level] = new AllChartsEntry(newText, TryParseChartSimaiSharp(newText, level, errors));
             }
+            chartPadding = 0f; // 已经add1Bar过了，所以要防止后面的逻辑再次调用simaisharp的谱面平移
         }
 
         foreach (var targetChart in music.Charts)
@@ -287,23 +319,6 @@ public partial class MaidataImportService
             bpm = chart.simaiSharpChart.TimingChanges[0].tempo;
             // 一个小节多少秒
             var bar = 60 / bpm * 4;
-
-            // 我们要让这个谱面真正的内容（忽略 first）延后多少
-            // levelPadding 似乎不需要算，因为每个谱面真正的内容都是从同一个地方开始
-            // 所以只要在前面加上 audioPadding + first 时间的休止符
-            // 最早出音符的那个谱面的第一押之前一定是 1bar（小节）的休止符
-            //       |_| levelPadding
-            // |_______| audioPadding
-            //       |________________| bar
-            // |________________| bar
-            // |-------|---|----|-----|-----
-            // |       |   |    |     | 这个谱面的第一押
-            // |       |   |    | 可能是另一个谱面难度的第一押，firstTiming，它可能导致 audioPadding > levelPadding
-            // |       |   |____| 这一段是休止符
-            // |       |   | 每个谱面真正的内容都是从这里开始
-            // |       |___| first skip 掉的部分
-            // |       | 原先音频的开头
-            // | 加了 padding 的音频开头
 
             # region 设定 targetLevel
 

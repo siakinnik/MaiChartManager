@@ -567,7 +567,7 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
         simaiFile.AppendLine($"&title={music.Name}");
         simaiFile.AppendLine($"&artist={music.Artist}");
         simaiFile.AppendLine($"&wholebpm={music.Bpm}");
-        simaiFile.AppendLine($"&first={audioDelay::0.####}");
+        simaiFile.AppendLine($"&first={audioDelay:0.####}");
         simaiFile.AppendLine($"&shortid={music.Id}");
         simaiFile.AppendLine($"&genreid={music.GenreId}");
         var genre = StaticSettings.GenreList.FirstOrDefault(it => it.Id == music.GenreId);

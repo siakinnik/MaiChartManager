@@ -25,7 +25,15 @@ export default defineComponent({
           props.errors.map((error, i) => {
             if ('first' in error) {
               const padding = error.chartPaddings?.[props.tempOptions.shift]! - error.first
-              if (padding > 0){
+              if (props.tempOptions.shift === ShiftMethod.Bar) {
+                if (error.chartPaddings?.[ShiftMethod.Bar]! > 0) { // 如果选择的是Bar模式且确实需要addBar，则也显示一条提示
+                  return <div key={i} class="p-3 rounded border border-blue/30 bg-blue/10">
+                    <div class="font-bold mb-1">{error.name}</div>
+                    {t('chart.import.addBar')}
+                  </div>
+                }
+              }
+              else if (padding > 0){
                 return <div key={i} class="p-3 rounded border border-blue/30 bg-blue/10">
                   <div class="font-bold mb-1">{error.name}</div>
                   {t('chart.import.add' + i18nPostfix.value, {padding: padding.toFixed(3)})}

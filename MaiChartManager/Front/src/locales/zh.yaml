@@ -240,6 +240,7 @@ chart:
     trimPadding: 将裁剪 {padding} 秒音频以保证第一押在第二小节
     addFirst: 将在音频前面加上 {first} 秒空白以对应 &first 的值
     trimFirst: 将裁剪 {first} 秒音频以对应 &first 的值
+    addBar: 将在谱面开头加上1小节空白，以保证第一押出现在第二小节之后
     error:
       noMaidata: 未找到 maidata.txt
       noAudio: 未找到音频文件

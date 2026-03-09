@@ -262,6 +262,7 @@ chart:
     trimPadding: Will trim {padding} seconds of audio to ensure first note is in second bar
     addFirst: Will add {first} seconds of silence to match &first value
     trimFirst: Will trim {first} seconds of audio to match &first value
+    addBar: Will add 1 bar of silence at the beginning of the chart to ensure the first note is after the second bar
     error:
       noMaidata: maidata.txt not found
       noAudio: Audio file not found

@@ -1,5 +1,6 @@
 ﻿using NAudio.Lame;
 using NAudio.Wave;
+using Xabe.FFmpeg;
 using VGAudio;
 using VGAudio.Cli;
 using Xv2CoreLib.ACB;
@@ -59,7 +60,12 @@ public static class Audio
 
     public static Stream ConvertToWav(Stream src, bool isOgg, float padding = 0)
     {
-        using WaveStream reader = isOgg ? new NAudio.Vorbis.VorbisWaveReader(src, true) : new StreamMediaFoundationReader(src);
+        using WaveStream reader = isOgg
+            ? new NAudio.Vorbis.VorbisWaveReader(src, true)
+            // 如果直接用StreamMediaFoundationReader的话，mp3转wav的过程会有问题，详见https://github.com/MuNET-OSS/MaiChartManager/issues/40#issuecomment-4029798667。
+            // 因此，将使用ffmpeg完成从mp3到wav的转换；但由于需要进行padding，所以还是得再以sample的形式读出来然后重新保存。
+            // PS：使用NAudio的WaveFileReader来直接处理wav文件是没有问题的，因为wav本身是一种基于sample的无损采样格式，没有encdelay之类的问题。只要确保不要使用NAudio进行MP3编解码即可。
+            : new WaveFileReader(ConvertMp3ToWavViaFfmpeg(src));
         var sample = reader.ToSampleProvider();
 
         switch (padding)
@@ -80,6 +86,39 @@ public static class Audio
         WaveFileWriter.WriteWavFileToStream(stream, sample.ToWaveProvider16()); // 淦
         stream.Position = 0;                                                    // 淦 x2
         return stream;
+    }
+
+    private static MemoryStream ConvertMp3ToWavViaFfmpeg(Stream src)
+    {
+        var tempFileGuid = Guid.NewGuid();
+        var inputPath = Path.Combine(StaticSettings.tempPath, $"ConvertToWav_{tempFileGuid:N}.mp3");
+        var outputPath = Path.Combine(StaticSettings.tempPath, $"ConvertToWav_{tempFileGuid:N}.wav");
+        try
+        {
+            Directory.CreateDirectory(StaticSettings.tempPath);
+
+            using (var inputFile = new FileStream(inputPath, FileMode.Create, FileAccess.Write))
+            {
+                src.CopyTo(inputFile);
+            }
+
+            var conversion = FFmpeg.Conversions.New()
+                .AddParameter("-i " + inputPath.Escape())
+                .AddParameter("-c:a pcm_s16le") // 转为16-bit little-endian PCM
+                .SetOutput(outputPath)
+                .SetOverwriteOutput(true);
+            conversion.Start().GetAwaiter().GetResult();
+
+            if (!File.Exists(outputPath) || new FileInfo(outputPath).Length == 0)
+                throw new InvalidOperationException("ffmpeg produced empty wav file from mp3 input.");
+
+            return new MemoryStream(File.ReadAllBytes(outputPath));
+        }
+        finally
+        {
+            File.Delete(inputPath);
+            File.Delete(outputPath);
+        }
     }
 
     public static byte[] ConvertFile(

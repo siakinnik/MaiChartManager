@@ -1282,6 +1282,8 @@ export class Api<
         awb?: File;
         /** @format binary */
         preview?: File;
+        /** @default false */
+        ignoreGapless?: boolean;
       },
       params: RequestParams = {},
     ) =>

@@ -231,6 +231,8 @@ chart:
       shiftNoMoveDesc: |-
         完全不修改谱面，从音频中删除 &first 的长度（如果有）
         可能会导致第一个音符出现的时机比较奇怪，比如说刚开始就有音符
+      ignoreGapless: MP3兼容模式（忽略Gapless）
+      ignoreGaplessTip: 如果你使用某些版本的Visual Maimai等制谱器制谱，然后发现导入的谱面有对音问题的话，可以尝试开启此项进行导入。
       codecForceH264: H264
       codecForceVP9: VP9 USM
     assignId: 为新导入的歌曲指定 ID

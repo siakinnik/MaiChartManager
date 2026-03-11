@@ -249,6 +249,8 @@ chart:
         present)
 
         May cause first note to appear at odd timing, e.g. immediately at start
+      ignoreGapless: MP3 compatibility mode (ignore Gapless)
+      ignoreGaplessTip: If the chart was made with some specific chart editors, such as certain versions of Visual Maimai, and the imported chart has timing issues, you can try enabling this option.
       codecForceH264: H264
       codecForceVP9: VP9 USM
     assignId: Assign ID for new imported songs

@@ -9,10 +9,10 @@ namespace MaiChartManager.Utils;
 
 public static class Audio
 {
-    public static void ConvertToMai(string srcPath, string savePath, float padding = 0, Stream? src = null, string? previewFilename = null, Stream? preview = null)
+    public static void ConvertToMai(string srcPath, string savePath, float padding = 0, Stream? src = null, string? previewFilename = null, Stream? preview = null, bool forceUseNAudio = false)
     {
         var wrapper = new ACB_Wrapper(ACB_File.Load(File.ReadAllBytes(Path.Combine(StaticSettings.exeDir, previewFilename is null ? "nopreview.acb" : "template.acb")), null));
-        var trackBytes = LoadAndConvertFile(srcPath, FileType.Hca, false, 9170825592834449000, padding, src);
+        var trackBytes = LoadAndConvertFile(srcPath, FileType.Hca, false, 9170825592834449000, padding, src, forceUseNAudio);
 
         wrapper.Cues[0].AddTrackToCue(trackBytes, true, false, EncodeType.HCA);
         if (previewFilename is not null)
@@ -25,7 +25,7 @@ public static class Audio
     }
 
     // 不要 byte[] 转 memory stream 倒来倒去，直接传入 stream
-    public static byte[] LoadAndConvertFile(string path, FileType convertToType, bool loop, ulong encrpytionKey = 0, float padding = 0, Stream? src = null)
+    public static byte[] LoadAndConvertFile(string path, FileType convertToType, bool loop, ulong encrpytionKey = 0, float padding = 0, Stream? src = null, bool forceUseNAudio = false)
     {
         using var read = src ?? File.OpenRead(path);
         switch (Path.GetExtension(path).ToLowerInvariant())
@@ -35,7 +35,7 @@ public static class Audio
             case ".ogg":
             case ".wma":
             case ".aac":
-                return ConvertFile(ConvertToWav(read, Path.GetExtension(path).Equals(".ogg", StringComparison.InvariantCultureIgnoreCase), padding), FileType.Wave, convertToType, loop, encrpytionKey);
+                return ConvertFile(ConvertToWav(read, Path.GetExtension(path).Equals(".ogg", StringComparison.InvariantCultureIgnoreCase), padding, forceUseNAudio), FileType.Wave, convertToType, loop, encrpytionKey);
             case ".hca":
                 return ConvertFile(read, FileType.Hca, convertToType, loop, encrpytionKey);
             case ".adx":
@@ -58,14 +58,14 @@ public static class Audio
         throw new InvalidDataException($"Filetype of \"{path}\" is not supported.");
     }
 
-    public static Stream ConvertToWav(Stream src, bool isOgg, float padding = 0)
+    public static Stream ConvertToWav(Stream src, bool isOgg, float padding = 0, bool forceUseNAudio = false)
     {
         using WaveStream reader = isOgg
             ? new NAudio.Vorbis.VorbisWaveReader(src, true)
-            // 如果直接用StreamMediaFoundationReader的话，mp3转wav的过程会有问题，详见https://github.com/MuNET-OSS/MaiChartManager/issues/40#issuecomment-4029798667。
-            // 因此，将使用ffmpeg完成从mp3到wav的转换；但由于需要进行padding，所以还是得再以sample的形式读出来然后重新保存。
-            // PS：使用NAudio的WaveFileReader来直接处理wav文件是没有问题的，因为wav本身是一种基于sample的无损采样格式，没有encdelay之类的问题。只要确保不要使用NAudio进行MP3编解码即可。
-            : new WaveFileReader(ConvertMp3ToWavViaFfmpeg(src));
+            : (forceUseNAudio
+                ? new StreamMediaFoundationReader(src) // NAudio不支持MP3 Gapless，所以作为一种“兼容模式”提供
+                : new WaveFileReader(ConvertMp3ToWavViaFfmpeg(src))); // 默认情况下，优先使用ffmpeg
+           // 关于上述MP3 Gapless问题的影响等具体讨论，详见 https://github.com/MuNET-OSS/MaiChartManager/issues/40
         var sample = reader.ToSampleProvider();
 
         switch (padding)

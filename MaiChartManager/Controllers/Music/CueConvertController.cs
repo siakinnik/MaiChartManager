@@ -24,7 +24,7 @@ public class CueConvertController(StaticSettings settings, ILogger<CueConvertCon
 
     [HttpPut]
     [DisableRequestSizeLimit]
-    public void SetAudio(int id, [FromForm] float padding, IFormFile file, IFormFile? awb, IFormFile? preview, string assetDir)
+    public void SetAudio(int id, [FromForm] float padding, IFormFile file, IFormFile? awb, IFormFile? preview, string assetDir, [FromForm] bool ignoreGapless = false)
     {
         id %= 10000;
         var targetAcbPath = Path.Combine(StaticSettings.StreamingAssets, assetDir, $@"SoundData\music{id:000000}.acb");
@@ -41,7 +41,7 @@ public class CueConvertController(StaticSettings settings, ILogger<CueConvertCon
         }
         else
         {
-            Audio.ConvertToMai(file.FileName, targetAcbPath, padding, file.OpenReadStream(), preview?.FileName, preview?.OpenReadStream());
+            Audio.ConvertToMai(file.FileName, targetAcbPath, padding, file.OpenReadStream(), preview?.FileName, preview?.OpenReadStream(), forceUseNAudio: ignoreGapless);
         }
 
         StaticSettings.AcbAwb[$"music{id:000000}.acb"] = targetAcbPath;

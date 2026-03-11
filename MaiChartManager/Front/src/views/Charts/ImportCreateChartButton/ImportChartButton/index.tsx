@@ -168,7 +168,7 @@ export default defineComponent({
         // 音频上应该应用的延迟audioPadding = 谱面上应用的延迟chartPadding - &first
         let audioPadding = chartPadding - music.first;
 
-        await api.SetAudio(music.id, selectedADir.value, { file: music.track, padding: audioPadding });
+        await api.SetAudio(music.id, selectedADir.value, { file: music.track, padding: audioPadding, ignoreGapless: !!tempOptions.value.ignoreGapless });
 
         if (music.movie && !tempOptions.value.disableBga) {
           currentMovieProgress.value = 0;

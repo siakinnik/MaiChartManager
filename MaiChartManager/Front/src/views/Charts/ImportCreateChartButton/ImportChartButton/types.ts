@@ -53,5 +53,6 @@ export type TempOptions = {
   shiftLocked?: boolean,
   ignoreLevel?: boolean,
   disableBga?: boolean,
+  ignoreGapless?: boolean,
 };
 export type SavedOptions = typeof defaultSavedOptions;

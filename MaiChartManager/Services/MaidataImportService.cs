@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using MaiChartManager.Models;
 using MaiChartManager.Utils;
 using MaiLib;
@@ -56,7 +57,7 @@ public partial class MaidataImportService
     {
         var regex = BpmTagRegex();
         var bpmStr = regex.Match(maidata).Value;
-        if (Math.Abs(float.Parse(bpmStr[1..^1]) - bpm) < 0.001f) // 本质是比较maidata中声明的(bpm)和我们参数传进来的bpm是否不等。以防浮点运算误差使用了range比较。
+        if (Math.Abs(float.Parse(bpmStr[1..^1], CultureInfo.InvariantCulture) - bpm) < 0.001f) // 本质是比较maidata中声明的(bpm)和我们参数传进来的bpm是否不等。以防浮点运算误差使用了range比较。
         {
             // 如果相等的话，则把新的小节插在bpmStr后面即可
             // 这里使用 {4},,,, 而不是 {1}, 因为要是谱面一开始根本没有写 {x} 的话，默认是 {4}。要是用了 {1}, 会覆盖默认的 {4}

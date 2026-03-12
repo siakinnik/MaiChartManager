@@ -133,7 +133,12 @@ public class OobeController(StaticSettings settings, ILogger<OobeController> log
                 }
                 ServerManager.StartApp(request.Export, (url) =>
                 {
-                    if (StaticSettings.Config.Export) return;
+                    if (StaticSettings.Config.Export)
+                    {
+                        // 局域网模式：服务器重启后端口变了，需要把新 URL 注入回 OOBE 浏览器
+                        AppMain.UiContext?.Post(_ => AppMain.OobeBrowser?.InjectBackendUrl(url), null);
+                        return;
+                    }
                     AppLifecycleManager.ShowBrowser(url);
                     AppMain.UiContext?.Post(_ =>
                     {

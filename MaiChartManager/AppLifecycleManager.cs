@@ -78,6 +78,8 @@ var icon = (Icon?)rm.GetObject("notifyIcon1.Icon");
         {
             if (AppMain.BrowserWin is { IsDisposed: false })
             {
+                // 服务器可能已重启（如 OOBE 中切换模式），需要刷新 URL
+                AppMain.BrowserWin.InjectBackendUrl(loopbackUrl);
                 AppMain.BrowserWin.Activate();
             }
             else

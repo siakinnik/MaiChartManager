@@ -20,6 +20,7 @@ common:
   management: Management
   dismiss: Dismiss
   longMusic: LongMusic
+  error: Error
 assetDir:
   title: Opt Management
   create: Create Directory
@@ -163,6 +164,9 @@ music:
     editFailed: Batch edit failed
     currentProgress: Current Progress
     currentProcessing: Currently Processing
+    exportFailed: Failed to export
+    exportSuccess: Export successful
+    deleteSuccess: Deleted successfully
   delete:
     confirm: Confirm
     confirmDelete: Confirm Delete
@@ -304,6 +308,13 @@ mod:
   loaded: Loaded
   killGameProcess: Kill Game Process
   needInstallOrUpdate: AquaMai not installed or needs update
+  ioKeyMap:
+    disabled: Disabled
+    select: Select
+    select1P: 1P Select
+    select2P: 2P Select
+    service: Service
+    test: Test
   adxHid:
     disabled: Disabled
     select1P: 1P Select
@@ -430,11 +441,16 @@ mod:
     Button2p: 2P Buttons
     Led1p: 1P LEDs
     Led2p: 2P LEDs
+    Touch: Touchscreen
+    Button: Buttons
+    Led: LEDs
     P1: Enable 1P
     P2: Enable 2P
     tip: If mixing Maimoller with other protocols, disable this for the non-Maimoller side
   on: 'On'
   off: 'Off'
+  enable: Enable
+  disable: Disable
   stableChannel: "Stable Channel"
   fastChannel: "Fast Channel"
   mumod: "MuMod"

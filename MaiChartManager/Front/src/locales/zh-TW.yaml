@@ -20,6 +20,7 @@ common:
   management: 管理
   dismiss: 放棄
   longMusic: LongMusic
+  error: 錯誤
 assetDir:
   title: Opt 管理
   create: 建立目錄
@@ -156,6 +157,9 @@ music:
     editFailed: 批次修改失敗
     currentProgress: 目前進度
     currentProcessing: 目前處理
+    exportFailed: 匯出失敗
+    exportSuccess: 匯出成功
+    deleteSuccess: 刪除成功
   delete:
     confirm: 確認
     confirmDelete: 確認刪除
@@ -282,6 +286,13 @@ mod:
   loaded: 已載入
   killGameProcess: 關閉遊戲處理程序
   needInstallOrUpdate: AquaMai 未安裝或需要更新
+  ioKeyMap:
+    disabled: 停用
+    select: 選擇
+    select1P: 1P 選擇
+    select2P: 2P 選擇
+    service: 服務
+    test: 測試
   adxHid:
     disabled: 停用
     select1P: 1P 選擇
@@ -393,11 +404,16 @@ mod:
     Button2p: 2P 按鍵
     Led1p: 1P 燈光
     Led2p: 2P 燈光
+    Touch: 觸屏
+    Button: 按鍵
+    Led: 燈光
     P1: 啟用 1P
     P2: 啟用 2P
     tip: 如果混用 Maimoller 與其他協議，請對不是 Maimoller 的一侧停用
   on: 開
   off: 關
+  enable: 啟用
+  disable: 停用
   stableChannel: "穩定通道"
   fastChannel: "快速通道"
   mumod: "MuMod"
@@ -426,6 +442,9 @@ mod:
     refresh: "重新整理設備狀態"
     unavailable: "PDX 驅動工具不可用"
     selectDevice: "選擇設備"
+    path1P: "1P 設備路徑"
+    path2P: "2P 設備路徑"
+    pathDesc: "USB 連接埠路徑，例如 2.2。請使用設定工具中顯示的路徑。留空則使用第一個偵測到的設備作為 1P"
 tools:
   title: 工具
   audioConvert: 音訊轉換（ACB + AWB）

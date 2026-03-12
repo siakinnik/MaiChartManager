@@ -1,6 +1,6 @@
 import { defineComponent, PropType, ref } from "vue";
 import { MusicXmlWithABJacket } from "@/client/apiGen";
-import { Button, Radio, Select, Popover } from "@munet/ui";
+import { Button, Radio, Select, Popover, addToast } from "@munet/ui";
 import { STEP } from "@/views/BatchAction/index";
 import api, { isWebView } from "@/client/api";
 import { showNeedPurchaseDialog, updateMusicList, version } from "@/store/refs";
@@ -47,19 +47,22 @@ export default defineComponent({
           load.value = true;
           await api.BatchDeleteMusic(props.selectedMusic!);
           await updateMusicList();
-          props.continue(STEP.None);
+          addToast({message: t('music.batch.deleteSuccess'), type: 'success'});
+          props.continue(STEP.Select);
           break;
         case OPTIONS.CreateNewOpt:
         case OPTIONS.CreateNewOptCompatible:
           if (isWebView) {
-            props.continue(STEP.None);
+            props.continue(STEP.Select);
             await api.RequestCopyTo({music: props.selectedMusic, removeEvents: selectedOption.value === OPTIONS.CreateNewOptCompatible, legacyFormat: false});
+            addToast({message: t('music.batch.exportSuccess'), type: 'success'});
             break;
           }
         case OPTIONS.CreateNewOptMa2_103:
           if (isWebView) {
-            props.continue(STEP.None);
+            props.continue(STEP.Select);
             await api.RequestCopyTo({music: props.selectedMusic, removeEvents: true, legacyFormat: true});
+            addToast({message: t('music.batch.exportSuccess'), type: 'success'});
             break;
           }
         case OPTIONS.ConvertToMaidata:

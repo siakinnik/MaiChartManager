@@ -20,6 +20,7 @@ common:
   management: 管理
   dismiss: 放弃
   longMusic: 长乐曲
+  error: 错误
 assetDir:
   title: Opt 管理
   create: 创建目录
@@ -156,6 +157,9 @@ music:
     editFailed: 批量修改失败
     currentProgress: 当前进度
     currentProcessing: 当前处理
+    exportFailed: 导出失败
+    exportSuccess: 导出成功
+    deleteSuccess: 删除成功
   delete:
     confirm: 确认
     confirmDelete: 确认删除

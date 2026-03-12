@@ -123,7 +123,11 @@ export default async (
         const entries = zipReader.getEntriesGenerator();
         for await (const entry of entries) {
           try {
-            if (entry.filename.endsWith("/") || !entry.getData) {
+            if (entry.filename.endsWith("/")) {
+              continue;
+            }
+
+            if (!('getData' in entry)) {
               continue;
             }
 
@@ -185,8 +189,14 @@ export default async (
 
   try {
     await Promise.all(Array.from({ length: workerCount }, () => worker()));
-  } finally {
+    addToast({message: t('music.batch.exportSuccess'), type: 'success'});
+  }
+  catch (e) {
+    console.error(e);
+    addToast({ type: 'error', message: `${t('error.exportFailed')}` });
+  }
+  finally {
     currentProcessItem.value = "";
-    setStep(STEP.None);
+    setStep(STEP.Select);
   }
 };

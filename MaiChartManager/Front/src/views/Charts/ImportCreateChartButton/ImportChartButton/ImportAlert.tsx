@@ -36,6 +36,7 @@ export default defineComponent({
               else if (padding > 0){
                 return <div key={i} class="p-3 rounded border border-blue/30 bg-blue/10">
                   <div class="font-bold mb-1">{error.name}</div>
+                  {/* i18n 中的参数始终使用 padding，因为要动态选择 key */}
                   {t('chart.import.add' + i18nPostfix.value, {padding: padding.toFixed(3)})}
                 </div>
               }

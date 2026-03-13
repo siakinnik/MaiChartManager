@@ -240,8 +240,8 @@ chart:
     folderHint: 包含以下文件的文件夹，或者，一个包含一些这样的文件夹的文件夹
     addPadding: 将在音频前面加上 {padding} 秒空白以保证第一押在第二小节
     trimPadding: 将裁剪 {padding} 秒音频以保证第一押在第二小节
-    addFirst: 将在音频前面加上 {first} 秒空白以对应 &first 的值
-    trimFirst: 将裁剪 {first} 秒音频以对应 &first 的值
+    addFirst: 将在音频前面加上 {padding} 秒空白以对应 &first 的值
+    trimFirst: 将裁剪 {padding} 秒音频以对应 &first 的值
     addBar: 将在谱面开头加上1小节空白，以保证第一押出现在第二小节之后
     error:
       noMaidata: 未找到 maidata.txt

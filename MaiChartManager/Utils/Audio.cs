@@ -35,7 +35,7 @@ public static class Audio
             case ".ogg":
             case ".wma":
             case ".aac":
-                return ConvertFile(ConvertToWav(read, Path.GetExtension(path).Equals(".ogg", StringComparison.InvariantCultureIgnoreCase), padding, forceUseNAudio), FileType.Wave, convertToType, loop, encrpytionKey);
+                return ConvertFile(ConvertToWav(read, Path.GetExtension(path).ToLowerInvariant(), padding, forceUseNAudio), FileType.Wave, convertToType, loop, encrpytionKey);
             case ".hca":
                 return ConvertFile(read, FileType.Hca, convertToType, loop, encrpytionKey);
             case ".adx":
@@ -58,14 +58,15 @@ public static class Audio
         throw new InvalidDataException($"Filetype of \"{path}\" is not supported.");
     }
 
-    public static Stream ConvertToWav(Stream src, bool isOgg, float padding = 0, bool forceUseNAudio = false)
+    public static Stream ConvertToWav(Stream src, string extension, float padding = 0, bool forceUseNAudio = false)
     {
-        using WaveStream reader = isOgg
-            ? new NAudio.Vorbis.VorbisWaveReader(src, true)
-            : (forceUseNAudio
-                ? new StreamMediaFoundationReader(src) // NAudio不支持MP3 Gapless，所以作为一种“兼容模式”提供
-                : new WaveFileReader(ConvertMp3ToWavViaFfmpeg(src))); // 默认情况下，优先使用ffmpeg
-           // 关于上述MP3 Gapless问题的影响等具体讨论，详见 https://github.com/MuNET-OSS/MaiChartManager/issues/40
+        using WaveStream reader = extension switch
+        {
+            ".ogg" => new NAudio.Vorbis.VorbisWaveReader(src, true),
+            ".mp3" when !forceUseNAudio => new WaveFileReader(ConvertMp3ToWavViaFfmpeg(src)), // 默认情况下，优先使用ffmpeg
+            _ => new StreamMediaFoundationReader(src), // WAV, WMA, AAC, 以及 MP3+forceUseNAudio，NAudio不支持MP3 Gapless，所以作为一种“兼容模式”提供
+        };
+        // 关于上述MP3 Gapless问题的影响等具体讨论，详见 https://github.com/MuNET-OSS/MaiChartManager/issues/40
         var sample = reader.ToSampleProvider();
 
         switch (padding)

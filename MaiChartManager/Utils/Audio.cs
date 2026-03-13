@@ -103,7 +103,7 @@ public static class Audio
             }
 
             var conversion = FFmpeg.Conversions.New()
-                .AddParameter("-i " + inputPath.Escape())
+                .AddParameter("-i " + FFmpegHelper.Escape(inputPath))
                 .AddParameter("-c:a pcm_s16le") // 转为16-bit little-endian PCM
                 .SetOutput(outputPath)
                 .SetOverwriteOutput(true);

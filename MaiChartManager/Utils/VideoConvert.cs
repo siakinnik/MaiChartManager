@@ -272,7 +272,7 @@ public static class VideoConvert
         var conversion = FFmpeg.Conversions.New();
         foreach (var inputVideo in mediaInfos)
         {
-            conversion.AddParameter("-i " + inputVideo.Path.Escape() + " ");
+            conversion.AddParameter("-i " + FFmpegHelper.Escape(inputVideo.Path) + " ");
         }
 
         conversion.AddParameter("-filter_complex \"");
@@ -336,7 +336,7 @@ public static class VideoConvert
 
                 // 转换为 MP4
                 var conversion = FFmpeg.Conversions.New()
-                    .AddParameter("-i " + outputIvfFile.Escape())
+                    .AddParameter("-i " + FFmpegHelper.Escape(outputIvfFile))
                     .AddParameter("-c:v copy")
                     .SetOutput(outputPath);
 

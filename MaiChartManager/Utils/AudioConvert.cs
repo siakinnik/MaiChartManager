@@ -82,7 +82,7 @@ public static class AudioConvert
             Directory.CreateDirectory(StaticSettings.tempPath);
 
             var conversion = FFmpeg.Conversions.New()
-                .AddParameter($"-i " + wavPath.Escape());
+                .AddParameter($"-i " + FFmpegHelper.Escape(wavPath));
 
             if (tagData != null)
             {
@@ -91,15 +91,15 @@ public static class AudioConvert
                     // 把专辑封面写到临时文件，然后让ffmpeg把它嵌入mp3
                     albumArtPath = Path.Combine(StaticSettings.tempPath, $"ConvertToMp3_{Guid.NewGuid():N}.png");
                     File.WriteAllBytes(albumArtPath, tagData.AlbumArt);
-                    conversion.AddParameter($"-i {albumArtPath.Escape()}");
+                    conversion.AddParameter($"-i {FFmpegHelper.Escape(albumArtPath)}");
                 } // 顺序不能换！这个必须在第一个，因为-i必须在任何其他参数之前。
-                if (!string.IsNullOrEmpty(tagData.Title)) conversion.AddParameter($"-metadata title=" + tagData.Title.Escape());
-                if (!string.IsNullOrEmpty(tagData.Artist)) conversion.AddParameter($"-metadata artist=" + tagData.Artist.Escape());
-                if (!string.IsNullOrEmpty(tagData.Album)) conversion.AddParameter($"-metadata album=" + tagData.Album.Escape());
-                if (!string.IsNullOrEmpty(tagData.Year)) conversion.AddParameter($"-metadata date=" + tagData.Year.Escape());
-                if (!string.IsNullOrEmpty(tagData.Comment)) conversion.AddParameter($"-metadata comment=" + tagData.Comment.Escape());
-                if (!string.IsNullOrEmpty(tagData.Genre)) conversion.AddParameter($"-metadata genre=" + tagData.Genre.Escape());
-                if (!string.IsNullOrEmpty(tagData.Track)) conversion.AddParameter($"-metadata track=" + tagData.Track.Escape());
+                if (!string.IsNullOrEmpty(tagData.Title)) conversion.AddParameter($"-metadata title=" + FFmpegHelper.Escape(tagData.Title));
+                if (!string.IsNullOrEmpty(tagData.Artist)) conversion.AddParameter($"-metadata artist=" + FFmpegHelper.Escape(tagData.Artist));
+                if (!string.IsNullOrEmpty(tagData.Album)) conversion.AddParameter($"-metadata album=" + FFmpegHelper.Escape(tagData.Album));
+                if (!string.IsNullOrEmpty(tagData.Year)) conversion.AddParameter($"-metadata date=" + FFmpegHelper.Escape(tagData.Year));
+                if (!string.IsNullOrEmpty(tagData.Comment)) conversion.AddParameter($"-metadata comment=" + FFmpegHelper.Escape(tagData.Comment));
+                if (!string.IsNullOrEmpty(tagData.Genre)) conversion.AddParameter($"-metadata genre=" + FFmpegHelper.Escape(tagData.Genre));
+                if (!string.IsNullOrEmpty(tagData.Track)) conversion.AddParameter($"-metadata track=" + FFmpegHelper.Escape(tagData.Track));
             }
             
             conversion.AddParameter("-c:a libmp3lame -b:a 256k"); // 把wav编码为256kbps的LAME mp3

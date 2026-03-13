@@ -1,5 +1,5 @@
 import { computed, defineComponent, effect, PropType, watch } from "vue";
-import { Button, CheckBox, Modal, NumberInput, Section } from "@munet/ui";
+import { Button, CheckBox, Modal, NumberInput, Popover, Section } from "@munet/ui";
 import { ImportChartMessage, MessageLevel, ShiftMethod } from "@/client/apiGen";
 import { ImportChartMessageEx, ImportMeta, SavedOptions, TempOptions } from "./types";
 import noJacket from '@/assets/noJacket.webp';
@@ -70,6 +70,15 @@ export default defineComponent({
             </CheckBox>
             <Section title={t('chart.import.option.advancedOptions')}>
                 <ShiftModeSelector tempOptions={props.tempOptions}></ShiftModeSelector>
+                <div class="flex items-center gap-1" style="margin-top: 0.25rem">
+                  <CheckBox v-model:value={props.tempOptions.ignoreGapless}>{t('chart.import.option.ignoreGapless')}</CheckBox>
+                  <Popover trigger="hover">
+                    {{
+                      trigger: () => <div class="i-material-symbols:info-outline-rounded op-50"/>,
+                      default: () => <div class="max-w-60">{t('chart.import.option.ignoreGaplessTip')}</div>
+                    }}
+                  </Popover>
+                </div>
             </Section>
         </>}
       </div>,

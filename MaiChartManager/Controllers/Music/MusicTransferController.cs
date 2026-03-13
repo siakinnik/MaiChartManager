@@ -8,9 +8,7 @@ using MaiLib;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic.FileIO;
 using NAudio.Lame;
-using SimaiSharp;
 using Vanara.Windows.Forms;
-using Xabe.FFmpeg;
 using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
 
 namespace MaiChartManager.Controllers.Music;
@@ -555,7 +553,7 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
         simaiFile.AppendLine($"&title={music.Name}");
         simaiFile.AppendLine($"&artist={music.Artist}");
         simaiFile.AppendLine($"&wholebpm={music.Bpm}");
-        simaiFile.AppendLine("&first=0.0333");
+        simaiFile.AppendLine("&first=0");
         simaiFile.AppendLine($"&shortid={music.Id}");
         simaiFile.AppendLine($"&genreid={music.GenreId}");
         var genre = StaticSettings.GenreList.FirstOrDefault(it => it.Id == music.GenreId);
@@ -622,6 +620,7 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
             imageStream.Close();
         }
 
+        // 导出音频
         var soundEntry = zipArchive.CreateEntry("track.mp3");
         await using var soundStream = soundEntry.Open();
         var tag = new ID3TagData

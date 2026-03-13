@@ -1,4 +1,4 @@
-import { ImportChartMessage, ShiftMethod } from "@/client/apiGen";
+import { ImportChartCheckResult, ImportChartMessage, ShiftMethod } from "@/client/apiGen";
 
 export enum STEP {
   none,
@@ -27,13 +27,12 @@ export type ImportMeta = {
   bg?: File,
   movie?: File,
   name: string,
-  musicPadding: number,
+  chartPaddings: ImportChartCheckResult['chartPaddings'],
   first: number,
-  bar: number,
   isDx: boolean,
 }
 
-export type FirstPaddingMessage = { first: number, padding: number }
+export type FirstPaddingMessage = { first: number, chartPaddings: ImportChartCheckResult['chartPaddings']}
 export type ImportChartMessageEx = (ImportChartMessage | FirstPaddingMessage) & { name: string, isPaid?: boolean }
 
 export const dummyMeta = {name: '', importStep: IMPORT_STEP.start} as ImportMeta
@@ -54,5 +53,6 @@ export type TempOptions = {
   shiftLocked?: boolean,
   ignoreLevel?: boolean,
   disableBga?: boolean,
+  ignoreGapless?: boolean,
 };
 export type SavedOptions = typeof defaultSavedOptions;

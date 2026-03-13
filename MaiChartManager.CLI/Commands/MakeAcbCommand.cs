@@ -22,6 +22,11 @@ public class MakeAcbCommand : AsyncCommand<MakeAcbCommand.Settings>
         [Description("音频填充（秒），正数为前置静音，负数为裁剪开头")]
         [DefaultValue(0f)]
         public float Padding { get; set; }
+        
+        [CommandOption("--ignoreGapless")]
+        [Description("使用MP3兼容模式（忽略音频中的Gapless信息）。如果你使用某些版本的Visual Maimai等制谱器制谱，然后发现导入的谱面有对音问题的话，可以尝试开启此项")]
+        [DefaultValue(false)]
+        public bool IgnoreGapless { get; set; }
 
         public override ValidationResult Validate()
         {
@@ -87,7 +92,8 @@ public class MakeAcbCommand : AsyncCommand<MakeAcbCommand.Settings>
                     Audio.ConvertToMai(
                         srcPath: source,
                         savePath: output,
-                        padding: settings.Padding
+                        padding: settings.Padding,
+                        forceUseNAudio: settings.IgnoreGapless
                     );
                 });
             });
@@ -131,7 +137,8 @@ public class MakeAcbCommand : AsyncCommand<MakeAcbCommand.Settings>
                             Audio.ConvertToMai(
                                 srcPath: source,
                                 savePath: output,
-                                padding: settings.Padding
+                                padding: settings.Padding,
+                                forceUseNAudio: settings.IgnoreGapless
                             );
                         });
                         doneCount++;

@@ -253,6 +253,8 @@ chart:
         present)
 
         May cause first note to appear at odd timing, e.g. immediately at start
+      ignoreGapless: MP3 compatibility mode (ignore Gapless)
+      ignoreGaplessTip: If the chart was made with some specific chart editors, such as certain versions of Visual Maimai, and the imported chart has timing issues, you can try enabling this option.
       codecForceH264: H264
       codecForceVP9: VP9 USM
     assignId: Assign ID for new imported songs
@@ -264,8 +266,9 @@ chart:
       Will add {padding} seconds of silence to ensure first note is in second
       bar
     trimPadding: Will trim {padding} seconds of audio to ensure first note is in second bar
-    addFirst: Will add {first} seconds of silence to match &first value
-    trimFirst: Will trim {first} seconds of audio to match &first value
+    addFirst: Will add {padding} seconds of silence to match &first value
+    trimFirst: Will trim {padding} seconds of audio to match &first value
+    addBar: Will add 1 bar of silence at the beginning of the chart to ensure the first note is after the second bar
     error:
       noMaidata: maidata.txt not found
       noAudio: Audio file not found

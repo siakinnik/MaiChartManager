@@ -1,5 +1,6 @@
 ﻿using NAudio.Lame;
 using NAudio.Wave;
+using Xabe.FFmpeg;
 using VGAudio;
 using VGAudio.Cli;
 using Xv2CoreLib.ACB;
@@ -8,10 +9,10 @@ namespace MaiChartManager.Utils;
 
 public static class Audio
 {
-    public static void ConvertToMai(string srcPath, string savePath, float padding = 0, Stream? src = null, string? previewFilename = null, Stream? preview = null)
+    public static void ConvertToMai(string srcPath, string savePath, float padding = 0, Stream? src = null, string? previewFilename = null, Stream? preview = null, bool forceUseNAudio = false)
     {
         var wrapper = new ACB_Wrapper(ACB_File.Load(File.ReadAllBytes(Path.Combine(StaticSettings.exeDir, previewFilename is null ? "nopreview.acb" : "template.acb")), null));
-        var trackBytes = LoadAndConvertFile(srcPath, FileType.Hca, false, 9170825592834449000, padding, src);
+        var trackBytes = LoadAndConvertFile(srcPath, FileType.Hca, false, 9170825592834449000, padding, src, forceUseNAudio);
 
         wrapper.Cues[0].AddTrackToCue(trackBytes, true, false, EncodeType.HCA);
         if (previewFilename is not null)
@@ -24,7 +25,7 @@ public static class Audio
     }
 
     // 不要 byte[] 转 memory stream 倒来倒去，直接传入 stream
-    public static byte[] LoadAndConvertFile(string path, FileType convertToType, bool loop, ulong encrpytionKey = 0, float padding = 0, Stream? src = null)
+    public static byte[] LoadAndConvertFile(string path, FileType convertToType, bool loop, ulong encrpytionKey = 0, float padding = 0, Stream? src = null, bool forceUseNAudio = false)
     {
         using var read = src ?? File.OpenRead(path);
         switch (Path.GetExtension(path).ToLowerInvariant())
@@ -34,7 +35,7 @@ public static class Audio
             case ".ogg":
             case ".wma":
             case ".aac":
-                return ConvertFile(ConvertToWav(read, Path.GetExtension(path).Equals(".ogg", StringComparison.InvariantCultureIgnoreCase), padding), FileType.Wave, convertToType, loop, encrpytionKey);
+                return ConvertFile(ConvertToWav(read, Path.GetExtension(path).ToLowerInvariant(), padding, forceUseNAudio), FileType.Wave, convertToType, loop, encrpytionKey);
             case ".hca":
                 return ConvertFile(read, FileType.Hca, convertToType, loop, encrpytionKey);
             case ".adx":
@@ -57,9 +58,15 @@ public static class Audio
         throw new InvalidDataException($"Filetype of \"{path}\" is not supported.");
     }
 
-    public static Stream ConvertToWav(Stream src, bool isOgg, float padding = 0)
+    public static Stream ConvertToWav(Stream src, string extension, float padding = 0, bool forceUseNAudio = false)
     {
-        using WaveStream reader = isOgg ? new NAudio.Vorbis.VorbisWaveReader(src, true) : new StreamMediaFoundationReader(src);
+        using WaveStream reader = extension switch
+        {
+            ".ogg" => new NAudio.Vorbis.VorbisWaveReader(src, true),
+            ".mp3" when !forceUseNAudio => new WaveFileReader(ConvertMp3ToWavViaFfmpeg(src)), // 默认情况下，优先使用ffmpeg
+            _ => new StreamMediaFoundationReader(src), // WAV, WMA, AAC, 以及 MP3+forceUseNAudio，NAudio不支持MP3 Gapless，所以作为一种“兼容模式”提供
+        };
+        // 关于上述MP3 Gapless问题的影响等具体讨论，详见 https://github.com/MuNET-OSS/MaiChartManager/issues/40
         var sample = reader.ToSampleProvider();
 
         switch (padding)
@@ -80,6 +87,39 @@ public static class Audio
         WaveFileWriter.WriteWavFileToStream(stream, sample.ToWaveProvider16()); // 淦
         stream.Position = 0;                                                    // 淦 x2
         return stream;
+    }
+
+    private static MemoryStream ConvertMp3ToWavViaFfmpeg(Stream src)
+    {
+        var tempFileGuid = Guid.NewGuid();
+        var inputPath = Path.Combine(StaticSettings.tempPath, $"ConvertToWav_{tempFileGuid:N}.mp3");
+        var outputPath = Path.Combine(StaticSettings.tempPath, $"ConvertToWav_{tempFileGuid:N}.wav");
+        try
+        {
+            Directory.CreateDirectory(StaticSettings.tempPath);
+
+            using (var inputFile = new FileStream(inputPath, FileMode.Create, FileAccess.Write))
+            {
+                src.CopyTo(inputFile);
+            }
+
+            var conversion = FFmpeg.Conversions.New()
+                .AddParameter("-i " + FFmpegHelper.Escape(inputPath))
+                .AddParameter("-c:a pcm_s16le") // 转为16-bit little-endian PCM
+                .SetOutput(outputPath)
+                .SetOverwriteOutput(true);
+            conversion.Start().GetAwaiter().GetResult();
+
+            if (!File.Exists(outputPath) || new FileInfo(outputPath).Length == 0)
+                throw new InvalidOperationException("ffmpeg produced empty wav file from mp3 input.");
+
+            return new MemoryStream(File.ReadAllBytes(outputPath));
+        }
+        finally
+        {
+            File.Delete(inputPath);
+            File.Delete(outputPath);
+        }
     }
 
     public static byte[] ConvertFile(

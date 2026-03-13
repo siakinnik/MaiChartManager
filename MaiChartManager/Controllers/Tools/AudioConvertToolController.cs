@@ -87,7 +87,7 @@ public class AudioConvertToolController : ControllerBase
     /// <summary>
     /// 将音频文件转换为 ACB/AWB
     /// </summary>
-    private IActionResult ConvertToAcbAwb(string inputFile, string directory, string fileNameWithoutExt, string extension)
+    private IActionResult ConvertToAcbAwb(string inputFile, string directory, string fileNameWithoutExt, string extension, bool ignoreGapless = false)
     {
         string tempAudioFile = null;
 
@@ -108,7 +108,7 @@ public class AudioConvertToolController : ControllerBase
             string awbPath = Path.Combine(directory, fileNameWithoutExt + ".awb");
 
             // 执行转换
-            Audio.ConvertToMai(actualInputFile, acbPath);
+            Audio.ConvertToMai(actualInputFile, acbPath, forceUseNAudio: ignoreGapless);
 
             return Ok(new { message = Locale.ConvertSuccess, acbPath = acbPath, awbPath = awbPath });
         }

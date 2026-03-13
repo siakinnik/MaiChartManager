@@ -1,10 +1,10 @@
 import { defineComponent, ref } from "vue";
 import { Button } from "@munet/ui";
 import SelectFileTypeTip from "./SelectFileTypeTip";
-import { LicenseStatus, MessageLevel, ShiftMethod } from "@/client/apiGen";
+import { LicenseStatus, MessageLevel } from "@/client/apiGen";
 import CheckingModal from "./CheckingModal";
 import api, { getUrl } from "@/client/api";
-import { globalCapture, musicList, selectedADir, selectMusicId, updateMusicList, version as appVersion } from "@/store/refs";
+import { globalCapture, selectedADir, selectMusicId, updateMusicList, version as appVersion } from "@/store/refs";
 import { appSettings } from "@/store/settings";
 import ErrorDisplayIdInput from "./ErrorDisplayIdInput";
 import ImportStepDisplay from "./ImportStepDisplay";
@@ -68,15 +68,14 @@ export default defineComponent({
         errors.value.push({ level: MessageLevel.Warning, message: t('chart.import.error.convertPaidFeature'), name: dir.name, isPaid: true });
       }
 
-      let musicPadding = 0, first = 0, bar = 0, name = dir.name, isDx = false;
+      let first = 0, chartPaddings, name = dir.name, isDx = false;
       if (maidata) {
         const checkRet = (await api.ImportChartCheck({ file: maidata })).data;
         reject = reject || !checkRet.accept;
         errors.value.push(...(checkRet.errors || []).map(it => ({ ...it, name: dir.name })));
-        musicPadding = checkRet.musicPadding!;
         first = checkRet.first!;
-        bar = checkRet.bar!;
-        errors.value.push({ first, padding: musicPadding, name: dir.name });
+        chartPaddings = checkRet.chartPaddings!;
+        errors.value.push({ first, chartPaddings, name: dir.name });
         // 为了本地的错误和远程的错误都显示本地的名称，这里在修改 name
         name = checkRet.title!;
         if (checkRet.isDx) id += 1e4;
@@ -85,7 +84,7 @@ export default defineComponent({
 
       if (!reject) {
         meta.value.push({
-          id, maidata, bg, track, musicPadding, name, first, movie, bar, isDx,
+          id, maidata, bg, track, chartPaddings, name, first, movie, isDx,
           importStep: IMPORT_STEP.start,
         })
       }
@@ -164,25 +163,18 @@ export default defineComponent({
         }
 
         music.importStep = IMPORT_STEP.music;
-        let padding = 0;
-        if (tempOptions.value.shift === ShiftMethod.Legacy) {
-          padding = music.musicPadding;
-        } else if (tempOptions.value.shift === ShiftMethod.Bar) {
-          if (music.musicPadding + music.first > 0.1)
-            padding = music.bar - music.first;
-          else
-            padding = -music.first;
-        } else if (tempOptions.value.shift === ShiftMethod.NoShift) {
-          padding = -music.first;
-        }
+        let chartPadding = music.chartPaddings?.[tempOptions.value.shift]!;
+        // 参见Services/MaidataImportService.cs:CalcChartPadding 中的注释，
+        // 音频上应该应用的延迟audioPadding = 谱面上应用的延迟chartPadding - &first
+        let audioPadding = chartPadding - music.first;
 
-        await api.SetAudio(music.id, selectedADir.value, { file: music.track, padding });
+        await api.SetAudio(music.id, selectedADir.value, { file: music.track, padding: audioPadding, ignoreGapless: !!tempOptions.value.ignoreGapless });
 
         if (music.movie && !tempOptions.value.disableBga) {
           currentMovieProgress.value = 0;
           music.importStep = IMPORT_STEP.movie;
           try {
-            await uploadMovie(music.id, music.movie, padding);
+            await uploadMovie(music.id, music.movie, audioPadding);
           } catch (e: any) {
             errors.value.push({ level: MessageLevel.Warning, message: t('chart.import.error.videoConvertFailed') + `: ${e.error?.message || e.error?.detail || e?.message || e?.toString() || t('error.unknown')}`, name: music.name });
           }

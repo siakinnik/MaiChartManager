@@ -264,14 +264,18 @@ export interface ISectionState {
 export interface ImportChartCheckResult {
   accept?: boolean;
   errors?: ImportChartMessage[] | null;
-  /** @format float */
-  musicPadding?: number;
+  chartPaddings?: {
+    /** @format float */
+    Legacy?: number;
+    /** @format float */
+    Bar?: number;
+    /** @format float */
+    NoShift?: number;
+  } | null;
   isDx?: boolean;
   title?: string | null;
   /** @format float */
   first?: number;
-  /** @format float */
-  bar?: number;
 }
 
 export interface ImportChartMessage {
@@ -1278,6 +1282,8 @@ export class Api<
         awb?: File;
         /** @format binary */
         preview?: File;
+        /** @default false */
+        ignoreGapless?: boolean;
       },
       params: RequestParams = {},
     ) =>

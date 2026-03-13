@@ -235,6 +235,8 @@ chart:
       shiftNoMoveDesc: |-
         完全不修改谱面，从音频中删除 &first 的长度（如果有）
         可能会导致第一个音符出现的时机比较奇怪，比如说刚开始就有音符
+      ignoreGapless: MP3兼容模式（忽略Gapless）
+      ignoreGaplessTip: 如果你使用某些版本的Visual Maimai等制谱器制谱，然后发现导入的谱面有对音问题的话，可以尝试开启此项进行导入。
       codecForceH264: H264
       codecForceVP9: VP9 USM
     assignId: 为新导入的歌曲指定 ID
@@ -242,8 +244,9 @@ chart:
     folderHint: 包含以下文件的文件夹，或者，一个包含一些这样的文件夹的文件夹
     addPadding: 将在音频前面加上 {padding} 秒空白以保证第一押在第二小节
     trimPadding: 将裁剪 {padding} 秒音频以保证第一押在第二小节
-    addFirst: 将在音频前面加上 {first} 秒空白以对应 &first 的值
-    trimFirst: 将裁剪 {first} 秒音频以对应 &first 的值
+    addFirst: 将在音频前面加上 {padding} 秒空白以对应 &first 的值
+    trimFirst: 将裁剪 {padding} 秒音频以对应 &first 的值
+    addBar: 将在谱面开头加上1小节空白，以保证第一押出现在第二小节之后
     error:
       noMaidata: 未找到 maidata.txt
       noAudio: 未找到音频文件

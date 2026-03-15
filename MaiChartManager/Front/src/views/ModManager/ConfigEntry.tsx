@@ -72,7 +72,7 @@ export default defineComponent({
                 return <NumberInput innerClass="h-42px!" v-model:value={props.entryState.value} decimal={0} step={1} min={-32768} max={32767}/>;
               case 'System.Double':
               case 'System.Single':
-                return <NumberInput innerClass="h-42px!" v-model:value={props.entryState.value} step={.1}/>;
+                return <NumberInput innerClass="h-42px!" v-model:value={props.entryState.value} step={.1} decimal={4}/>;
               case 'AquaMai.Config.Types.KeyCodeOrName':
                 return <Select v-model:value={props.entryState.value} options={Object.entries(KeyCodeName).map(([label, value]) => ({ label, value }))}/>;
               case 'AquaMai.Config.Types.KeyCodeID':

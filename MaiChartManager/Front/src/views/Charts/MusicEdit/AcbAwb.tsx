@@ -143,7 +143,7 @@ export default defineComponent({
       >{{
         default: () => <div class="flex flex-col gap-3">
           <div>{t('music.edit.audioOffsetHint')}</div>
-          <NumberInput v-model:value={offset.value} class="w-full" step={0.01}/>
+          <NumberInput v-model:value={offset.value} class="w-full" step={0.0001} decimal={4}/>
         </div>,
         actions: () => <button class="w-0 grow" onClick={okResolve.value as any}>{t('common.confirm')}</button>
       }}</Modal>

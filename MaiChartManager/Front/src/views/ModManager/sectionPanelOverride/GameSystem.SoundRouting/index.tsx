@@ -41,7 +41,7 @@ export default defineComponent({
       if (!entry) return null;
       return <div class="flex gap-2 items-start">
         <div class={ENTRY_LABEL_CLASS}>{getNameForPath(entry.path!, entry.name!, entry.attribute?.comment?.nameZh)}</div>
-        <NumberInput innerClass="h-42px!" v-model:value={props.entryStates[PREFIX + key].value} step={0.1}/>
+        <NumberInput innerClass="h-42px!" v-model:value={props.entryStates[PREFIX + key].value} step={0.1} decimal={2}/>
       </div>;
     };
 

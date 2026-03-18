@@ -62,7 +62,7 @@ export default defineComponent({
     return () => <div class={["flex flex-col gap-2", ENTRY_GROUP_PADDING]}>
       {!isMmlRequirementSatisfied.value ? <div class="flex gap-2 items-center m-l-35">
         <span class="c-orange">{t('mod.mmlIo.notInstalled')}</span>
-        <Button variant="secondary" onClick={() => install.execute()} ing={install.isLoading.value}>{t('mod.oneClickInstall')}</Button>
+        <Button variant="secondary" onClick={() => install.execute()} ing={install.isLoading.value}>{t('mod.mmlIo.oneClickInstall')}</Button>
       </div>
         : <div class="flex gap-2 items-center m-l-35">
           <span class="c-green-6">{t('mod.mmlIo.installed')}</span>

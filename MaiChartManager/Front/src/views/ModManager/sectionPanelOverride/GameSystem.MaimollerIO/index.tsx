@@ -5,7 +5,7 @@ import { globalCapture, modInfo, updateModInfo } from '@/store/refs';
 import { useAsyncState } from '@vueuse/core';
 import { Button, Select, CheckBox } from '@munet/ui';
 import { defineComponent, PropType, ref, computed, watch } from 'vue';
-import ConfigEntry from '../../ConfigEntry';
+import ConfigEntry, {optionsIoKeyMap} from '../../ConfigEntry';
 import { ENTRY_GROUP_PADDING, ENTRY_LABEL_CLASS } from '../../constants';
 
 export default defineComponent({
@@ -25,14 +25,7 @@ export default defineComponent({
       },
     })
 
-    const options = [
-      { label: t('mod.ioKeyMap.disabled'), value: 'None' },
-      { label: t('mod.ioKeyMap.select'), value: 'Select' },
-      { label: t('mod.ioKeyMap.select1P'), value: 'Select1P' },
-      { label: t('mod.ioKeyMap.select2P'), value: 'Select2P' },
-      { label: t('mod.ioKeyMap.service'), value: 'Service' },
-      { label: t('mod.ioKeyMap.test'), value: 'Test' },
-    ];
+    const options = optionsIoKeyMap(t);
 
     const PREFIX = 'GameSystem.MaimollerIO.';
     const useLegacyEntryPath = PREFIX + 'UseLegacy';

@@ -10,6 +10,18 @@ import { useI18n } from 'vue-i18n';
 import { locale } from "@/locales";
 import { ENTRY_LABEL_CLASS } from "./constants";
 
+/* t需要传入是Vue的i18n翻译函数 */
+export function optionsIoKeyMap(t: (key: string) => string): { label: string, value: string }[] {
+  return [
+    { label: t('mod.ioKeyMap.disabled'), value: 'None' },
+    { label: t('mod.ioKeyMap.select'), value: 'Select' },
+    { label: t('mod.ioKeyMap.select1P'), value: 'Select1P' },
+    { label: t('mod.ioKeyMap.select2P'), value: 'Select2P' },
+    { label: t('mod.ioKeyMap.service'), value: 'Service' },
+    { label: t('mod.ioKeyMap.test'), value: 'Test' },
+  ];
+}
+
 export default defineComponent({
   props: {
     entry: { type: Object as PropType<Entry>, required: true },
@@ -17,15 +29,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const { t, te } = useI18n();
-
-    const optionsIoKeyMap = [
-      { label: t('mod.ioKeyMap.disabled'), value: 'None' },
-      { label: t('mod.ioKeyMap.select'), value: 'Select' },
-      { label: t('mod.ioKeyMap.select1P'), value: 'Select1P' },
-      { label: t('mod.ioKeyMap.select2P'), value: 'Select2P' },
-      { label: t('mod.ioKeyMap.service'), value: 'Service' },
-      { label: t('mod.ioKeyMap.test'), value: 'Test' },
-    ];
 
     const optionsSoundChannel = ['None', 'P1SpeakerLeft', 'P1SpeakerRight', 'P1HeadphoneLeft', 'P1HeadphoneRight', 'P2SpeakerLeft', 'P2SpeakerRight', 'P2HeadphoneLeft', 'P2HeadphoneRight']
       .map(channel => ({ label: t('mod.soundChannel.' + channel), value: channel }));
@@ -78,9 +81,9 @@ export default defineComponent({
               case 'AquaMai.Config.Types.KeyCodeID':
                 return <Select v-model:value={props.entryState.value} options={Object.entries(KeyCodeID).map(([label, value]) => ({label, value}))}/>;
               case 'AquaMai.Config.Types.IOKeyMap':
-                return <Select v-model:value={props.entryState.value} options={optionsIoKeyMap}/>;
+                return <Select v-model:value={props.entryState.value} options={optionsIoKeyMap(t)}/>;
               case 'AquaMai.Config.Types.AdxKeyMap':
-                return <Select v-model:value={props.entryState.value} options={optionsIoKeyMap}/>;
+                return <Select v-model:value={props.entryState.value} options={optionsIoKeyMap(t)}/>;
               case 'AquaMai.Config.Types.SoundChannel':
                 return <Select v-model:value={props.entryState.value} options={optionsSoundChannel}/>;
             }

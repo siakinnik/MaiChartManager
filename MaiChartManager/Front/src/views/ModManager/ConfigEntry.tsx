@@ -6,6 +6,7 @@ import { KeyCodeName } from "./types/KeyCodeName";
 import { getNameForPath } from "./utils";
 import comments from "./modComments.yaml";
 import { KeyCodeID } from "./types/KeyCodeID";
+import { VKCode } from "./types/VKCode";
 import { useI18n } from 'vue-i18n';
 import { locale } from "@/locales";
 import { ENTRY_LABEL_CLASS } from "./constants";
@@ -19,7 +20,29 @@ export function optionsIoKeyMap(t: (key: string) => string): { label: string, va
     { label: t('mod.ioKeyMap.select2P'), value: 'Select2P' },
     { label: t('mod.ioKeyMap.service'), value: 'Service' },
     { label: t('mod.ioKeyMap.test'), value: 'Test' },
+    { label: t('mod.ioKeyMap.customFn') + "1", value: 'CustomFn1' },
+    { label: t('mod.ioKeyMap.customFn') + "2", value: 'CustomFn2' },
+    { label: t('mod.ioKeyMap.customFn') + "3", value: 'CustomFn3' },
+    { label: t('mod.ioKeyMap.customFn') + "4", value: 'CustomFn4' },
   ];
+}
+
+export function optionsKeyCodeOrName(t: (key: string) => string): { label: string, value: string }[] {
+  return Object.entries(KeyCodeName).map(([label, value]) => {
+    if (label.startsWith("CustomFn")) { // "自定义功能键"需要单独i18n
+      return { label: t('mod.ioKeyMap.customFn') + label[8], value };
+    }
+    return { label, value }; // 其他的则沿用枚举中的值
+  });
+}
+
+export function optionsVKCode(t: (key: string) => string): { label: string, value: string }[] {
+  return Object.entries(VKCode).map(([label, value]) => {
+    if (label == "None") { // 单独翻译为“禁用”
+      return { label: t('mod.disable'), value };
+    }
+    return { label, value }; // 其他的则沿用枚举中的值
+  });
 }
 
 export default defineComponent({
@@ -77,13 +100,14 @@ export default defineComponent({
               case 'System.Single':
                 return <NumberInput innerClass="h-42px!" v-model:value={props.entryState.value} step={.1} decimal={4}/>;
               case 'AquaMai.Config.Types.KeyCodeOrName':
-                return <Select v-model:value={props.entryState.value} options={Object.entries(KeyCodeName).map(([label, value]) => ({ label, value }))}/>;
+                return <Select v-model:value={props.entryState.value} options={optionsKeyCodeOrName(t)}/>;
               case 'AquaMai.Config.Types.KeyCodeID':
                 return <Select v-model:value={props.entryState.value} options={Object.entries(KeyCodeID).map(([label, value]) => ({label, value}))}/>;
               case 'AquaMai.Config.Types.IOKeyMap':
-                return <Select v-model:value={props.entryState.value} options={optionsIoKeyMap(t)}/>;
               case 'AquaMai.Config.Types.AdxKeyMap':
                 return <Select v-model:value={props.entryState.value} options={optionsIoKeyMap(t)}/>;
+              case 'AquaMai.Config.Types.VKCode':
+                return <Select v-model:value={props.entryState.value} options={optionsVKCode(t)}/>;
               case 'AquaMai.Config.Types.SoundChannel':
                 return <Select v-model:value={props.entryState.value} options={optionsSoundChannel}/>;
             }

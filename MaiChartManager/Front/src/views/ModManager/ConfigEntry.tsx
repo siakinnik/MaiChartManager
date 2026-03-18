@@ -30,7 +30,8 @@ export function optionsIoKeyMap(t: (key: string) => string): { label: string, va
 export function optionsKeyCodeOrName(t: (key: string) => string): { label: string, value: string }[] {
   return Object.entries(KeyCodeName).map(([label, value]) => {
     if (label.startsWith("CustomFn")) { // "自定义功能键"需要单独i18n
-      return { label: t('mod.ioKeyMap.customFn') + label[8], value };
+      const suffix = label.slice('CustomFn'.length);
+      return { label: t('mod.ioKeyMap.customFn') + suffix, value };
     }
     return { label, value }; // 其他的则沿用枚举中的值
   });

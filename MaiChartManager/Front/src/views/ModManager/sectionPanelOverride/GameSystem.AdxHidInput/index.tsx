@@ -4,7 +4,7 @@ import { Button, Select } from '@munet/ui';
 import api from "@/client/api";
 import { modInfo, updateModInfo } from "@/store/refs";
 import { useI18n } from 'vue-i18n';
-import ConfigEntry from '../../ConfigEntry';
+import ConfigEntry, {optionsIoKeyMap} from '../../ConfigEntry';
 import { ENTRY_GROUP_PADDING, ENTRY_LABEL_CLASS } from '../../constants';
 
 export default defineComponent({
@@ -23,14 +23,7 @@ export default defineComponent({
       'GameSystem.AdxHidInput.Button3',
       'GameSystem.AdxHidInput.Button4',
     ];
-    const options = [
-      { label: t('mod.ioKeyMap.disabled'), value: 'None' },
-      { label: t('mod.ioKeyMap.select'), value: 'Select' },
-      { label: t('mod.ioKeyMap.select1P'), value: 'Select1P' },
-      { label: t('mod.ioKeyMap.select2P'), value: 'Select2P' },
-      { label: t('mod.ioKeyMap.service'), value: 'Service' },
-      { label: t('mod.ioKeyMap.test'), value: 'Test' },
-    ];
+    const options = optionsIoKeyMap(t);
 
     const del = async () => {
       load.value = true

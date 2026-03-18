@@ -296,6 +296,7 @@ mod:
     select2P: 2P 選擇
     service: 服務
     test: 測試
+    customFn: 自訂功能鍵
   adxHid:
     disabled: 停用
     select1P: 1P 選擇

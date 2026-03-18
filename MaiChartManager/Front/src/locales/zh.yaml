@@ -296,6 +296,7 @@ mod:
     select2P: 2P 选择
     service: 服务
     test: 测试
+    customFn: 自定义功能键
   adxHid:
     conflictDetected: 检测到冲突的 Mod
     oneClickDelete: 一键删除

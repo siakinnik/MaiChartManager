@@ -274,6 +274,8 @@ public partial class MaidataImportService
         foreach (var (key, value) in kvps)
         {
             maiData[key] = value;
+            if (key.StartsWith("inote") || key.StartsWith("lv") || key.StartsWith("first") ||
+                key.StartsWith("wholebpm")) maiData[key] = maiData[key].Trim();
         }
 
         var allCharts = new Dictionary<int, AllChartsEntry>();

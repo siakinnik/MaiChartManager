@@ -262,23 +262,11 @@ public partial class MaidataImportService
     
     [GeneratedRegex(@"^(MET\t\d+\t\d+\t\d+\t)(\d+\s*)$", RegexOptions.Multiline)]
     private static partial Regex FirstMetLineRegex();
-
-    private static string replaceGroup2ByRegex(string input, Match match, int value)
-    {
-        if (!match.Success) return input;
-        return string.Concat(
-            input.AsSpan(0, match.Index),
-            match.Groups[1].ValueSpan,
-            value.ToString(CultureInfo.InvariantCulture),
-            input.AsSpan(match.Index + match.Length));
-    }
     
     private static string ApplyClockCountToFirstMetLine(string ma2Content, int clockCount)
     {
-        var clockdefMatch = ClockDefRegex().Match(ma2Content);
-        ma2Content = replaceGroup2ByRegex(ma2Content, clockdefMatch, 96 * clockCount);
-        var metMatch = FirstMetLineRegex().Match(ma2Content);
-        ma2Content = replaceGroup2ByRegex(ma2Content, metMatch, clockCount);
+        ma2Content = ClockDefRegex().Replace(ma2Content, $"${{1}}{96 * clockCount}", 1);
+        ma2Content = FirstMetLineRegex().Replace(ma2Content, $"${{1}}{clockCount}", 1);
         return ma2Content;
     }
 
@@ -439,7 +427,8 @@ public partial class MaidataImportService
             // 如果maidata中声明了clock_count，应用之，修改CLOCK_DEF和MET
             if (int.TryParse(maiData.GetValueOrDefault("clock_count"), out var clockCount))
             {
-                shiftedConverted = ApplyClockCountToFirstMetLine(shiftedConverted, clockCount);
+                if (clockCount > 0) shiftedConverted = ApplyClockCountToFirstMetLine(shiftedConverted, clockCount);
+                else errors.Add(new ImportChartMessage("the \"&clock_count\" value in this maidata is invalid thus ignored.", MessageLevel.Warning));
             }
 
             // Just use T_NUM_ALL value in ma2 file

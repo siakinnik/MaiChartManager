@@ -380,6 +380,11 @@ public partial class MaidataImportService
             var levelNumStr = maiData.GetValueOrDefault($"lv_{level}");
             if (!string.IsNullOrWhiteSpace(levelNumStr))
             {
+                if (isUtage && !char.IsDigit(levelNumStr[0]))
+                {
+                    music.UtageKanji = levelNumStr;
+                    levelNumStr = levelNumStr.Substring(1).Replace("?", ""); // 为了处理类似“奏13+?”这种情况，留下13+给后面的逻辑处理
+                }
                 levelNumStr = levelNumStr.Replace("+", ".7");
             }
 

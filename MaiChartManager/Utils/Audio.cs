@@ -84,8 +84,13 @@ public static class Audio
         }
 
         var stream = new MemoryStream();
-        WaveFileWriter.WriteWavFileToStream(stream, sample.ToWaveProvider16()); // 淦
-        stream.Position = 0;                                                    // 淦 x2
+        WaveFileWriter.WriteWavFileToStream(stream, sample.ToWaveProvider16());
+#if DEBUG
+        Console.WriteLine($"ConvertToWav: extension={extension}, padding={padding}, forceUseNAudio={forceUseNAudio}");
+        stream.Position = 0; // 把wav的内容写到本地文件以供调试
+        File.WriteAllBytes(Path.Combine(StaticSettings.tempPath, "ConvertToWav_debug.wav"), stream.ToArray());
+#endif
+        stream.Position = 0;
         return stream;
     }
 

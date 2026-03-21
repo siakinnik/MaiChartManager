@@ -574,8 +574,11 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
             if (AudioConvert.TryResolveAcbAwb(GetAudioCandidateIds(music), out _, out var previewAcb, out _) && previewAcb is not null)
             {
                 var previewTime = CriUtils.GetAudioPreviewTime(previewAcb);
-                if (previewTime.StartTime >= 0)
+                if (previewTime.StartTime >= 0 && previewTime.EndTime > previewTime.StartTime)
+                {
                     simaiFile.AppendLine($"&demo_seek={previewTime.StartTime}");
+                    simaiFile.AppendLine($"&demo_len={previewTime.EndTime - previewTime.StartTime}");
+                }
             }
         }
         catch

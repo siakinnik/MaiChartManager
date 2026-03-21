@@ -68,7 +68,7 @@ export default defineComponent({
         errors.value.push({ level: MessageLevel.Warning, message: t('chart.import.error.convertPaidFeature'), name: dir.name, isPaid: true });
       }
 
-      let first = 0, chartPaddings, name = dir.name, isDx = false;
+      let first = 0, chartPaddings, name = dir.name, isDx = false, previewTime = undefined;
       if (maidata) {
         const checkRet = (await api.ImportChartCheck({ file: maidata })).data;
         reject = reject || !checkRet.accept;
@@ -80,11 +80,12 @@ export default defineComponent({
         name = checkRet.title!;
         if (checkRet.isDx) id += 1e4;
         isDx = checkRet.isDx!;
+        if (checkRet.previewTime) previewTime = checkRet.previewTime
       }
 
       if (!reject) {
         meta.value.push({
-          id, maidata, bg, track, chartPaddings, name, first, movie, isDx,
+          id, maidata, bg, track, chartPaddings, name, first, movie, isDx, previewTime,
           importStep: IMPORT_STEP.start,
         })
       }
@@ -169,6 +170,7 @@ export default defineComponent({
         let audioPadding = chartPadding - music.first;
 
         await api.SetAudio(music.id, selectedADir.value, { file: music.track, padding: audioPadding, ignoreGapless: !!tempOptions.value.ignoreGapless });
+        if (music.previewTime) await api.SetAudioPreview(music.id, selectedADir.value, music.previewTime);
 
         if (music.movie && !tempOptions.value.disableBga) {
           currentMovieProgress.value = 0;

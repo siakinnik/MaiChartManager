@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using MaiChartManager.Controllers.Music;
 using MaiChartManager.Services;
 using Microsoft.AspNetCore.Mvc;
 using SimaiSharp;
@@ -11,7 +12,7 @@ namespace MaiChartManager.Controllers.Charts;
 public class ImportChartController(StaticSettings settings, ILogger<StaticSettings> logger, 
     MaidataImportService importService) : ControllerBase
 {
-    public record ImportChartCheckResult(bool Accept, IEnumerable<ImportChartMessage> Errors, Dictionary<ShiftMethod, float> chartPaddings, bool IsDx, string? Title, float first);
+    public record ImportChartCheckResult(bool Accept, IEnumerable<ImportChartMessage> Errors, Dictionary<ShiftMethod, float> chartPaddings, bool IsDx, string? Title, float first, CueConvertController.SetAudioPreviewRequest? previewTime);
 
     [HttpPost]
     public ImportChartCheckResult ImportChartCheck(IFormFile file, [FromForm] bool isReplacement = false)
@@ -99,7 +100,7 @@ public class ImportChartController(StaticSettings settings, ILogger<StaticSettin
             {
                 errors.Add(new ImportChartMessage(Locale.MusicNoCharts, MessageLevel.Fatal));
                 fatal = true;
-                return new ImportChartCheckResult(!fatal, errors, new Dictionary<ShiftMethod, float>(), false, title, 0);
+                return new ImportChartCheckResult(!fatal, errors, new Dictionary<ShiftMethod, float>(), false, title, 0, null);
             }
 
             float.TryParse(maiData.GetValueOrDefault("first"), out var first);
@@ -142,14 +143,22 @@ public class ImportChartController(StaticSettings settings, ILogger<StaticSettin
 
             var chartPaddings = MaidataImportService.CalcChartPadding(maiCharts, out _);
 
-            return new ImportChartCheckResult(!fatal, errors, chartPaddings, isDx, title, first);
+            CueConvertController.SetAudioPreviewRequest? previewTime = null;
+            if (float.TryParse(maiData.GetValueOrDefault("demo_seek"), out var demo_seek))
+            {
+                // 当只有demo_seek没有demo_len时，则把demo_len设为一个很大的数，表示preview直到音频结尾；SetAudioPreviewApi中会自动把实际的loopEnd限制到音频长度以内。
+                if (!float.TryParse(maiData.GetValueOrDefault("demo_len"), out var demo_len)) demo_len = 10000f;
+                previewTime = new CueConvertController.SetAudioPreviewRequest(demo_seek, demo_seek + demo_len);
+            }
+            
+            return new ImportChartCheckResult(!fatal, errors, chartPaddings, isDx, title, first, previewTime);
         }
         catch (Exception e)
         {
             logger.LogError(e, "解析谱面失败（大）");
             errors.Add(new ImportChartMessage(Locale.ChartParseFailedGlobal, MessageLevel.Fatal));
             fatal = true;
-            return new ImportChartCheckResult(!fatal, errors, new Dictionary<ShiftMethod, float>(), false, "", 0);
+            return new ImportChartCheckResult(!fatal, errors, new Dictionary<ShiftMethod, float>(), false, "", 0, null);
         }
     }
     

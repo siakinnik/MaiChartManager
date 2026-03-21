@@ -43,11 +43,14 @@ public static class CriUtils
         criTable.Load(File.ReadAllBytes(Path.Combine(StaticSettings.exeDir, "templateV3.acb")));
 
         var cueTable = criTable.Rows[0].GetTable("CueTable");
-        cueTable.Rows[0]["Length"] = (int)((float)format.SampleCount / format.SampleRate * 1000);
+        float audioLength = (float)format.SampleCount / format.SampleRate;
+        cueTable.Rows[0]["Length"] = (int)(audioLength * 1000);
         criTable.WriterSettings = CriTableWriterSettings.Adx2Settings;
         criTable.Rows[0]["CueTable"] = cueTable.Save();
 
         var trackEventTable = criTable.Rows[0].GetTable("TrackEventTable");
+        // 对loopEnd予以截断，防止前端传来的loopEnd超过音频结尾的范围
+        if (loopEnd.TotalSeconds > audioLength) loopEnd = TimeSpan.FromSeconds(audioLength);
         trackEventTable.Rows[1]["Command"] = MakeCommandForPreview(loopStart, loopEnd);
         criTable.Rows[0]["TrackEventTable"] = trackEventTable.Save();
 

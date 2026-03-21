@@ -276,6 +276,7 @@ export interface ImportChartCheckResult {
   title?: string | null;
   /** @format float */
   first?: number;
+  previewTime?: SetAudioPreviewRequest;
 }
 
 export interface ImportChartMessage {

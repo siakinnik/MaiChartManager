@@ -612,7 +612,7 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
         var img = music.GetMusicJacketPngData();
         if (img is not null)
         {
-            var imgExt = (Path.GetExtension(music.JacketPath ?? music.PseudoAssetBundleJacket ?? music.AssetBundleJacket) ?? ".png").ToLowerInvariant();
+            var imgExt = (Path.GetExtension(music.RealJacketPath) ?? ".png").ToLowerInvariant();
             if (imgExt == ".ab") imgExt = ".png";
             var imageEntry = zipArchive.CreateEntry($"bg{imgExt}");
             await using var imageStream = imageEntry.Open();

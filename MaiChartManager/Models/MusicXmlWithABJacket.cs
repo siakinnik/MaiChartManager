@@ -11,6 +11,7 @@ public class MusicXmlWithABJacket(string filePath, string gamePath, string asset
 
     // 在 mod 里文件的 jacket 是优先的
     public new bool HasJacket => JacketPath is not null || AssetBundleJacket is not null || PseudoAssetBundleJacket is not null;
+    public string RealJacketPath => JacketPath ?? AssetBundleJacket ?? PseudoAssetBundleJacket;
 
     public new static MusicXmlWithABJacket CreateNew(int id, string gamePath, string assetDir)
     {
@@ -122,16 +123,18 @@ public class MusicXmlWithABJacket(string filePath, string gamePath, string asset
 
     public void Delete()
     {
-        if (HasJacket && !JacketPath?.Contains(@"\A000\", StringComparison.InvariantCultureIgnoreCase) == true)
+        if (HasJacket && RealJacketPath?.Contains(@"\A000\", StringComparison.InvariantCultureIgnoreCase) == false)
         {
-            Console.WriteLine("删除 jacket: " + JacketPath);
+            Console.WriteLine("删除 jacket: " + RealJacketPath);
             try
             {
-                FileSystem.DeleteFile(JacketPath);
+                FileSystem.DeleteFile(RealJacketPath);
+                if (RealJacketPath.EndsWith(".ab")) // .ab的情况，要额外把manifest也干掉
+                    FileSystem.DeleteFile(RealJacketPath + ".manifest");
             }
             catch
             {
-                Console.WriteLine($"删除 jacket 失败: {JacketPath}");
+                Console.WriteLine($"删除 jacket 失败: {RealJacketPath}");
             }
         }
 

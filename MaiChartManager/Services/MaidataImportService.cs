@@ -257,6 +257,54 @@ public partial class MaidataImportService
 
     private record AllChartsEntry(string chartText, MaiChart simaiSharpChart);
 
+    /** 根据maidata中定义的所有难度，将其映射到游戏中的难度。 **/
+    public Dictionary<int, int> mapMaidataLevelToGame(List<int> maidataLevels)
+    {
+        var result = new Dictionary<int, int>();
+        var gameLevels = new bool[5];
+        
+        // 先映射标准难度谱面 绿红黄紫白
+        for (int lv = 2; lv <= 6; lv++)
+        {
+            if (!maidataLevels.Contains(lv)) continue;
+            var targetLevel = lv - 2;
+            result.Add(lv, targetLevel);
+            gameLevels[targetLevel] = true;
+        }
+
+        // 再映射78
+        foreach (var lv in (int[])[7,8])
+        {
+            if (!maidataLevels.Contains(lv)) continue;
+            foreach (var targetLevel in (int[])[3,4,0]) // 匹配顺序：紫，白，绿
+            {
+                if (!gameLevels[targetLevel])
+                {
+                    result.Add(lv, targetLevel);
+                    gameLevels[targetLevel] = true;
+                    break;
+                }
+            }
+        }
+        
+        // 再映射0
+        foreach (var lv in (int[])[0])
+        {
+            if (!maidataLevels.Contains(lv)) continue;
+            foreach (var targetLevel in (int[])[0,3,4]) // 匹配顺序：绿，紫，白
+            {
+                if (!gameLevels[targetLevel])
+                {
+                    result.Add(lv, targetLevel);
+                    gameLevels[targetLevel] = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+    
     public ImportChartResult ImportMaidata(
         MusicXml music,
         IFormFile file,
@@ -313,6 +361,7 @@ public partial class MaidataImportService
         }
 
         float bpm = 0f;
+        var targetLevelMap = mapMaidataLevelToGame(allCharts.Keys.ToList());
         foreach (var (level, chart) in allCharts)
         {
             // 宴会场只导入第一个谱面
@@ -323,35 +372,8 @@ public partial class MaidataImportService
             // 一个小节多少秒
             var bar = 60 / bpm * 4;
 
-            # region 设定 targetLevel
-
-            var targetLevel = level - 2;
-
-            // 处理非标准难度
-            if (level is > 6 or < 1)
-            {
-                // 分给 3 4 0
-                if (!music.Charts[3].Enable)
-                {
-                    targetLevel = 3;
-                }
-                else if (!music.Charts[4].Enable)
-                {
-                    targetLevel = 4;
-                }
-                else if (!music.Charts[0].Enable)
-                {
-                    targetLevel = 0;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
+            if (!targetLevelMap.TryGetValue(level, out var targetLevel)) continue; // 字典里没查到、说明这个难度是“被忽略的难度”
             if (isUtage) targetLevel = 0;
-
-            # endregion
 
             var targetChart = music.Charts[targetLevel];
             targetChart.Path = $"{id:000000}_0{targetLevel}.ma2";

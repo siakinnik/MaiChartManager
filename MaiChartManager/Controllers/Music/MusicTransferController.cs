@@ -563,10 +563,6 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
         var version = StaticSettings.VersionList.FirstOrDefault(it => it.Id == music.AddVersionId);
         if (version is not null)
             simaiFile.AppendLine($"&version={version.GenreName}");
-        simaiFile.AppendLine($"&chartconverter=MaiChartManager v{Application.ProductVersion}");
-        simaiFile.AppendLine("&ChartConvertTool=MaiChartManager");
-        simaiFile.AppendLine($"&ChartConvertToolVersion={Application.ProductVersion}");
-
 
         // demo_seek
         try
@@ -615,12 +611,17 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
 
         if (clockCount > 0) simaiFile.AppendLine($"&clock_count={clockCount}");
 
+        simaiFile.AppendLine($"&chartconverter=MaiChartManager v{Application.ProductVersion}");
+        simaiFile.AppendLine("&ChartConvertTool=MaiChartManager");
+        simaiFile.AppendLine($"&ChartConvertToolVersion={Application.ProductVersion}");
+        
         // 根据前面读取的结果，向simaiFile中最终写入谱面信息相关字段
         foreach (var (i, ma2Content) in ma2Contents)
         {
             var chart = music.Charts[i];
             var ma2 = parser.ChartOfToken(ma2Content);
             var simai = ma2.Compose(ChartEnum.ChartVersion.SimaiFes);
+            simaiFile.AppendLine(""); // 为了格式美观，在每个难度之前添加一个空行
             simaiFile.AppendLine($"&lv_{i + 2}={chart.Level}.{chart.LevelDecimal}");
             simaiFile.AppendLine($"&des_{i + 2}={chart.Designer}");
             simaiFile.AppendLine($"&inote_{i + 2}={simai}");

@@ -43,19 +43,14 @@ public class ImportChartController(StaticSettings settings, ILogger<StaticSettin
             }
 
             var allChartText = new Dictionary<int, string>();
-            for (var i = 2; i < 9; i++)
+            for (var i = 0; i < 9; i++)
             {
                 if (!string.IsNullOrWhiteSpace(maiData.GetValueOrDefault($"inote_{i}")))
                 {
                     allChartText.Add(i, maiData.GetValueOrDefault($"inote_{i}"));
                 }
             }
-
-            if (!string.IsNullOrWhiteSpace(maiData.GetValueOrDefault("inote_0")))
-            {
-                allChartText.Add(0, maiData.GetValueOrDefault($"inote_0"));
-            }
-            var targetLevelMap = importService.mapMaidataLevelToGame(allChartText.Keys.ToList());
+            var targetLevelMap = MaidataImportService.MapMaidataLevelToGame(allChartText.Keys.ToList());
 
             # region 向前端返回，关于导入谱面的inote_映射到游戏中的难度的提示信息
             string[] levelNames = [Locale.DifficultyBasic, Locale.DifficultyAdvanced, Locale.DifficultyExpert, Locale.DifficultyMaster, Locale.DifficultyReMaster];

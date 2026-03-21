@@ -258,7 +258,7 @@ public partial class MaidataImportService
     private record AllChartsEntry(string chartText, MaiChart simaiSharpChart);
 
     /** 根据maidata中定义的所有难度，将其映射到游戏中的难度。 **/
-    public Dictionary<int, int> mapMaidataLevelToGame(List<int> maidataLevels)
+    public static Dictionary<int, int> MapMaidataLevelToGame(List<int> maidataLevels)
     {
         var result = new Dictionary<int, int>();
         var gameLevels = new bool[5];
@@ -272,32 +272,25 @@ public partial class MaidataImportService
             gameLevels[targetLevel] = true;
         }
 
-        // 再映射78
-        foreach (var lv in (int[])[7,8])
+        // 再映射非标准难度
+        var nonStandardMappings = new[]
         {
-            if (!maidataLevels.Contains(lv)) continue;
-            foreach (var targetLevel in (int[])[3,4,0]) // 匹配顺序：紫，白，绿
-            {
-                if (!gameLevels[targetLevel])
-                {
-                    result.Add(lv, targetLevel);
-                    gameLevels[targetLevel] = true;
-                    break;
-                }
-            }
-        }
-        
-        // 再映射0
-        foreach (var lv in (int[])[0])
+            new { Levels = new[] { 7, 8 }, Targets = new[] { 3, 4, 0 } }, // lv7和8的匹配顺序：紫，白，绿
+            new { Levels = new[] { 0 },    Targets = new[] { 0, 3, 4 } }  // lv0的匹配顺序：绿，紫，白
+        };
+        foreach (var mapping in nonStandardMappings)
         {
-            if (!maidataLevels.Contains(lv)) continue;
-            foreach (var targetLevel in (int[])[0,3,4]) // 匹配顺序：绿，紫，白
+            foreach (var lv in mapping.Levels)
             {
-                if (!gameLevels[targetLevel])
+                if (!maidataLevels.Contains(lv)) continue;
+                foreach (var targetLevel in mapping.Targets)
                 {
-                    result.Add(lv, targetLevel);
-                    gameLevels[targetLevel] = true;
-                    break;
+                    if (!gameLevels[targetLevel])
+                    {
+                        result.Add(lv, targetLevel);
+                        gameLevels[targetLevel] = true;
+                        break;
+                    }
                 }
             }
         }
@@ -361,7 +354,7 @@ public partial class MaidataImportService
         }
 
         float bpm = 0f;
-        var targetLevelMap = mapMaidataLevelToGame(allCharts.Keys.ToList());
+        var targetLevelMap = MapMaidataLevelToGame(allCharts.Keys.ToList());
         foreach (var (level, chart) in allCharts)
         {
             // 宴会场只导入第一个谱面
@@ -382,7 +375,7 @@ public partial class MaidataImportService
             {
                 if (isUtage && !char.IsDigit(levelNumStr[0]))
                 {
-                    music.UtageKanji = levelNumStr;
+                    music.UtageKanji = levelNumStr.Substring(0, 1);
                     levelNumStr = levelNumStr.Substring(1).Replace("?", ""); // 为了处理类似“奏13+?”这种情况，留下13+给后面的逻辑处理
                 }
                 levelNumStr = levelNumStr.Replace("+", ".7");

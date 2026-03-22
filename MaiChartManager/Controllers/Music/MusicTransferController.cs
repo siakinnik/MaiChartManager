@@ -563,10 +563,6 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
         var version = StaticSettings.VersionList.FirstOrDefault(it => it.Id == music.AddVersionId);
         if (version is not null)
             simaiFile.AppendLine($"&version={version.GenreName}");
-        simaiFile.AppendLine($"&chartconverter=MaiChartManager v{Application.ProductVersion}");
-        simaiFile.AppendLine("&ChartConvertTool=MaiChartManager");
-        simaiFile.AppendLine($"&ChartConvertToolVersion={Application.ProductVersion}");
-
 
         // demo_seek
         try
@@ -574,14 +570,24 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
             if (AudioConvert.TryResolveAcbAwb(GetAudioCandidateIds(music), out _, out var previewAcb, out _) && previewAcb is not null)
             {
                 var previewTime = CriUtils.GetAudioPreviewTime(previewAcb);
-                if (previewTime.StartTime >= 0)
+                if (previewTime.StartTime >= 0 && previewTime.EndTime > previewTime.StartTime)
+                {
                     simaiFile.AppendLine($"&demo_seek={previewTime.StartTime}");
+                    simaiFile.AppendLine($"&demo_len={previewTime.EndTime - previewTime.StartTime}");
+                }
             }
         }
         catch
         {
             // ignore preview time errors
         }
+
+        var ma2Contents = new List<(int, string[])>();
+        
+        // 关于clock_count功能，我决定不走MaiLib了，而是我们自己解析。因为ma2.Compose返回的是裸谱面inote中的内容，没有办法合理的把clock信息插进去。因此，我们自己解析吧。
+        // 选用最难的一张有效谱面的MET值作为全曲的&clock_count
+        int clockCount = 0;
+
         for (var i = 0; i < music.Charts.Length; i++)
         {
             var chart = music.Charts[i];
@@ -596,8 +602,26 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
             }
 
             var ma2Content = await System.IO.File.ReadAllLinesAsync(chartPath);
+            ma2Contents.Add((i, ma2Content));
+
+            // 从谱面内容中寻找MET行
+            var metLine = ma2Content.FirstOrDefault(it => it.StartsWith("MET\t"));
+            if (metLine is not null && int.TryParse(metLine.Split('\t')[4], out var v)) clockCount = v;
+        }
+
+        if (clockCount > 0) simaiFile.AppendLine($"&clock_count={clockCount}");
+
+        simaiFile.AppendLine($"&chartconverter=MaiChartManager v{Application.ProductVersion}");
+        simaiFile.AppendLine("&ChartConvertTool=MaiChartManager");
+        simaiFile.AppendLine($"&ChartConvertToolVersion={Application.ProductVersion}");
+        
+        // 根据前面读取的结果，向simaiFile中最终写入谱面信息相关字段
+        foreach (var (i, ma2Content) in ma2Contents)
+        {
+            var chart = music.Charts[i];
             var ma2 = parser.ChartOfToken(ma2Content);
             var simai = ma2.Compose(ChartEnum.ChartVersion.SimaiFes);
+            simaiFile.AppendLine(""); // 为了格式美观，在每个难度之前添加一个空行
             simaiFile.AppendLine($"&lv_{i + 2}={chart.Level}.{chart.LevelDecimal}");
             simaiFile.AppendLine($"&des_{i + 2}={chart.Designer}");
             simaiFile.AppendLine($"&inote_{i + 2}={simai}");

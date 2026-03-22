@@ -69,7 +69,7 @@ export default defineComponent({
         errors.value.push({ level: MessageLevel.Warning, message: t('chart.import.error.convertPaidFeature'), name: dir.name, isPaid: true });
       }
 
-      let first = 0, chartPaddings, name = dir.name, isDx = false;
+      let first = 0, chartPaddings, name = dir.name, isDx = false, previewTime = undefined;
       if (maidata) {
         const checkRet = (await api.ImportChartCheck({ file: maidata })).data;
         reject = reject || !checkRet.accept;
@@ -81,11 +81,12 @@ export default defineComponent({
         name = checkRet.title!;
         if (checkRet.isDx) id += 1e4;
         isDx = checkRet.isDx!;
+        if (checkRet.previewTime) previewTime = checkRet.previewTime
       }
 
       if (!reject) {
         meta.value.push({
-          id, maidata, bg, track, chartPaddings, name, first, movie, isDx,
+          id, maidata, bg, track, chartPaddings, name, first, movie, isDx, previewTime,
           importStep: IMPORT_STEP.start,
         })
       }
@@ -171,6 +172,14 @@ export default defineComponent({
         let audioPadding = chartPadding - music.first;
 
         await api.SetAudio(music.id, selectedADir.value, { file: music.track, padding: audioPadding, ignoreGapless: !!tempOptions.value.ignoreGapless });
+        if (music.previewTime) {
+          // 因为&demo_seek和&demo_len都是相对于原始音源的，所以这里的时间必须要扣掉上面SetAudio时应用的padding。
+          // 根据SetAudioApi的定义，padding为正表示歌曲前面被加了空白，因此原本的预览段在新的裁剪后的音频中的位置也要相应后移；padding为负反之。
+          // 因此，直接给startTime和endTime都加上audioPadding即可。
+          music.previewTime.startTime! += audioPadding;
+          music.previewTime.endTime! += audioPadding
+          await api.SetAudioPreview(music.id, selectedADir.value, music.previewTime);
+        }
 
         if (music.movie && !tempOptions.value.disableBga) {
           currentMovieProgress.value = 0;

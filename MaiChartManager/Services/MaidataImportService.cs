@@ -256,6 +256,19 @@ public partial class MaidataImportService
     }
 
     private record AllChartsEntry(string chartText, MaiChart simaiSharpChart);
+    
+    [GeneratedRegex(@"^(CLK_DEF\t)(\d+\s*)$", RegexOptions.Multiline)]
+    private static partial Regex ClockDefRegex();
+    
+    [GeneratedRegex(@"^(MET\t\d+\t\d+\t\d+\t)(\d+\s*)$", RegexOptions.Multiline)]
+    private static partial Regex FirstMetLineRegex();
+    
+    private static string ApplyClockCountToFirstMetLine(string ma2Content, int clockCount)
+    {
+        ma2Content = ClockDefRegex().Replace(ma2Content, $"${{1}}{96 * clockCount}", 1);
+        ma2Content = FirstMetLineRegex().Replace(ma2Content, $"${{1}}{clockCount}", 1);
+        return ma2Content;
+    }
 
     public ImportChartResult ImportMaidata(
         MusicXml music,
@@ -409,6 +422,13 @@ public partial class MaidataImportService
             {
                 errors.Add(new ImportChartMessage(Locale.ChartNotesMissing, MessageLevel.Warning));
                 logger.LogWarning("BUG! shiftedConverted: {shiftedLen}, originalConverted: {originalLen}", shiftedConverted.Split('\n').Length, originalConverted.Split('\n').Length);
+            }
+            
+            // 如果maidata中声明了clock_count，应用之，修改CLOCK_DEF和MET
+            if (int.TryParse(maiData.GetValueOrDefault("clock_count"), out var clockCount))
+            {
+                if (clockCount > 0) shiftedConverted = ApplyClockCountToFirstMetLine(shiftedConverted, clockCount);
+                else errors.Add(new ImportChartMessage("the \"&clock_count\" value in this maidata is invalid thus ignored.", MessageLevel.Warning));
             }
 
             // Just use T_NUM_ALL value in ma2 file

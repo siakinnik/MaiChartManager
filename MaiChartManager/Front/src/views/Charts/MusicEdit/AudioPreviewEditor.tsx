@@ -1,5 +1,5 @@
-import { computed, defineComponent, onMounted, ref } from "vue";
-import { Button, addToast } from "@munet/ui";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { Button, NumberInput, addToast } from "@munet/ui";
 import WaveSurfer from "wavesurfer.js";
 import { globalCapture, selectedADir, selectMusicId } from "@/store/refs";
 import ZoomPlugin from 'wavesurfer.js/dist/plugins/zoom'
@@ -15,7 +15,7 @@ export default defineComponent({
   props: {
     closeModel: {type: Function, required: true}
   },
-  setup(props, {emit}) {
+  setup(props, {emit, expose}) {
     const waveSurferContainer = ref()
     const region = ref<Region>()
     const ws = ref<WaveSurfer>()
@@ -24,6 +24,42 @@ export default defineComponent({
     const load = ref(false)
     const dataLoad = ref(true)
     const {ctrl, shift} = useMagicKeys()
+    const startTime = ref(0)
+    const endTime = ref(0)
+    const duration = ref(0)
+    // 标记是否正在由输入框触发 region 更新，防止循环
+    const updatingFromInput = ref(false)
+
+    const syncTimesFromRegion = () => {
+      if (region.value && !updatingFromInput.value) {
+        startTime.value = region.value.start
+        endTime.value = region.value.end
+      }
+    }
+
+    const onStartTimeChange = () => {
+      if (!region.value) return
+      if (startTime.value >= endTime.value) {
+        addToast({message: t('music.edit.audioPreviewStartGtEnd'), type: 'warning'})
+        startTime.value = region.value.start
+        return
+      }
+      updatingFromInput.value = true
+      region.value.setOptions({start: startTime.value})
+      updatingFromInput.value = false
+    }
+
+    const onEndTimeChange = () => {
+      if (!region.value) return
+      if (endTime.value <= startTime.value) {
+        addToast({message: t('music.edit.audioPreviewEndLtStart'), type: 'warning'})
+        endTime.value = region.value.end
+        return
+      }
+      updatingFromInput.value = true
+      region.value.setOptions({end: endTime.value, start: region.value.start})
+      updatingFromInput.value = false
+    }
 
 
     onMounted(async () => {
@@ -57,15 +93,20 @@ export default defineComponent({
         ],
       })
 
-      ws.value.on('decode', (duration) => {
+      ws.value.on('decode', (dur) => {
+        duration.value = dur
         // Regions
         region.value = regions.addRegion({
           start: savedRegion!.startTime! >= 0 ? savedRegion.startTime! : 0,
-          end: savedRegion!.endTime! >= 0 ? savedRegion.endTime! : duration,
+          end: savedRegion!.endTime! >= 0 ? savedRegion.endTime! : dur,
           drag: true,
           resize: true,
           id: 'selection',
         })
+        syncTimesFromRegion()
+
+        region.value.on('update', syncTimesFromRegion)
+        region.value.on('update-end', syncTimesFromRegion)
       })
 
       ws.value.on('click', (e) => {
@@ -76,12 +117,14 @@ export default defineComponent({
             return
           }
           region.value!.setOptions({start: time})
+          syncTimesFromRegion()
         } else if (shift.value) {
           if (time <= region.value!.start) {
             addToast({message: t('music.edit.audioPreviewEndLtStart'), type: 'warning'})
             return
           }
           region.value!.setOptions({end: time, start: region.value!.start})
+          syncTimesFromRegion()
         }
       })
 
@@ -110,6 +153,10 @@ export default defineComponent({
 
     const playIcon = computed(() => isPlaying.value ? 'i-mdi-pause' : 'i-mdi-play')
 
+    expose({
+      save, load
+    })
+
     return () => <div class="relative">
       {dataLoad.value && <div class="absolute inset-0 flex items-center justify-center bg-black/10 z-10"><div class="i-mdi-loading animate-spin text-2xl"/></div>}
       <div class="flex flex-col gap-3">
@@ -133,13 +180,15 @@ export default defineComponent({
             {t('music.edit.audioPreviewSelectRegion')}
           </Button>
         </div>
-        <div class="flex gap-2 justify-end">
-          <Button variant="secondary" danger onClick={props.closeModel as any} disabled={load.value}>
-            {t('common.dismiss')}
-          </Button>
-          <Button variant="secondary" onClick={save} ing={load.value}>
-            {t('common.save')}
-          </Button>
+        <div class="flex gap-4 items-center">
+          <div class="flex flex-col gap-1 w-0 grow">
+            <div class="ml-1 text-sm">{t('music.edit.audioPreviewStart')}</div>
+            <NumberInput v-model:value={startTime.value} min={0} max={duration.value} step={0.001} decimal={3} onChange={onStartTimeChange}/>
+          </div>
+          <div class="flex flex-col gap-1 w-0 grow">
+            <div class="ml-1 text-sm">{t('music.edit.audioPreviewEnd')}</div>
+            <NumberInput v-model:value={endTime.value} min={0} max={duration.value} step={0.001} decimal={3} onChange={onEndTimeChange}/>
+          </div>
         </div>
       </div>
     </div>;

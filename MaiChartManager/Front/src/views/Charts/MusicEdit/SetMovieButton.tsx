@@ -6,6 +6,7 @@ import { LicenseStatus, MusicXmlWithABJacket } from "@/client/apiGen";
 import api, { getUrl } from "@/client/api";
 import { globalCapture, selectedADir, showNeedPurchaseDialog, version } from "@/store/refs";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { handleSseOpen } from "@/utils/sseOpen";
 import { t } from "@/locales";
 
 enum STEP {
@@ -45,6 +46,7 @@ export default defineComponent({
         signal: controller.signal,
         method: 'PUT',
         body,
+        onopen: handleSseOpen,
         onerror(e) {
           reject(e);
           controller.abort();

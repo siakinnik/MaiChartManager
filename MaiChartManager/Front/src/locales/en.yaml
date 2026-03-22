@@ -127,6 +127,8 @@ music:
     previewChartWarning: Chart preview does not represent actual gameplay, please test in-game
     audioPreviewCtrlShiftClick: Ctrl / Shift + Click to set start / end time directly at click position
     audioPreviewSelectRegion: Selection
+    audioPreviewStart: Start Time (s)
+    audioPreviewEnd: End Time (s)
     includeB35: Include in B35
     includeB15: Include in B15
     versionHint: >-

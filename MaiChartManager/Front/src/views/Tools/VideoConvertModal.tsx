@@ -4,6 +4,7 @@ import { defineComponent, ref } from 'vue';
 import { LicenseStatus } from '@/client/apiGen';
 import { globalCapture, showNeedPurchaseDialog, version } from '@/store/refs';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
+import { handleSseOpen } from '@/utils/sseOpen';
 import { useI18n } from 'vue-i18n';
 
 enum STEP {
@@ -28,6 +29,7 @@ export default defineComponent({
           fetchEventSource(getUrl('VideoConvertToolApi'), {
             signal: controller.signal,
             method: 'POST',
+            onopen: handleSseOpen,
             onerror(e) {
               reject(e);
               controller.abort();

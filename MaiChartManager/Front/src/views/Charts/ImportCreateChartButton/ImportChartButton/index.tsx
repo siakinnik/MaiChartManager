@@ -11,6 +11,7 @@ import ImportStepDisplay from "./ImportStepDisplay";
 import { useStorage } from "@vueuse/core";
 import { captureException } from "@sentry/vue";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { handleSseOpen } from "@/utils/sseOpen";
 import { defaultSavedOptions, defaultTempOptions, dummyMeta, IMPORT_STEP, ImportChartMessageEx, ImportMeta, STEP } from "./types";
 import getNextUnusedMusicId from "@/utils/getNextUnusedMusicId";
 import { useI18n } from 'vue-i18n';
@@ -102,6 +103,7 @@ export default defineComponent({
         signal: controller.signal,
         method: 'PUT',
         body,
+        onopen: handleSseOpen,
         onerror(e) {
           reject(e);
           controller.abort();

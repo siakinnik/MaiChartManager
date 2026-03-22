@@ -20,6 +20,8 @@ export default defineComponent({
       show.value = true
     }
 
+    const editorRef = ref<{save: () => Promise<void>, load: boolean}>()
+
     return () => <Button variant="secondary" onClick={handleClick} disabled={props.disabled}>
       {t('music.edit.editPreview')}
 
@@ -29,8 +31,15 @@ export default defineComponent({
         v-model:show={show.value}
         esc={false}
       >{{
-        default: () =>
-          <AudioPreviewEditor closeModel={() => show.value = false}/>,
+        default: () => <AudioPreviewEditor ref={editorRef} closeModel={() => show.value = false} />,
+        actions: () => <>
+          <Button variant="secondary" danger onClick={() => show.value = false} disabled={editorRef.value?.load}>
+            {t('common.dismiss')}
+          </Button>
+          <Button variant="secondary" onClick={editorRef.value?.save} ing={editorRef.value?.load}>
+            {t('common.save')}
+          </Button>
+        </>
       }}</Modal>
     </Button>;
   }

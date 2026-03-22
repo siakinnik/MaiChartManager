@@ -121,6 +121,8 @@ music:
     previewChartWarning: 谱面预览不代表上机效果，请以实际为准
     audioPreviewCtrlShiftClick: Ctrl / Shift + 点击可直接将点击位置设为开始 / 结束时间
     audioPreviewSelectRegion: 选区
+    audioPreviewStart: 起点时间（秒）
+    audioPreviewEnd: 终点时间（秒）
     includeB35: 计入 B35
     includeB15: 计入 B15
     versionHint: >-

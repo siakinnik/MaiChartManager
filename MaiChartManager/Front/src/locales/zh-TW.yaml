@@ -121,6 +121,8 @@ music:
     previewChartWarning: 譜面預覽不代表上機效果，請以實際為準
     audioPreviewCtrlShiftClick: Ctrl / Shift + 點擊可直接將點擊位置設為開始 / 結束時間
     audioPreviewSelectRegion: 選區
+    audioPreviewStart: 起點時間（秒）
+    audioPreviewEnd: 終點時間（秒）
     includeB35: 計入 B35
     includeB15: 計入 B15
     versionHint: >-

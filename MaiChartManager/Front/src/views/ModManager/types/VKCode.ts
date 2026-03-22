@@ -1,6 +1,6 @@
-export enum KeyCodeName {
+export enum VKCode {
   None = "None",
-  Alpha0 = "Alpha0",
+  Alpha0 = "Alpha0",   // 0 键
   Alpha1 = "Alpha1",
   Alpha2 = "Alpha2",
   Alpha3 = "Alpha3",
@@ -10,7 +10,7 @@ export enum KeyCodeName {
   Alpha7 = "Alpha7",
   Alpha8 = "Alpha8",
   Alpha9 = "Alpha9",
-  Keypad0 = "Keypad0",
+  Keypad0 = "Keypad0",  // 数字键盘 0 键
   Keypad1 = "Keypad1",
   Keypad2 = "Keypad2",
   Keypad3 = "Keypad3",
@@ -32,22 +32,20 @@ export enum KeyCodeName {
   F10 = "F10",
   F11 = "F11",
   F12 = "F12",
+  Enter = "Enter",    // VK_RETURN 输入键
+  Space = "Space",    // 空格键
+  Backspace = "Backspace", // VK_BACK
+  Tab = "Tab",
+  Esc = "Esc",      // VK_ESCAPE
   Insert = "Insert",
   Delete = "Delete",
   Home = "Home",
   End = "End",
-  PageUp = "PageUp",
-  PageDown = "PageDown",
-  UpArrow = "UpArrow",
-  DownArrow = "DownArrow",
-  LeftArrow = "LeftArrow",
-  RightArrow = "RightArrow",
-  Select1P = "Select1P",
-  Select2P = "Select2P",
-  Service = "Service",
-  Test = "Test",
-  CustomFn1 = "CustomFn1",
-  CustomFn2 = "CustomFn2",
-  CustomFn3 = "CustomFn3",
-  CustomFn4 = "CustomFn4",
+  Pause = "Pause",
+  PageUp = "PageUp",   // VK_PRIOR
+  PageDown = "PageDown", // VK_NEXT
+  UpArrow = "UpArrow",  // VK_UP
+  DownArrow = "DownArrow", // VK_DOWN
+  LeftArrow = "LeftArrow", // VK_LEFT
+  RightArrow = "RightArrow", // VK_RIGHT
 }

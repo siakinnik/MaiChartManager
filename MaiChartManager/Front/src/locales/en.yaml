@@ -320,6 +320,7 @@ mod:
     select2P: 2P Select
     service: Service
     test: Test
+    customFn: 'Custom FnKey '
   adxHid:
     disabled: Disabled
     select1P: 1P Select

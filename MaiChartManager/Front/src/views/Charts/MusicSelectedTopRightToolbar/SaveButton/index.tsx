@@ -16,7 +16,7 @@ export default defineComponent({
       setTimeout(() => {
         isAnimationShow.value = false;
       }, 250);
-      await updateMusicList();
+      await updateMusicList(true);
     }
 
     const {ctrl_s} = useMagicKeys({

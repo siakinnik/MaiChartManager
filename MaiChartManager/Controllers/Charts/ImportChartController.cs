@@ -43,60 +43,52 @@ public class ImportChartController(StaticSettings settings, ILogger<StaticSettin
                 fatal = true;
             }
 
-            var levels = new bool[5];
             var allChartText = new Dictionary<int, string>();
-
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 9; i++)
             {
-                // maidata 里 2 是绿谱，6 是白谱
-                if (!string.IsNullOrWhiteSpace(maiData.GetValueOrDefault($"inote_{i + 2}")))
+                if (i == 1) continue; // maidata 中 inote_1 无对应游戏难度，与 ImportMaidata 保持一致
+                if (!string.IsNullOrWhiteSpace(maiData.GetValueOrDefault($"inote_{i}")))
                 {
-                    levels[i] = true;
-                    allChartText.Add(i + 2, maiData.GetValueOrDefault($"inote_{i + 2}"));
+                    allChartText.Add(i, maiData.GetValueOrDefault($"inote_{i}"));
                 }
             }
+            var targetLevelMap = MaidataImportService.MapMaidataLevelToGame(allChartText.Keys.ToList());
 
-            if (levels.Any(it => it))
+            # region 向前端返回，关于导入谱面的inote_映射到游戏中的难度的提示信息
+            string[] levelNames = [Locale.DifficultyBasic, Locale.DifficultyAdvanced, Locale.DifficultyExpert, Locale.DifficultyMaster, Locale.DifficultyReMaster];
+            string[] importAsMessages = [Locale.DifficultyImportedAsBasic, null, null, Locale.DifficultyImportedAsMaster, Locale.DifficultyImportedAsReMaster];
+            
+            string generalImportMessage = ""; // “将导入以下难度：” 的默认信息
+            var extraImportMessages = new List<string>(); // “有一个难度为 {0} 的谱面，将导入为XX谱 ” 的信息
+            foreach (var (lv, _) in allChartText)
             {
-                string[] levelNames = [Locale.DifficultyBasic, Locale.DifficultyAdvanced, Locale.DifficultyExpert, Locale.DifficultyMaster, Locale.DifficultyReMaster];
-                var message = Locale.ImportingDifficulties;
-                for (var i = 0; i < 5; i++)
-                {
-                    if (levels[i])
-                    {
-                        message += levelNames[i] + " ";
-                    }
+                if (!targetLevelMap.TryGetValue(lv, out var targetLevel))
+                { // 根据targetLevelMap返回的结果，该谱面应被忽略
+                    extraImportMessages.Add(string.Format(Locale.DifficultyIgnored, lv));
+                    continue;
                 }
-
-                errors.Add(new ImportChartMessage(message, MessageLevel.Info));
-            }
-
-            foreach (var i in (int[])[7, 8, 0])
-            {
-                if (string.IsNullOrWhiteSpace(maiData.GetValueOrDefault($"inote_{i}"))) continue;
-                allChartText.Add(i, maiData.GetValueOrDefault($"inote_{i}"));
-                if (!levels[3])
+                if (2 <= lv && lv <= 6)
                 {
-                    levels[3] = true;
-                    errors.Add(new ImportChartMessage(string.Format(Locale.DifficultyImportedAsMaster, i), MessageLevel.Warning));
-                }
-                else if (!levels[4])
-                {
-                    levels[4] = true;
-                    errors.Add(new ImportChartMessage(string.Format(Locale.DifficultyImportedAsReMaster, i), MessageLevel.Warning));
-                }
-                else if (!levels[0])
-                {
-                    levels[0] = true;
-                    errors.Add(new ImportChartMessage(string.Format(Locale.DifficultyImportedAsBasic, i), MessageLevel.Warning));
+                    generalImportMessage += levelNames[targetLevel] + " ";
                 }
                 else
                 {
-                    errors.Add(new ImportChartMessage(string.Format(Locale.DifficultyIgnored, i), MessageLevel.Warning));
+                    extraImportMessages.Add(string.Format(importAsMessages[targetLevel], lv));
                 }
             }
+            
+            if (!string.IsNullOrEmpty(generalImportMessage))
+            {
+                errors.Add(new ImportChartMessage(Locale.ImportingDifficulties + generalImportMessage, MessageLevel.Info));
+            }
 
-            if (!levels.Any(it => it))
+            foreach (var message in extraImportMessages)
+            {
+                errors.Add(new ImportChartMessage(message, MessageLevel.Warning));
+            }
+            # endregion
+
+            if (targetLevelMap.Count == 0) // 没有能够被映射的谱面
             {
                 errors.Add(new ImportChartMessage(Locale.MusicNoCharts, MessageLevel.Fatal));
                 fatal = true;

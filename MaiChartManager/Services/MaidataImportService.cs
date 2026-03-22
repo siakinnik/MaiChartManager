@@ -270,6 +270,47 @@ public partial class MaidataImportService
         return ma2Content;
     }
 
+    /** 根据maidata中定义的所有难度，将其映射到游戏中的难度。 **/
+    public static Dictionary<int, int> MapMaidataLevelToGame(List<int> maidataLevels)
+    {
+        var result = new Dictionary<int, int>();
+        var gameLevels = new bool[5];
+        
+        // 先映射标准难度谱面 绿红黄紫白
+        for (int lv = 2; lv <= 6; lv++)
+        {
+            if (!maidataLevels.Contains(lv)) continue;
+            var targetLevel = lv - 2;
+            result.Add(lv, targetLevel);
+            gameLevels[targetLevel] = true;
+        }
+
+        // 再映射非标准难度
+        var nonStandardMappings = new[]
+        {
+            new { Levels = new[] { 7, 8 }, Targets = new[] { 3, 4, 0 } }, // lv7和8的匹配顺序：紫，白，绿
+            new { Levels = new[] { 0 },    Targets = new[] { 0, 3, 4 } }  // lv0的匹配顺序：绿，紫，白
+        };
+        foreach (var mapping in nonStandardMappings)
+        {
+            foreach (var lv in mapping.Levels)
+            {
+                if (!maidataLevels.Contains(lv)) continue;
+                foreach (var targetLevel in mapping.Targets)
+                {
+                    if (!gameLevels[targetLevel])
+                    {
+                        result.Add(lv, targetLevel);
+                        gameLevels[targetLevel] = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+    
     public ImportChartResult ImportMaidata(
         MusicXml music,
         IFormFile file,
@@ -326,6 +367,7 @@ public partial class MaidataImportService
         }
 
         float bpm = 0f;
+        var targetLevelMap = MapMaidataLevelToGame(allCharts.Keys.ToList());
         foreach (var (level, chart) in allCharts)
         {
             // 宴会场只导入第一个谱面
@@ -336,41 +378,19 @@ public partial class MaidataImportService
             // 一个小节多少秒
             var bar = 60 / bpm * 4;
 
-            # region 设定 targetLevel
-
-            var targetLevel = level - 2;
-
-            // 处理非标准难度
-            if (level is > 6 or < 1)
-            {
-                // 分给 3 4 0
-                if (!music.Charts[3].Enable)
-                {
-                    targetLevel = 3;
-                }
-                else if (!music.Charts[4].Enable)
-                {
-                    targetLevel = 4;
-                }
-                else if (!music.Charts[0].Enable)
-                {
-                    targetLevel = 0;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
+            if (!targetLevelMap.TryGetValue(level, out var targetLevel)) continue; // 字典里没查到、说明这个难度是“被忽略的难度”
             if (isUtage) targetLevel = 0;
-
-            # endregion
 
             var targetChart = music.Charts[targetLevel];
             targetChart.Path = $"{id:000000}_0{targetLevel}.ma2";
             var levelNumStr = maiData.GetValueOrDefault($"lv_{level}");
             if (!string.IsNullOrWhiteSpace(levelNumStr))
             {
+                if (isUtage && !char.IsDigit(levelNumStr[0]))
+                {
+                    music.UtageKanji = levelNumStr.Substring(0, 1);
+                    levelNumStr = levelNumStr.Substring(1).Replace("?", ""); // 为了处理类似“奏13+?”这种情况，留下13+给后面的逻辑处理
+                }
                 levelNumStr = levelNumStr.Replace("+", ".7");
             }
 

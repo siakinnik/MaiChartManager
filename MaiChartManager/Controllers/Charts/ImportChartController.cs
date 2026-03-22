@@ -45,6 +45,7 @@ public class ImportChartController(StaticSettings settings, ILogger<StaticSettin
             var allChartText = new Dictionary<int, string>();
             for (var i = 0; i < 9; i++)
             {
+                if (i == 1) continue; // maidata 中 inote_1 无对应游戏难度，与 ImportMaidata 保持一致
                 if (!string.IsNullOrWhiteSpace(maiData.GetValueOrDefault($"inote_{i}")))
                 {
                     allChartText.Add(i, maiData.GetValueOrDefault($"inote_{i}"));

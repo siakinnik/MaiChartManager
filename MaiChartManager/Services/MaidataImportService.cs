@@ -83,6 +83,9 @@ public partial class MaidataImportService
 
     [GeneratedRegex(@"(\d)qx(\d)")]
     private static partial Regex SimaiError5();
+    
+    [GeneratedRegex(@"(\[[\d\.#:]+\])([bxfh]+)")]
+    private static partial Regex SimaiError6(); // 类似1h[2:1]bx这种写法是不标准的，需要改为1hbx[2:1]
 
     private static string FixChartSimaiSharp(string chart)
     {
@@ -92,6 +95,8 @@ public partial class MaidataImportService
         chart = SimaiError2().Replace(chart, "[$1:$2]");
         chart = SimaiError4().Replace(chart, ",,");
         chart = SimaiError5().Replace(chart, "$1xq$2");
+        chart = SimaiError6().Replace(chart, "$2$1");
+        chart = chart.Replace("-?", "?-"); // 不飞的星星
         return chart;
     }
 
@@ -147,9 +152,10 @@ public partial class MaidataImportService
 
         try
         {
-            var normalizedText = SimaiCommentRegex().Replace(chartText, "");
-            normalizedText = SimaiCommentRegex2().Replace(normalizedText, "");
-            return new SimaiParser().ChartOfToken(new SimaiTokenizer().TokensFromText(normalizedText));
+            // 移除注释
+            chartText = SimaiCommentRegex().Replace(chartText, "");
+            chartText = SimaiCommentRegex2().Replace(chartText, "");
+            return new SimaiParser().ChartOfToken(new SimaiTokenizer().TokensFromText(chartText));
         }
         catch (Exception)
         {
@@ -158,21 +164,8 @@ public partial class MaidataImportService
 
         try
         {
-            var normalizedText = FixChartSimaiSharp(chartText)
-                // 不飞的星星
-                .Replace("-?", "?-");
-            // 移除注释
-            normalizedText = SimaiCommentRegex().Replace(normalizedText, "");
-            normalizedText = SimaiCommentRegex2().Replace(normalizedText, "");
+            var normalizedText = FixChartSimaiSharp(chartText);
             var tokens = new SimaiTokenizer().TokensFromText(normalizedText);
-            for (var i = 0; i < tokens.Length; i++)
-            {
-                if (tokens[i].Contains("]b"))
-                {
-                    tokens[i] = tokens[i].Replace("]b", "]").Replace("[", "b[");
-                }
-            }
-
             var maiLibChart = new SimaiParser().ChartOfToken(tokens);
             errors.Add(new ImportChartMessage(string.Format(Locale.ChartFixedMinorErrors, level), MessageLevel.Info));
             return maiLibChart;
@@ -333,17 +326,13 @@ public partial class MaidataImportService
         }
 
         var allCharts = new Dictionary<int, AllChartsEntry>();
-        for (var i = 2; i < 9; i++)
+        for (var i = 0; i < 9; i++)
         {
+            if (i == 1) continue;
             if (!string.IsNullOrWhiteSpace(maiData.GetValueOrDefault($"inote_{i}")))
             {
                 allCharts.Add(i, new AllChartsEntry(maiData[$"inote_{i}"], TryParseChartSimaiSharp(maiData[$"inote_{i}"], i, errors)));
             }
-        }
-
-        if (!string.IsNullOrWhiteSpace(maiData.GetValueOrDefault("inote_0")))
-        {
-            allCharts.Add(0, new AllChartsEntry(maiData["inote_0"], TryParseChartSimaiSharp(maiData["inote_0"], 0, errors)));
         }
 
         float.TryParse(maiData.GetValueOrDefault("first"), out var first);
@@ -380,6 +369,7 @@ public partial class MaidataImportService
 
             if (!targetLevelMap.TryGetValue(level, out var targetLevel)) continue; // 字典里没查到、说明这个难度是“被忽略的难度”
             if (isUtage) targetLevel = 0;
+            bool touchSizeBig = !isUtage && level is 2 or 3; // 对绿谱和黄谱，设置为大的 touchSize
 
             var targetChart = music.Charts[targetLevel];
             targetChart.Path = $"{id:000000}_0{targetLevel}.ma2";
@@ -408,6 +398,14 @@ public partial class MaidataImportService
             if (maiLibChart is null)
             {
                 return new ImportChartResult(errors, true);
+            }
+
+            if (touchSizeBig)
+            {
+                foreach (var note in maiLibChart.Notes)
+                {
+                    if (note.NoteType is NoteEnum.NoteType.TTP or NoteEnum.NoteType.THO) note.TouchSize = "L1";
+                }
             }
 
             var originalConverted = maiLibChart.Compose(ChartEnum.ChartVersion.Ma2_104);

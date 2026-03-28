@@ -44,6 +44,12 @@ try
             .WithExample("makeusm", "video.mp4", "-O", "output.dat")
             .WithExample("makeusm", "video1.mp4", "video2.mp4", "video3.mp4");
 
+        config.AddCommand<MakeMp4Command>("makemp4")
+            .WithDescription("将 USM/DAT 文件转换为 MP4 格式")
+            .WithExample("makemp4", "movie.dat")
+            .WithExample("makemp4", "movie.dat", "-O", "output.mp4")
+            .WithExample("makemp4", "movie1.dat", "movie2.dat", "movie3.dat");
+
         config.AddCommand<MakeAcbCommand>("makeacb")
             .WithDescription("将音频文件转换为 ACB 格式")
             .WithExample("makeacb", "audio.wav")

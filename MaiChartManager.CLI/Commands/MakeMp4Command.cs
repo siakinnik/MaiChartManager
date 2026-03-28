@@ -18,6 +18,11 @@ public class MakeMp4Command : AsyncCommand<MakeMp4Command.Settings>
         [Description("输出文件路径（仅单文件时可用）")]
         public string? Output { get; set; }
 
+        [CommandOption("-f|--force")]
+        [Description("覆盖已存在的输出文件")]
+        [DefaultValue(false)]
+        public bool Force { get; set; }
+
         public override ValidationResult Validate()
         {
             if (Sources.Length == 0)
@@ -50,11 +55,23 @@ public class MakeMp4Command : AsyncCommand<MakeMp4Command.Settings>
             {
                 var source = settings.Sources[0];
                 var output = settings.Output ?? Path.ChangeExtension(source, ".mp4");
+
+                if (!settings.Force && File.Exists(output))
+                {
+                    AnsiConsole.MarkupLine($"[red]✗ 输出文件已存在: {output}（使用 --force 覆盖）[/]");
+                    return 1;
+                }
+
                 await ConvertSingleFile(source, output);
             }
             else
             {
-                await ConvertMultipleFiles(settings);
+                var errorCount = await ConvertMultipleFiles(settings);
+                if (errorCount > 0)
+                {
+                    AnsiConsole.MarkupLine($"[yellow]⚠ 转换完成，{errorCount} 个文件失败（使用 --force 覆盖已存在的文件）[/]");
+                    return 1;
+                }
             }
 
             AnsiConsole.MarkupLine("[green]✓ 所有转换已成功完成！[/]");
@@ -101,10 +118,11 @@ public class MakeMp4Command : AsyncCommand<MakeMp4Command.Settings>
         AnsiConsole.MarkupLine($"[green]✓ 已保存到: {output}[/]");
     }
 
-    private async Task ConvertMultipleFiles(Settings settings)
+    private async Task<int> ConvertMultipleFiles(Settings settings)
     {
         AnsiConsole.MarkupLine($"[yellow]正在转换 {settings.Sources.Length} 个文件...[/]");
 
+        int doneCount = 0, errorCount = 0;
         await AnsiConsole.Progress()
             .AutoClear(false)
             .Columns(
@@ -114,12 +132,20 @@ public class MakeMp4Command : AsyncCommand<MakeMp4Command.Settings>
                 new SpinnerColumn())
             .StartAsync(async ctx =>
             {
-                int doneCount = 0, errorCount = 0;
                 foreach (var source in settings.Sources)
                 {
                     var output = Path.ChangeExtension(source, ".mp4");
                     var task = ctx.AddTask($"[green]{Path.GetFileName(source)}[/]");
                     task.MaxValue = 100;
+
+                    if (!settings.Force && File.Exists(output))
+                    {
+                        errorCount++;
+                        task.Description = $"[red]{Path.GetFileName(source)} - 输出文件已存在[/]";
+                        task.Value = 100;
+                        task.StopTask();
+                        continue;
+                    }
 
                     if (errorCount > 0)
                     {
@@ -152,5 +178,7 @@ public class MakeMp4Command : AsyncCommand<MakeMp4Command.Settings>
                 }
                 TerminalProgress.Clear();
             });
+
+        return errorCount;
     }
 }

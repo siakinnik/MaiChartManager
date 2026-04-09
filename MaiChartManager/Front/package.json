@@ -1,5 +1,5 @@
 {
-  "name": "qwq",
+  "name": "mcm-frontend",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -10,13 +10,14 @@
     "genClient": "tsx genClient"
   },
   "devDependencies": {
+    "@chenfengyuan/vue-qrcode": "^2.0.0",
     "@fontsource/nerko-one": "^5.2.7",
     "@fontsource/noto-sans-sc": "^5.2.8",
     "@fontsource/quicksand": "^5.2.10",
     "@iconify/json": "^2.2.443",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@modyfi/vite-plugin-yaml": "^1.1.1",
-    "@munet/ui": "^1.0.13",
+    "@munet/ui": "workspace:*",
     "@sentry/vite-plugin": "^5.1.0",
     "@sentry/vue": "^10.40.0",
     "@types/color": "^4.2.0",
@@ -35,13 +36,13 @@
     "change-case": "^5.4.4",
     "color": "^5.0.3",
     "lodash": "^4.17.23",
+    "lodash-es": "^4.18.1",
     "naive-ui": "^2.43.2",
     "path-browserify": "^1.0.1",
     "perfect-debounce": "^2.1.0",
     "posthog-js": "^1.354.4",
     "sass": "^1.97.3",
     "swagger-typescript-api": "^13.2.18",
-    "tinyglobby": "^0.2.15",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "unity-webgl": "^4.4.3",
@@ -55,7 +56,6 @@
     "vue-router": "^5.0.3",
     "wavesurfer.js": "^7.12.1"
   },
-  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd",
   "dependencies": {
     "@f3ve/vue-markdown-it": "^0.2.3"
   }

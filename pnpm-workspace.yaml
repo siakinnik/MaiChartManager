@@ -1,3 +1,7 @@
+packages:
+  - MaiChartManager/Front
+  - MuNET-UI
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@sentry/cli'
@@ -5,3 +9,5 @@ onlyBuiltDependencies:
   - esbuild
   - protobufjs
   - vue-demi
+
+enableGlobalVirtualStore: true

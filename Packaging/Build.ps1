@@ -76,11 +76,11 @@ Remove-Item "$PSScriptRoot\*.msix" -ErrorAction SilentlyContinue
 # Release 模式下（本地构建）始终构建前端
 if ($Mode -ne "Canary" -or -not (Test-Path "$ProjectRoot\MaiChartManager\wwwroot\index.html")) {
     Write-Host "Building Frontend..." -ForegroundColor Cyan
-    Push-Location "$ProjectRoot\MaiChartManager\Front"
+    Push-Location "$ProjectRoot"
     try {
         pnpm install
         if ($LASTEXITCODE -ne 0) { throw "pnpm install failed with exit code $LASTEXITCODE" }
-        pnpm build
+        pnpm --filter mcm-frontend build
         if ($LASTEXITCODE -ne 0) { throw "Frontend build failed with exit code $LASTEXITCODE" }
     } finally {
         Pop-Location

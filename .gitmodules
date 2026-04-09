@@ -13,3 +13,6 @@
 [submodule "AquaMai"]
 	path = AquaMai
 	url = git@github.com:MewoLab/AquaMai.git
+[submodule "MuNet-UI"]
+	path = MuNET-UI
+	url = git@github.com:MuNET-OSS/MuNET-UI.git

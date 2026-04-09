@@ -1,4 +1,4 @@
-import { computed, defineComponent, onMounted, PropType, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, PropType, provide, ref, watch } from "vue";
 import { addVersionList, genreList, globalCapture, selectedADir, selectedMusic as info, selectMusicId, updateAddVersionList, updateGenreList, updateMusicList, selectedLevel, disableSync, gameVersion, b15ver } from "@/store/refs";
 import { Chart, MusicXmlWithABJacket } from "@/client/apiGen";
 import api from "@/client/api";
@@ -21,6 +21,8 @@ import { NTabPane, NTabs } from "naive-ui";
 
 const Component = defineComponent({
   setup() {
+
+    provide('disabled', computed(() => selectedADir.value === 'A000'));
 
     const firstEnabledChart = info.value?.charts?.findIndex(chart => chart.enable);
     if (firstEnabledChart && firstEnabledChart >= 0) {
@@ -61,8 +63,6 @@ const Component = defineComponent({
         });
       }
     })
-
-    // TODO: inject disable when A000
 
     return () => info.value && <div class="flex flex-col gap-2">
       <div class="grid cols-[1fr_12em] gap-5">

@@ -128,6 +128,17 @@ const Component = defineComponent({
             <VersionInput v-model:value={info.value.version}/>
           </div>
         </div>
+        {info.value.genreId === UTAGE_GENRE && // 宴会场
+          <div class="flex gap-4">
+            <div class="flex flex-col gap-2 w-0 grow">
+              <div class="ml-1 text-sm">{t('music.edit.utageType')}</div>
+              <TextInput v-model:value={info.value.utageKanji}/>
+            </div>
+            <div class="flex flex-col gap-2 w-0 grow-3">
+              <div class="ml-1 text-sm">{t('music.edit.utageComment')}</div>
+              <TextInput v-model:value={info.value.comment}/>
+            </div>
+          </div>}
         <AcbAwb song={info.value}/>
         <NTabs type="line" animated barWidth={0} v-model:value={selectedLevel.value} class="levelTabs"
                style={{ '--n-tab-padding': 0, '--n-pane-padding-top': 0, '--n-tab-text-color-hover': '' }}>

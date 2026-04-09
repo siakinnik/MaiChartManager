@@ -7,7 +7,7 @@ import ViteYaml from '@modyfi/vite-plugin-yaml';
 import svgLoader from 'vite-svg-loader'
 
 // https://vitejs.dev/config/
-export default defineConfig(({command}) => ({
+export default defineConfig(({ command }) => ({
   plugins: [
     vue(),
     vueJsx(),
@@ -36,5 +36,8 @@ export default defineConfig(({command}) => ({
       '/MaiChartManagerServlet': 'http://localhost:5181'
     },
     port: 5182,
+    fs: {
+      strict: false,
+    }
   }
 }));

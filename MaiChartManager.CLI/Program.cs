@@ -56,6 +56,10 @@ try
             .WithExample("makeacb", "audio.mp3", "-O", "output.acb")
             .WithExample("makeacb", "audio1.wav", "audio2.mp3", "--padding", "0.5");
 
+        config.AddCommand<MakeAbCommand>("makeab")
+            .WithDescription("将文件夹中的封面图片批量转换为 AssetBundle 格式")
+            .WithExample("makeab", "D:\\images");
+
         config.AddCommand<DebugCommand>("debug")
             .WithDescription("以控制台模式启动主程序，用于查看日志输出");
     });

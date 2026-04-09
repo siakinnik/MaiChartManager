@@ -19,7 +19,7 @@ export default defineComponent({
       }
     })
 
-    return () => <div class="of-y-auto cst max-h-24vh">
+    return () => <div class="of-y-auto cst max-h-20vh">
       <div class="flex flex-col gap-2">
         {
           props.errors.map((error, i) => {

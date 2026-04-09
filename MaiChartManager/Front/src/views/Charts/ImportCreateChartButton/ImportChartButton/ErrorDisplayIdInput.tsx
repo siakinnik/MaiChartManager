@@ -45,7 +45,7 @@ export default defineComponent({
         <ImportAlert errors={props.errors} tempOptions={props.tempOptions}></ImportAlert>
         {!!props.meta.length && <>
             {t('chart.import.assignId')}
-            <div class="of-y-auto cst max-h-24vh">
+            <div class="of-y-auto cst max-h-20vh">
                 <div class="flex flex-col gap-3">
                   {props.meta.map((meta, i) => <MusicIdInput key={i} meta={meta} utage={props.savedOptions.genreId === UTAGE_GENRE}/>)}
                 </div>

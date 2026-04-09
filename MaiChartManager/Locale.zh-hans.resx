@@ -269,6 +269,14 @@
     <value>视频或者图片|*.mp4;*.mov;*.avi;*.mkv;*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.webp;*.svg;*.dat;*.usm</value>
   </data>
 
+    <!-- ImageToAbToolController -->
+    <data name="SelectImageFolder" xml:space="preserve">
+    <value>请选择包含封面图片的文件夹</value>
+  </data>
+    <data name="NoValidImagesFound" xml:space="preserve">
+    <value>未找到有效的图片文件（需要：纯数字文件名或 ui_jacket_* 格式，PNG/JPG 格式）</value>
+  </data>
+
     <!-- ModController -->
     <data name="UnsupportedConfigVersion" xml:space="preserve">
     <value>无法兼容的配置文件版本</value>

@@ -453,6 +453,8 @@ tools:
   convertSuccess: 转换完成！
   convertFailed: 转换失败
   videoConvertError: 视频转换出错
+  imageToAb: 图片转 AssetBundle
+  imageToAbError: 图片转 AB 出错
   videoOptions:
     processing: 还在处理，别急…
 error:

@@ -269,6 +269,14 @@
     <value>影片或者圖片|*.mp4;*.mov;*.avi;*.mkv;*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.webp;*.svg;*.dat;*.usm</value>
   </data>
 
+    <!-- ImageToAbToolController -->
+    <data name="SelectImageFolder" xml:space="preserve">
+    <value>請選擇包含封面圖片的資料夾</value>
+  </data>
+    <data name="NoValidImagesFound" xml:space="preserve">
+    <value>未找到有效的圖片檔案（需要：純數字檔名或 ui_jacket_* 格式，PNG/JPG 格式）</value>
+  </data>
+
     <!-- ModController -->
     <data name="UnsupportedConfigVersion" xml:space="preserve">
     <value>無法相容的設定檔案版本</value>

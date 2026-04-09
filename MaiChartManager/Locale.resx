@@ -277,6 +277,14 @@ If you notice any issues with the conversion result, you can try testing it in A
     <value>Video or Image|*.mp4;*.mov;*.avi;*.mkv;*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.webp;*.svg;*.dat;*.usm</value>
   </data>
 
+    <!-- ImageToAbToolController -->
+    <data name="SelectImageFolder" xml:space="preserve">
+    <value>Please select folder containing jacket images</value>
+  </data>
+    <data name="NoValidImagesFound" xml:space="preserve">
+    <value>No valid images found (expected: numeric filename or ui_jacket_* pattern, PNG/JPG format)</value>
+  </data>
+
     <!-- ModController -->
     <data name="UnsupportedConfigVersion" xml:space="preserve">
     <value>Incompatible configuration file version</value>

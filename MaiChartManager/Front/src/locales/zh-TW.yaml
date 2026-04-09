@@ -459,6 +459,8 @@ tools:
   convertSuccess: 轉換完成！
   convertFailed: 轉換失敗
   videoConvertError: 影片轉換出錯
+  imageToAb: 圖片轉 AssetBundle
+  imageToAbError: 圖片轉 AB 出錯
   videoOptions:
     processing: 還在處理，別急…
 error:

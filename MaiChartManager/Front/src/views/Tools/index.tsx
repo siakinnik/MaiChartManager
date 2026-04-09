@@ -2,6 +2,7 @@ import api from '@/client/api';
 import { addToast } from '@munet/ui';
 import { defineComponent, ref } from 'vue';
 import VideoConvertButton from '@/views/Tools/VideoConvertModal';
+import ImageToAbModal from '@/views/Tools/ImageToAbModal';
 import { useI18n } from 'vue-i18n';
 
 interface ToolCard {
@@ -14,6 +15,7 @@ interface ToolCard {
 export default defineComponent({
   setup() {
     const videoConvertRef = ref<{ trigger: () => void }>();
+    const imageToAbRef = ref<{ trigger: () => void }>();
     const { t } = useI18n();
 
     const handleAudioConvert = async () => {
@@ -40,6 +42,11 @@ export default defineComponent({
         labelKey: 'tools.videoConvert',
         action: () => videoConvertRef.value?.trigger(),
       },
+      {
+        icon: 'i-mdi-image',
+        labelKey: 'tools.imageToAb',
+        action: () => imageToAbRef.value?.trigger(),
+      },
     ];
 
     return () => (
@@ -64,6 +71,7 @@ export default defineComponent({
           ))}
         </div>
         <VideoConvertButton ref={videoConvertRef as any} />
+        <ImageToAbModal ref={imageToAbRef as any} />
       </div>
     );
   },

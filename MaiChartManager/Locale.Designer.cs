@@ -748,6 +748,24 @@ namespace MaiChartManager {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please select folder containing jacket images.
+        /// </summary>
+        internal static string SelectImageFolder {
+            get {
+                return ResourceManager.GetString("SelectImageFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No valid images found.
+        /// </summary>
+        internal static string NoValidImagesFound {
+            get {
+                return ResourceManager.GetString("NoValidImagesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown error.
         /// </summary>
         internal static string UnknownError {

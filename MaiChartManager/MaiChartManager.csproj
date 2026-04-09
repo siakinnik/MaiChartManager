@@ -71,6 +71,8 @@
     <PackageReference Include="SingleInstanceCore" Version="2.2.2"/>
       <PackageReference Include="SixLabors.ImageSharp" Version="2.1.11"/>
     <PackageReference Include="Standart.Hash.xxHash" Version="4.0.5"/>
+      <PackageReference Include="AssetsTools.NET" Version="3.0.4" />
+      <PackageReference Include="AssetsTools.NET.Texture" Version="3.0.2" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1"/>
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.0.1"/>
       <PackageReference Include="System.Runtime.Serialization.Formatters" Version="10.0.0"/>

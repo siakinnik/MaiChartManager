@@ -1,4 +1,4 @@
-import { computed, defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType, provide } from "vue";
 import { Popover, Radio } from "@munet/ui";
 import { ShiftMethod } from "@/client/apiGen";
 import { TempOptions } from "./types";
@@ -15,6 +15,8 @@ export default defineComponent({
       get: () => props.tempOptions.shift,
       set: (v: ShiftMethod) => { if (!props.tempOptions.shiftLocked) props.tempOptions.shift = v }
     })
+
+    provide('disabled', computed(() => props.tempOptions.shiftLocked))
 
     return () => <div>
       <div class="text-sm">{t('chart.import.option.shiftMode')}</div>

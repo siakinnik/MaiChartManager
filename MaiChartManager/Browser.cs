@@ -28,12 +28,19 @@ public sealed partial class Browser : Form
         webView21.DefaultBackgroundColor = Color.Transparent;
         IapManager.BindToForm(this);
 
-        // 竖屏显示器时，限制窗口高度不超过显示器宽度的 2/3
+        // 限制窗口高度
         var landscape = Screen.AllScreens.FirstOrDefault(s => s.WorkingArea.Width >= s.WorkingArea.Height);
         if (landscape == null)
         {
+            // 竖屏显示器时，限制窗口高度不超过显示器宽度的 2/3
             var portrait = Screen.PrimaryScreen ?? Screen.AllScreens[0];
             var maxHeight = portrait.WorkingArea.Width * 2 / 3;
+            if (Height > maxHeight)
+                Height = maxHeight;
+        }
+        else
+        {
+            var maxHeight = landscape.WorkingArea.Height;
             if (Height > maxHeight)
                 Height = maxHeight;
         }

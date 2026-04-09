@@ -15,7 +15,7 @@ public static class WebViewHelper
             var area = landscape.WorkingArea;
             return new Point(
                 area.X + (area.Width - width) / 2,
-                area.Y + (area.Height - height) / 2
+                Math.Max(area.Y, area.Y + (area.Height - height) / 2)
             );
         }
 
@@ -25,7 +25,7 @@ public static class WebViewHelper
         var squareTop = pArea.Bottom - squareSize;
         return new Point(
             pArea.X + (squareSize - width) / 2,
-            squareTop + (squareSize - height) / 2
+            Math.Max(pArea.Y, squareTop + (squareSize - height) / 2)
         );
     }
 

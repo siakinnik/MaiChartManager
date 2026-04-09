@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using MaiChartManager;
 using MaiChartManager.CLI.Utils;
 using MaiChartManager.Utils;
 using Spectre.Console;
@@ -32,6 +33,11 @@ public partial class MakeAbCommand : AsyncCommand<MakeAbCommand.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrEmpty(StaticSettings.GamePath) || !Directory.Exists(StaticSettings.StreamingAssets))
+        {
+            AnsiConsole.MarkupLine("[red]✗ 未找到游戏目录，请先通过桌面版配置游戏路径[/]");
+            return 1;
+        }
         var candidates = Directory.EnumerateFiles(settings.Folder)
             .Select(path => (Path: path, Name: Path.GetFileName(path)))
             .Select(x =>

@@ -130,7 +130,8 @@ export default defineComponent({
               <ConfigSection key={section.path!} section={section}
                              entryStates={props.config.entryStates!}
                              isCommunity={communityList.value.includes(section.path!)}
-                             sectionState={props.config.sectionStates![section.path!]}/>)}
+                             sectionState={props.config.sectionStates![section.path!]}
+                             allSectionStates={props.config.sectionStates!}/>)}
           </div>
         </div>
       </div>

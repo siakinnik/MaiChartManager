@@ -14,6 +14,7 @@ export default defineComponent({
     section: { type: Object as PropType<Section>, required: true },
     entryStates: { type: Object as PropType<Record<string, IEntryState>>, required: true },
     sectionState: { type: Object as PropType<ISectionState>, required: true },
+    allSectionStates: { type: Object as PropType<Record<string, ISectionState>> },
     isCommunity: Boolean,
   },
   setup(props, { emit }) {
@@ -55,14 +56,14 @@ export default defineComponent({
       </div>}
       <TransitionVertical>
         {props.sectionState.enabled && <div class="flex flex-col gap-2 mt-2">
-          {customPanelPosition === 'top' && <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/>}
+          {customPanelPosition === 'top' && <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section} allSectionStates={props.allSectionStates}/>}
           {(CustomPanel && customPanelPosition === 'override') ?
-            <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/> :
+            <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section} allSectionStates={props.allSectionStates}/> :
             !!props.section.entries?.length && <div class={["flex flex-col gap-2", ENTRY_GROUP_PADDING]}>
               {props.section.entries?.filter(it => !it.attribute?.hideWhenDefault || (it.attribute?.hideWhenDefault && !props.entryStates[it.path!].isDefault))
                 .map((entry) => <ConfigEntry key={entry.path!} entry={entry} entryState={props.entryStates[entry.path!]}/>)}
             </div>}
-          {customPanelPosition === 'bottom' && <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section}/>}
+          {customPanelPosition === 'bottom' && <CustomPanel entryStates={props.entryStates} sectionState={props.sectionState} section={props.section} allSectionStates={props.allSectionStates}/>}
           </div>}
       </TransitionVertical>
     </div>;

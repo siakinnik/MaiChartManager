@@ -1,6 +1,6 @@
 import api from "@/client/api";
 import { useAsyncState } from '@vueuse/core';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { debounce } from 'perfect-debounce';
 import { ConfigDto } from "@/client/apiGen";
 import { globalCapture, modInfo, updateModInfo } from "@/store/refs";
@@ -14,7 +14,7 @@ const skipSignatureCheckRef = ref(false);
 export const configReadErr = ref('');
 export const configReadErrTitle = ref('');
 
-// 标志位：配置刚从服务器加载，watcher 应忽略首次变更
+// 防止在 mod 管理页面，一加载就触发保存
 export const configJustLoaded = ref(false);
 
 const { state: aquaMaiConfig, execute: executeGetConfig, isLoading: configLoading } = useAsyncState(async () => {
@@ -56,7 +56,7 @@ const { state: aquaMaiConfig, execute: executeGetConfig, isLoading: configLoadin
     forceDefaultRef.value = false;
     skipSignatureCheckRef.value = false;
   }
-}, undefined as ConfigDto | undefined, { immediate: false, shallow: false });
+}, undefined as ConfigDto | undefined, { immediate: false, shallow: false, resetOnExecute: false });
 
 export { aquaMaiConfig, configLoading };
 
@@ -65,6 +65,8 @@ export const updateAquaMaiConfig = async (forceDefault = false, skipSignatureChe
   skipSignatureCheckRef.value = skipSignatureCheck;
   configJustLoaded.value = true;
   await executeGetConfig();
+  await nextTick();
+  configJustLoaded.value = false;
 };
 
 // MuMod 状态

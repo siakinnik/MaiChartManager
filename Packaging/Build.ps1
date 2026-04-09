@@ -20,15 +20,16 @@ try {
     $gitDescribe = git describe --tags --long
     Pop-Location
     
-    if ($gitDescribe -match "v?(\d+\.\d+\.\d+)-(\d+)-g[0-9a-f]+") {
+    if ($gitDescribe -match "v?(\d+\.\d+(?:\.\d+)?)-(\d+)-g[0-9a-f]+") {
         $baseVer = $Matches[1]
         $commitCount = $Matches[2]
         
+        $baseVerFull = if ($baseVer.Split('.').Length -eq 2) { "$baseVer.0" } else { $baseVer }
+        
         if ($Mode -eq "Canary") {
-            $BuildVersion = "$baseVer.$commitCount"
+            $BuildVersion = "$baseVerFull.$commitCount"
         } else {
-            # Release 模式保留三位 (补0)
-            $BuildVersion = "$baseVer.0"
+            $BuildVersion = "$baseVerFull.0"
         }
     } else {
         Write-Warning "Git describe format mismatch: $gitDescribe. Fallback to $BuildVersion"

@@ -18,7 +18,7 @@ export enum OPTIONS {
   ConvertToMaidata,
   ConvertToMaidataIgnoreVideo,
   CreateNewOptMa2_103,
-  ConvertToMaidataById,   // siakinnik - added
+  ConvertToMaidataById,
 }
 
 export enum MAIDATA_SUBDIR {
@@ -66,15 +66,9 @@ export default defineComponent({
             addToast({message: t('music.batch.exportSuccess'), type: 'success'});
             break;
           }
+        case OPTIONS.ConvertToMaidataById:
         case OPTIONS.ConvertToMaidata:
         case OPTIONS.ConvertToMaidataIgnoreVideo:
-          if (version.value?.license !== 'Active') {
-            showNeedPurchaseDialog.value = true
-            break;
-          }
-          remoteExport(props.continue as any, props.selectedMusic!, selectedOption.value, selectedMaidataSubdir.value);
-          break;
-        case OPTIONS.ConvertToMaidataById:
           if (version.value?.license !== 'Active') {
             showNeedPurchaseDialog.value = true
             break;

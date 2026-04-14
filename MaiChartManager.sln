@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaiChartManager", "MaiChartManager\MaiChartManager.csproj", "{A1B48984-FD7E-10D0-2792-9C078DFF903F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaiChartManager.CLI", "MaiChartManager.CLI\MaiChartManager.CLI.csproj", "{657F8B01-304D-FAAB-22EA-0B548A0D683F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaiChartManager.GenClient", "MaiChartManager.GenClient\MaiChartManager.GenClient.csproj", "{0ECBD6C7-11BA-8218-A108-48B8ECAE09E2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1B48984-FD7E-10D0-2792-9C078DFF903F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B48984-FD7E-10D0-2792-9C078DFF903F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B48984-FD7E-10D0-2792-9C078DFF903F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B48984-FD7E-10D0-2792-9C078DFF903F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{657F8B01-304D-FAAB-22EA-0B548A0D683F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{657F8B01-304D-FAAB-22EA-0B548A0D683F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{657F8B01-304D-FAAB-22EA-0B548A0D683F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{657F8B01-304D-FAAB-22EA-0B548A0D683F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ECBD6C7-11BA-8218-A108-48B8ECAE09E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ECBD6C7-11BA-8218-A108-48B8ECAE09E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ECBD6C7-11BA-8218-A108-48B8ECAE09E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ECBD6C7-11BA-8218-A108-48B8ECAE09E2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0B883359-BC6B-4A64-9DBB-195778324F5C}
+	EndGlobalSection
+EndGlobal

@@ -65,7 +65,7 @@ export default async (
     if (isIdNaming) {
       return parentDir ? `${parentDir}/${music.id}` : `${music.id}`;
     };
-    
+
     return parentDir ? `${parentDir}/${targetDir}` : targetDir;
   };
 
@@ -87,6 +87,8 @@ export default async (
         return `ExportAsMaidataApi/${music.assetDir}/${music.id}`;
       case OPTIONS.ConvertToMaidataIgnoreVideo:
         return `ExportAsMaidataApi/${music.assetDir}/${music.id}?ignoreVideo=true`;
+      case OPTIONS.ConvertToMaidataById:
+        return `ExportAsMaidataApi/${music.assetDir}/${music.id}`;
       default:
         throw new Error(`Unsupported export action: ${action}`);
     }
@@ -100,6 +102,8 @@ export default async (
         return Math.max(1, Math.floor(cpuThreads / 4));
       case OPTIONS.ConvertToMaidataIgnoreVideo:
         return Math.max(1, Math.floor(cpuThreads / 3));
+      case OPTIONS.ConvertToMaidataById:
+        return Math.max(1, Math.floor(cpuThreads / 4));
       default:
         return Math.max(1, Math.floor(cpuThreads / 2));
     }
@@ -111,7 +115,8 @@ export default async (
 
     const maidataRootDir =
       action === OPTIONS.ConvertToMaidata ||
-        action === OPTIONS.ConvertToMaidataIgnoreVideo
+        action === OPTIONS.ConvertToMaidataIgnoreVideo ||
+        action === OPTIONS.ConvertToMaidataById
         ? getMaidataExportDir(music)
         : "";
 

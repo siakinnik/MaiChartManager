@@ -60,6 +60,12 @@ export default async (
       t("music.list.unknown"),
     );
     const targetDir = `${safeTitle}${suffix}`;
+    const isIdNaming = action === OPTIONS.ConvertToMaidataById;
+
+    if (isIdNaming) {
+      return parentDir ? `${parentDir}/${music.id}` : `${music.id}`;
+    };
+    
     return parentDir ? `${parentDir}/${targetDir}` : targetDir;
   };
 
@@ -105,7 +111,7 @@ export default async (
 
     const maidataRootDir =
       action === OPTIONS.ConvertToMaidata ||
-      action === OPTIONS.ConvertToMaidataIgnoreVideo
+        action === OPTIONS.ConvertToMaidataIgnoreVideo
         ? getMaidataExportDir(music)
         : "";
 
@@ -189,7 +195,7 @@ export default async (
 
   try {
     await Promise.all(Array.from({ length: workerCount }, () => worker()));
-    addToast({message: t('music.batch.exportSuccess'), type: 'success'});
+    addToast({ message: t('music.batch.exportSuccess'), type: 'success' });
   }
   catch (e) {
     console.error(e);

@@ -18,6 +18,7 @@ export enum OPTIONS {
   ConvertToMaidata,
   ConvertToMaidataIgnoreVideo,
   CreateNewOptMa2_103,
+  ConvertToMaidataById,   // siakinnik - added
 }
 
 export enum MAIDATA_SUBDIR {
@@ -73,6 +74,13 @@ export default defineComponent({
           }
           remoteExport(props.continue as any, props.selectedMusic!, selectedOption.value, selectedMaidataSubdir.value);
           break;
+        case OPTIONS.ConvertToMaidataById:
+          if (version.value?.license !== 'Active') {
+            showNeedPurchaseDialog.value = true
+            break;
+          }
+          remoteExport(props.continue as any, props.selectedMusic!, selectedOption.value, selectedMaidataSubdir.value);
+          break;
       }
     }
 
@@ -120,12 +128,15 @@ export default defineComponent({
           <Radio k={OPTIONS.ConvertToMaidata} v-model:value={selectedOption.value}>
             {t('music.batch.convertToMaidata')}
           </Radio>
+          <Radio k={OPTIONS.ConvertToMaidataById} v-model:value={selectedOption.value}>
+            {t('music.batch.convertToMaidata')} (MusicID)
+          </Radio>
           <Radio k={OPTIONS.ConvertToMaidataIgnoreVideo} v-model:value={selectedOption.value}>
             {t('music.batch.convertToMaidataNoVideo')}
           </Radio>
 
           <TransitionVertical>
-            {(selectedOption.value === OPTIONS.ConvertToMaidata || selectedOption.value === OPTIONS.ConvertToMaidataIgnoreVideo) &&
+            {(selectedOption.value === OPTIONS.ConvertToMaidata || selectedOption.value === OPTIONS.ConvertToMaidataIgnoreVideo || selectedOption.value === OPTIONS.ConvertToMaidataById) &&
               <Select v-model:value={selectedMaidataSubdir.value} options={[{label: t('music.batch.subdirOption.none'), value: MAIDATA_SUBDIR.None}, {label: t('music.batch.subdirOption.genre'), value: MAIDATA_SUBDIR.Genre}, {label: t('music.batch.subdirOption.version'), value: MAIDATA_SUBDIR.Version}]}/>}
           </TransitionVertical>
         </div>

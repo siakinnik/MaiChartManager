@@ -54,6 +54,10 @@ export default async (
       parentDir = sanitizeFsSegment(parentDir, t("music.list.unknown"));
     }
 
+    if (action === OPTIONS.ConvertToMaidataById) {
+      return parentDir ? `${parentDir}/${music.id}` : `${music.id}`;
+    }
+
     const suffix = music.id! > 1e4 && music.id! < 2e4 ? " [DX]" : "";
     const safeTitle = sanitizeFsSegment(
       music.name || t("music.list.unknown"),
@@ -81,6 +85,8 @@ export default async (
         return `ExportAsMaidataApi/${music.assetDir}/${music.id}`;
       case OPTIONS.ConvertToMaidataIgnoreVideo:
         return `ExportAsMaidataApi/${music.assetDir}/${music.id}?ignoreVideo=true`;
+      case OPTIONS.ConvertToMaidataById:
+        return `ExportAsMaidataApi/${music.assetDir}/${music.id}`;
       default:
         throw new Error(`Unsupported export action: ${action}`);
     }
@@ -94,6 +100,8 @@ export default async (
         return Math.max(1, Math.floor(cpuThreads / 4));
       case OPTIONS.ConvertToMaidataIgnoreVideo:
         return Math.max(1, Math.floor(cpuThreads / 3));
+      case OPTIONS.ConvertToMaidataById:
+        return Math.max(1, Math.floor(cpuThreads / 4));
       default:
         return Math.max(1, Math.floor(cpuThreads / 2));
     }
@@ -105,7 +113,8 @@ export default async (
 
     const maidataRootDir =
       action === OPTIONS.ConvertToMaidata ||
-      action === OPTIONS.ConvertToMaidataIgnoreVideo
+        action === OPTIONS.ConvertToMaidataIgnoreVideo ||
+        action === OPTIONS.ConvertToMaidataById
         ? getMaidataExportDir(music)
         : "";
 
@@ -189,7 +198,7 @@ export default async (
 
   try {
     await Promise.all(Array.from({ length: workerCount }, () => worker()));
-    addToast({message: t('music.batch.exportSuccess'), type: 'success'});
+    addToast({ message: t('music.batch.exportSuccess'), type: 'success' });
   }
   catch (e) {
     console.error(e);

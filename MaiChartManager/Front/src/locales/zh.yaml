@@ -146,6 +146,7 @@ music:
     exportPreserveFormat: 导出为 Opt（保持谱面格式，移除 Event 等）
     exportMa2Format: 导出为 Opt（Ma2 103 格式，移除 Event 等）
     convertToMaidata: 转换为 Maidata
+    convertToMaidataById: 转换为 Maidata（以 MusicID 命名）
     convertToMaidataNoVideo: 转换为 Maidata（无 BGA）
     subdirOption:
       none: 平铺文件夹

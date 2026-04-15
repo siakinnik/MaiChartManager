@@ -123,7 +123,7 @@ export default defineComponent({
             {t('music.batch.convertToMaidata')}
           </Radio>
           <Radio k={OPTIONS.ConvertToMaidataById} v-model:value={selectedOption.value}>
-            {t('music.batch.convertToMaidata')} (MusicID)
+            {t('music.batch.convertToMaidataById')}
           </Radio>
           <Radio k={OPTIONS.ConvertToMaidataIgnoreVideo} v-model:value={selectedOption.value}>
             {t('music.batch.convertToMaidataNoVideo')}

@@ -153,6 +153,7 @@ music:
     exportPreserveFormat: Export as Opt (Preserve Format, Remove Events)
     exportMa2Format: Export as Opt (Ma2 103 Format, Remove Events)
     convertToMaidata: Convert to Maidata
+    convertToMaidataById: Convert to Maidata (MusicID Naming)
     convertToMaidataNoVideo: Convert to Maidata (No BGA)
     subdirOption:
       none: Flat

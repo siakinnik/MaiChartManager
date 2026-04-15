@@ -54,18 +54,16 @@ export default async (
       parentDir = sanitizeFsSegment(parentDir, t("music.list.unknown"));
     }
 
+    if (action === OPTIONS.ConvertToMaidataById) {
+      return parentDir ? `${parentDir}/${music.id}` : `${music.id}`;
+    }
+
     const suffix = music.id! > 1e4 && music.id! < 2e4 ? " [DX]" : "";
     const safeTitle = sanitizeFsSegment(
       music.name || t("music.list.unknown"),
       t("music.list.unknown"),
     );
     const targetDir = `${safeTitle}${suffix}`;
-    const isIdNaming = action === OPTIONS.ConvertToMaidataById;
-
-    if (isIdNaming) {
-      return parentDir ? `${parentDir}/${music.id}` : `${music.id}`;
-    };
-
     return parentDir ? `${parentDir}/${targetDir}` : targetDir;
   };
 

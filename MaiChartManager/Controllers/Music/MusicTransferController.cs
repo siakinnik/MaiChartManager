@@ -416,13 +416,16 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
                     zipArchive.CreateEntryFromFile(jacketSPath + ".manifest", $"AssetBundleImages/jacket/{Path.GetFileName(jacketSPath)}.manifest");
                 }
             }
-
             if (System.IO.File.Exists(music.AssetBundleJacket + ".manifest"))
             {
                 zipArchive.CreateEntryFromFile(music.AssetBundleJacket + ".manifest", $"AssetBundleImages/jacket/{Path.GetFileName(music.AssetBundleJacket)}.manifest");
             }
         }
 
+        else if (music.PseudoAssetBundleJacket is not null)
+        {
+            zipArchive.CreateEntryFromFile(music.PseudoAssetBundleJacket, $"AssetBundleImages/jacket/{Path.GetFileName(music.PseudoAssetBundleJacket)}");
+        }
         // copy acbawb
         if (!AudioConvert.TryResolveAcbAwb(GetAudioCandidateIds(music), out var resolvedAudioId, out var acb, out var awb) || acb is null || awb is null)
         {

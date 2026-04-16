@@ -208,7 +208,7 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
             {
                 var jacketSFileName = Path.GetFileName(jacketSPath);
                 CopySharedFileIfNeeded(jacketSPath, Path.Combine(jacketRootDir, jacketSFileName), copiedSharedDestinations);
-                
+
                 if (System.IO.File.Exists(jacketSPath + ".manifest"))
                 {
                     CopySharedFileIfNeeded(jacketSPath + ".manifest", Path.Combine(jacketRootDir, jacketSFileName + ".manifest"), copiedSharedDestinations);
@@ -405,14 +405,22 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
         else if (music.AssetBundleJacket is not null)
         {
             zipArchive.CreateEntryFromFile(music.AssetBundleJacket, $"AssetBundleImages/jacket/{Path.GetFileName(music.AssetBundleJacket)}");
+
+            // FIX #42
+            var jacketSPath = music.AssetBundleJacket.Substring(0, music.AssetBundleJacket.Length - 3) + "_s.ab";
+            if (System.IO.File.Exists(jacketSPath))
+            {
+                zipArchive.CreateEntryFromFile(jacketSPath, $"AssetBundleImages/jacket/{Path.GetFileName(jacketSPath)}");
+                if (System.IO.File.Exists(jacketSPath + ".manifest"))
+                {
+                    zipArchive.CreateEntryFromFile(jacketSPath + ".manifest", $"AssetBundleImages/jacket/{Path.GetFileName(jacketSPath)}.manifest");
+                }
+            }
+
             if (System.IO.File.Exists(music.AssetBundleJacket + ".manifest"))
             {
                 zipArchive.CreateEntryFromFile(music.AssetBundleJacket + ".manifest", $"AssetBundleImages/jacket/{Path.GetFileName(music.AssetBundleJacket)}.manifest");
             }
-        }
-        else if (music.PseudoAssetBundleJacket is not null)
-        {
-            zipArchive.CreateEntryFromFile(music.PseudoAssetBundleJacket, $"AssetBundleImages/jacket/{Path.GetFileName(music.PseudoAssetBundleJacket)}");
         }
 
         // copy acbawb

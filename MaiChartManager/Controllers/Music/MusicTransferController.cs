@@ -202,16 +202,17 @@ public class MusicTransferController(StaticSettings settings, ILogger<MusicTrans
             CopySharedFileIfNeeded(music.AssetBundleJacket, Path.Combine(jacketRootDir, jacketFileName), copiedSharedDestinations);
 
             // Issue #42 fix
-            var jacketSPath = music.AssetBundleJacket.Replace(".ab", "_s.ab");
+            var jacketSPath = music.AssetBundleJacket.Substring(0, music.AssetBundleJacket.Length - 3) + "_s.ab";
+
             if (System.IO.File.Exists(jacketSPath))
             {
                 var jacketSFileName = Path.GetFileName(jacketSPath);
                 CopySharedFileIfNeeded(jacketSPath, Path.Combine(jacketRootDir, jacketSFileName), copiedSharedDestinations);
-            }
-
-            if (System.IO.File.Exists(music.AssetBundleJacket + ".manifest"))
-            {
-                CopySharedFileIfNeeded(music.AssetBundleJacket + ".manifest", Path.Combine(jacketRootDir, jacketFileName + ".manifest"), copiedSharedDestinations);
+                
+                if (System.IO.File.Exists(jacketSPath + ".manifest"))
+                {
+                    CopySharedFileIfNeeded(jacketSPath + ".manifest", Path.Combine(jacketRootDir, jacketSFileName + ".manifest"), copiedSharedDestinations);
+                }
             }
         }
         else if (music.PseudoAssetBundleJacket is not null)
